@@ -1,0 +1,4 @@
+(executable
+ (public_name dbcaml)
+ (name main)
+ (libraries dbcaml))

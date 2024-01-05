@@ -1,0 +1,4 @@
+(lang dune 3.12)
+(name dbcaml)
+(sections (lib .) (bin ../../bin))
+(files (lib (META dune-package opam)) (bin (dbcaml)))
