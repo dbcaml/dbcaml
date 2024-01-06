@@ -5,12 +5,12 @@ description: "Database toolkit for OCaml"
 maintainer: ["Emil Privér <emil@priver.dev>"]
 authors: ["Emil Privér <emil@priver.dev>"]
 license: "MIT"
-tags: ["database toolkit", "database",  "sql", "postgresql", "mysql", "sqlite"]
-homepage: "https://github.com/emilpriver/dbcaml"
+tags: ["topics" "daatabase" "ocaml"]
+homepage: "https://github.com/username/reponame"
 doc: "https://github.com/emilpriver/dbcaml"
-bug-reports: "https://github.com/emilpriver/dbcaml/issues"
+bug-reports: "https://github.com/username/reponame/issues"
 depends: [
-  "ocaml"{>= "5.1.1"}
+  "ocaml"
   "dune" {>= "3.12"}
   "odoc" {with-doc}
 ]
@@ -28,4 +28,4 @@ build: [
     "@doc" {with-doc}
   ]
 ]
-dev-repo: "git+https://github.com/emilpriver/dbcaml.git"
+dev-repo: "git+https://github.com/username/reponame.git"
