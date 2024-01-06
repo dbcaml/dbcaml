@@ -1,3 +1,5 @@
+open Riot
+
 module PgPool = struct
   type t = {
     max_connections: int;
