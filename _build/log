@@ -1,4 +1,4 @@
-# dune exec dbcaml
+# dune build
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Shared cache location: /home/emilpriver/.cache/dune/db
@@ -19,4 +19,13 @@
 #        }
 #  ; instrument_with = []
 #  }
-$ /home/emilpriver/.opam/sara/bin/ocamlc.opt -config > /tmp/dune_f40d4b_output
+$ /home/emilpriver/.opam/sara/bin/ocamlc.opt -config > /tmp/dune_2ff33d_output
+$ (cd _build/default && /home/emilpriver/.opam/sara/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I dbcaml/.lib.objs/byte -no-alias-deps -opaque -o dbcaml/.lib.objs/byte/lib__.cmo -c -impl dbcaml/lib__.ml-gen)
+$ (cd _build/default && /home/emilpriver/.opam/sara/bin/ocamldep.opt -modules -impl dbcaml/pool.ml) > _build/default/dbcaml/.lib.objs/lib__Pool.impl.d
+> File "dbcaml/pool.ml", line 14, characters 0-3:
+> 14 | end
+>      ^^^
+> Error: Syntax error
+[2]
+$ (cd _build/default && /home/emilpriver/.opam/sara/bin/ocamldep.opt -modules -impl dbcaml/lib.ml) > _build/default/dbcaml/.lib.objs/lib.impl.d
+$ (cd _build/default && /home/emilpriver/.opam/sara/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I dbcaml/.lib.objs/byte -I dbcaml/.lib.objs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o dbcaml/.lib.objs/native/lib__.cmx -c -impl dbcaml/lib__.ml-gen)

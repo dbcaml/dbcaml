@@ -11,5 +11,7 @@ module PgPool = struct
      (* 
         This function should create a connection pool and return the pool so we can interact with it.
       *)
+     print_endline "Connecting to database..."
+  ;;
 end
 

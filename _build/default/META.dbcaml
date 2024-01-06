@@ -1,0 +1,12 @@
+package "__private__" (
+  directory = "__private__"
+  package "lib" (
+    directory = "lib"
+    description = ""
+    requires = ""
+    archive(byte) = "lib.cma"
+    archive(native) = "lib.cmxa"
+    plugin(byte) = "lib.cma"
+    plugin(native) = "lib.cmxs"
+  )
+)
