@@ -1,2 +1,1 @@
-module Pool = Pool
-module ConnectionManager = ConnectionManager
+module PgPool = Pg_pool
