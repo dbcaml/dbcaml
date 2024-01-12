@@ -1,4 +1,4 @@
 (library
  (package dbcaml)
  (name lib)
- (libraries riot))
+ (libraries riot postgresql))
