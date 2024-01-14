@@ -31,7 +31,8 @@ module PgPool = struct
     This function should create a connection pool and return the pool so we can interact with it.
     *)
   let connect ?(max_connections = 10) conninfo =
-    print_string "starting connection manager";
+    Printf.printf "Connection manager booted\n%!";
+
     let connection_manager_pid =
       spawn (fun () ->
           let pids = Array.make max_connections (create_connection ~conninfo) in
@@ -39,7 +40,7 @@ module PgPool = struct
           print_int (Array.length pids);
 
           match receive () with
-          | Query query -> print_string query
+          | Query query -> Printf.printf "Query: %s\n%!" query
           | _ -> failwith "unknown message")
     in
 
