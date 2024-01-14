@@ -21,5 +21,5 @@
  (description "Database toolkit for OCaml")
  (depends ocaml dune)
  (tags
-  (topics "daatabase" "ocaml")
+  (topics "database" "ocaml")
   ))

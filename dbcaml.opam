@@ -5,7 +5,7 @@ description: "Database toolkit for OCaml"
 maintainer: ["Emil Privér <emil@priver.dev>"]
 authors: ["Emil Privér <emil@priver.dev>"]
 license: "MIT"
-tags: ["topics" "daatabase" "ocaml"]
+tags: ["topics" "database" "ocaml"]
 homepage: "https://github.com/username/reponame"
 doc: "https://github.com/emilpriver/dbcaml"
 bug-reports: "https://github.com/username/reponame/issues"

@@ -1,0 +1,4 @@
+(executable
+ (public_name basic)
+ (name main)
+ (libraries dbcaml riot))
