@@ -1,14 +1,17 @@
 open Dbcaml
+open Riot
 
 let () =
-  print_endline "Starting up";
-
   Riot.run @@ fun () ->
-  print_endline "Riot booted";
+  let _ = Logger.start () |> Result.get_ok in
+
+  Logger.set_log_level (Some Logger.Debug);
+
+  Logger.info (fun f -> f "Starting application");
 
   let _ =
     PgPool.connect
       "host=localhost port=6437 user=postgres password=mysecretpassword dbname=development sslmode=disable"
   in
 
-  Printf.printf "Hello world\n%!"
+  ()
