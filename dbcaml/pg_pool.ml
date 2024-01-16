@@ -13,23 +13,9 @@ module PgPool = struct
   let default = { max_connections = 10 }
 
   let create_connection conninfo =
-    let pid =
-      spawn (fun () ->
-          let _ =
-            try new connection ~conninfo () with
-            | _ -> failwith "failed to create connection"
-          in
-
-          (*
-            * Recive a job and execute it. later on return the value back to the connection manager which will send it back to the client
-            *)
-          match receive () with
-          | Query query ->
-            Logger.info (fun f ->
-                f "Pid: %a: Got query: %s" Pid.pp (self ()) query)
-          | _ -> failwith "unknown message")
-    in
-    pid
+    try new connection ~conninfo () with
+    (* FIXME:  change this to return a proper error *)
+    | _ -> failwith "failed to create connection"
 
   (*
     This function should create a connection pool and return the pool so we can interact with it.
@@ -37,22 +23,21 @@ module PgPool = struct
   let connect ?(max_connections = 10) conninfo =
     let connection_manager_pid =
       spawn (fun () ->
-          let pids =
+          let connections =
             Array.make max_connections (create_connection conninfo)
             |> Array.to_list
           in
-          Logger.debug (fun f -> f "Created %d connections" (List.length pids));
+
+          Logger.debug (fun f ->
+              f "Created %d connections" (List.length connections));
 
           (*
             * Recive a job and execute it. later on return the value back to the connection manager which will send it back to the client
             *)
           match receive () with
           | Query query ->
-            List.iter
-              (fun pid ->
-                Logger.debug (fun f -> f "Sending query to pid: %a" Pid.pp pid);
-                send pid (Query query))
-              pids
+            let c = List.hd connections in
+            c#exec query |> ignore
           | ReadyStatus status ->
             Logger.debug (fun f -> f "Got status: %s" status)
           | _ -> failwith "unknown message")
