@@ -11,7 +11,7 @@ let () =
 
   let _ =
     PgPool.connect
-      "host=localhost port=6437 user=postgres password=mysecretpassword dbname=development sslmode=disable"
+      "psql://postgres:mysecretpassword@localhost:6437/app?sslmode=disable"
   in
 
   ()
