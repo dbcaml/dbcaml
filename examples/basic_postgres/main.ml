@@ -1,4 +1,4 @@
-open Dbcaml
+open Dbcaml_driver_postgres
 open Riot
 
 let () =
@@ -10,7 +10,7 @@ let () =
   Logger.info (fun f -> f "Starting application");
 
   let _ =
-    PgPool.connect
+    Pg_pool.PgPool.connect
       "psql://postgres:mysecretpassword@localhost:6437/app?sslmode=disable"
   in
 

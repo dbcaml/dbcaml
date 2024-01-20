@@ -5,7 +5,7 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github emilpriver/dbcaml))
 
 (authors "Emil Privér <emil@priver.dev>")
 
@@ -22,4 +22,14 @@
  (depends ocaml dune)
  (tags
   (topics "database" "ocaml")
+  ))
+
+
+(package
+ (name dbcaml_driver_postgres)
+ (synopsis "Postgres driver for dbcaml")
+ (description "Postgres driver for dbcaml")
+ (depends ocaml dune)
+ (tags
+  (topics "database" "ocaml" "dbcaml")
   ))

@@ -12,7 +12,19 @@ module PgPool = struct
   let default = { max_connections = 10 }
 
   let connect ~conninfo =
-    let pid = spawn (fun () -> Connection.Default.connect conninfo) in
+    let pid =
+      spawn (fun () ->
+          let c = Connection.connect conninfo |> Result.get_ok in
+
+          match receive () with
+          | Query query ->
+            let _ = Connection.send_message c query in
+            Printf.printf "Got result: %s\n" query;
+            ()
+          | ReadyStatus status ->
+            Logger.debug (fun f -> f "Got status: %s" status)
+          | _ -> failwith "unknown message")
+    in
 
     pid
 
@@ -28,14 +40,14 @@ module PgPool = struct
 
           Logger.debug (fun f ->
               f "Created %d connections" (List.length connections));
-
           (*
           * Recive a job and execute it. later on return the value back to the connection manager which will send it back to the client
           *)
           match receive () with
           | Query query ->
-            let _ = List.hd connections in
-            print_string query
+            let c = List.hd connections in
+            Logger.debug (fun f -> f "Sending query to connection: %a" Pid.pp c);
+            send c (Query query)
           | ReadyStatus status ->
             Logger.debug (fun f -> f "Got status: %s" status)
           | _ -> failwith "unknown message")
