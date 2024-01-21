@@ -8,7 +8,9 @@ let open_connection_to_server server_address port =
   in
 
   let socket_address = Unix.ADDR_INET (address, port) in
-  Unix.open_connection socket_address
+  let (in_channel, out_channel) = Unix.open_connection socket_address in
+
+  (in_channel, out_channel)
 
 let connect connection_string =
   let u = Uri.of_string connection_string in
@@ -24,13 +26,25 @@ let connect connection_string =
     | None -> failwith "No port provided"
   in
 
+  let user =
+    match Uri.user u with
+    | Some x -> x
+    | None -> failwith "No user provided"
+  in
+
+  let password =
+    match Uri.password u with
+    | Some x -> x
+    | None -> failwith "No password provided"
+  in
+
   let c =
     try
       let (in_channel, out_channel) =
         open_connection_to_server server_address port
       in
-      Authentication.send_startup_message out_channel;
-      Authentication.handle_auth_request out_channel;
+      Authentication.send_startup_message out_channel user "development";
+      Authentication.handle_auth_request out_channel in_channel password;
 
       Ok (in_channel, out_channel)
     with
@@ -39,17 +53,24 @@ let connect connection_string =
 
   c
 
+let disconnect (in_channel, out_channel) =
+  try
+    output_string out_channel "X\n";
+    flush out_channel;
+    close_in in_channel;
+    close_out out_channel;
+    Ok ()
+  with
+  | e -> Error (Printexc.to_string e)
+
 let send_message (in_channel, out_channel) message =
   try
     (* Send message to Postgres *)
-    output_string out_channel (Printf.sprintf "%s\n" message);
+    output_string out_channel message;
     flush out_channel;
 
     let response = input_line in_channel in
-    Logger.debug (fun f -> f "Response from server: %s " response);
-
-    close_in in_channel;
-    close_out out_channel
+    Logger.debug (fun f -> f "Response from server: %s " response)
   with
   | e ->
     Logger.error (fun f -> f "An error occurred: %s " (Printexc.to_string e))

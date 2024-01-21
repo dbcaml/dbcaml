@@ -14,7 +14,11 @@ module PgPool = struct
   let connect ~conninfo =
     let pid =
       spawn (fun () ->
-          let c = Connection.connect conninfo |> Result.get_ok in
+          let c =
+            match Connection.connect conninfo with
+            | Ok c -> c
+            | Error e -> failwith e
+          in
 
           match receive () with
           | Query query ->
