@@ -9,9 +9,11 @@ let () =
 
   Logger.info (fun f -> f "Starting application");
 
-  let _ =
+  let pool =
     Pg_pool.PgPool.connect
       "psql://postgres:mysecretpassword@localhost:6437/app?sslmode=disable"
   in
+
+  let _ = Pg_pool.PgPool.query pool "SELECT 1 + 1" in
 
   ()
