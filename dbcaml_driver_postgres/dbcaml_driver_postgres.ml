@@ -10,47 +10,41 @@ module Logger = Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
-module PgPool = struct
+let establish_single_connection conninfo =
+  spawn (fun () ->
+      let c =
+        try new Postgresql.connection ~conninfo () with
+        | e -> failwith (Printexc.to_string e)
+      in
+
+      match receive () with
+      | Query query ->
+        c#send_query query;
+
+        (* TODO: fetch the response and store in a variable *)
+        Logger.debug (fun f -> f "Got result: %s" res);
+        ()
+      | ReadyStatus status -> Logger.debug (fun f -> f "Got status: %s" status)
+      | _ -> failwith "unknown message")
+
+module Postgres = struct
   type t = { max_connections: int }
 
   let default = { max_connections = 10 }
 
-  let connect ~conninfo =
-    let pid =
-      spawn (fun () ->
-          let c =
-            match Connection.connect conninfo with
-            | Ok c -> c
-            | Error e -> failwith e
-          in
-
-          match receive () with
-          | Query query ->
-            let _ = Connection.send_message c query in
-            Printf.printf "Got result: %s\n" query;
-            ()
-          | ReadyStatus status ->
-            Logger.debug (fun f -> f "Got status: %s" status)
-          | _ -> failwith "unknown message")
-    in
-
-    pid
-
-  (*
-    This function should create a connection pool and return the pool so we can interact with it.
-    *)
   let connect ?(max_connections = 10) conninfo =
     let connection_manager_pid =
       spawn (fun () ->
           let connections =
-            Array.make max_connections (connect ~conninfo) |> Array.to_list
+            Array.make
+              max_connections
+              (try establish_single_connection conninfo with
+              | e -> failwith (Printexc.to_string e))
+            |> Array.to_list
           in
 
           Logger.debug (fun f ->
               f "Created %d connections" (List.length connections));
-          (*
-          * Recive a job and execute it. later on return the value back to the connection manager which will send it back to the client
-          *)
           match receive () with
           | Query query ->
             let c = List.hd connections in

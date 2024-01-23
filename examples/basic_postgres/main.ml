@@ -10,10 +10,11 @@ let () =
   Logger.info (fun f -> f "Starting application");
 
   let pool =
-    Pg_pool.PgPool.connect
-      "psql://postgres:mysecretpassword@localhost:6437/app?sslmode=disable"
+    Postgres.connect
+      ~max_connections:10
+      "host=localhost port=6437 user=postgres password=mysecretpassword dbname=postgres"
   in
 
-  let _ = Pg_pool.PgPool.query pool "SELECT 1 + 1" in
+  let _ = pool in
 
   ()
