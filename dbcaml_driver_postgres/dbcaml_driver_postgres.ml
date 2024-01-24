@@ -1,31 +1,46 @@
 open Riot
 
-type query = string
-
-type Message.t += Query of query
-
-type Message.t += ReadyStatus of string
-
 module Logger = Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
 let establish_single_connection conninfo =
-  spawn (fun () ->
-      let c =
-        try new Postgresql.connection ~conninfo () with
-        | e -> failwith (Printexc.to_string e)
-      in
+  let u = Uri.of_string conninfo in
 
-      match receive () with
-      | Query query ->
-        c#send_query query;
+  let host = Uri.host u |> Option.value ~default:"localhost" in
+  let port = Uri.port u |> Option.value ~default:5432 in
+  let user = Uri.userinfo u |> Option.value ~default:"postgres" in
+  let password = Uri.password u |> Option.value ~default:"" in
+  let database = Uri.path u in
 
-        (* TODO: fetch the response and store in a variable *)
-        Logger.debug (fun f -> f "Got result: %s" res);
-        ()
-      | ReadyStatus status -> Logger.debug (fun f -> f "Got status: %s" status)
-      | _ -> failwith "unknown message")
+  let pid =
+    spawn (fun () ->
+        let c =
+          Pgx_unix.connect
+            ~host
+            ~port
+            ~user
+            ~password
+            ~database
+            ~ssl:Pgx_unix.(`Auto)
+            ~verbose:10
+            ()
+        in
+
+        match receive () with
+        | Types.Query query ->
+          Logger.debug (fun f -> f "Got query: %s" query);
+
+          let l = Pgx_unix.simple_query c query in
+          (match l with
+          | [] -> print_endline "empty"
+          | _ ->
+            print_endline "not empty";
+            ()
+          | _ -> failwith "unknown message"))
+  in
+
+  pid
 
 module Postgres = struct
   type t = { max_connections: int }
@@ -46,11 +61,12 @@ module Postgres = struct
           Logger.debug (fun f ->
               f "Created %d connections" (List.length connections));
           match receive () with
-          | Query query ->
+          | Types.Query query ->
             let c = List.hd connections in
+            (* FIXME: select a not occupied connection *)
             Logger.debug (fun f -> f "Sending query to connection: %a" Pid.pp c);
-            send c (Query query)
-          | ReadyStatus status ->
+            send c (Types.Query query)
+          | Types.ReadyStatus status ->
             Logger.debug (fun f -> f "Got status: %s" status)
           | _ -> failwith "unknown message")
     in
@@ -58,5 +74,5 @@ module Postgres = struct
     Logger.debug (fun f ->
         f "Booting Connection manager with PID: %a" Pid.pp (self ()));
 
-    send connection_manager_pid (Query "SELECT * FROM users")
+    send connection_manager_pid (Types.Query "SELECT * FROM users")
 end

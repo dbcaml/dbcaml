@@ -4,11 +4,11 @@ services:
     image: postgres:14.10
     command: ["postgres", "-c", "fsync=off", "-c", "max_connections=5000", "-c", "shared_buffers=250MB"]
     environment:
-      - POSTGRES_DB=development
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=mysecretpassword
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - "6437:5432"
+      - "6432:5432"
   mysql:
     image: mysql:latest
     environment:
