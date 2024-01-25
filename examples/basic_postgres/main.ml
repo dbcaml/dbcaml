@@ -12,7 +12,7 @@ let () =
   let pool =
     Postgres.connect
       ~max_connections:10
-      "postgresql://postgres:postgres@localhost:6432/postgres"
+      "postgresql://postgres:postgres@127.0.0.1:6432/postgres?sslmode=disable"
   in
 
   let _ = pool in

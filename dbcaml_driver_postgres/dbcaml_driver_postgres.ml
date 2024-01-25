@@ -7,37 +7,39 @@ end)
 let establish_single_connection conninfo =
   let u = Uri.of_string conninfo in
 
-  let host = Uri.host u |> Option.value ~default:"localhost" in
+  let host = Uri.host u |> Option.value ~default:"127.0.0.1" in
   let port = Uri.port u |> Option.value ~default:5432 in
-  let user = Uri.userinfo u |> Option.value ~default:"postgres" in
+  let user = Uri.user u |> Option.value ~default:"postgres" in
   let password = Uri.password u |> Option.value ~default:"" in
-  let database = Uri.path u in
+  let database = String.sub (Uri.path u) 1 (String.length (Uri.path u) - 1) in
+
+  print_endline database;
+  print_endline password;
+  print_endline user;
+  print_endline host;
+  print_endline (string_of_int port);
 
   let pid =
     spawn (fun () ->
-        let c =
-          Pgx_unix.connect
-            ~host
-            ~port
-            ~user
-            ~password
-            ~database
-            ~ssl:Pgx_unix.(`Auto)
-            ~verbose:10
-            ()
-        in
-
+        Pgx_async.with_conn
+          ~host
+          ~port
+          ~user
+          ~password
+          ~database
+          ~ssl:`No
+          ~verbose:10
+          ()
+        @@ fun db ->
         match receive () with
         | Types.Query query ->
           Logger.debug (fun f -> f "Got query: %s" query);
+          Pgx_async.simple_query db query;
 
-          let l = Pgx_unix.simple_query c query in
-          (match l with
-          | [] -> print_endline "empty"
-          | _ ->
-            print_endline "not empty";
-            ()
-          | _ -> failwith "unknown message"))
+          ()
+        | _ -> failwith "unknown message");
+
+    ()
   in
 
   pid
