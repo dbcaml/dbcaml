@@ -21,7 +21,7 @@ let establish_single_connection conninfo =
 
   let pid =
     spawn (fun () ->
-        Pgx_async.with_conn
+        Pgx_unix.with_conn
           ~host
           ~port
           ~user
@@ -29,17 +29,15 @@ let establish_single_connection conninfo =
           ~database
           ~ssl:`No
           ~verbose:10
-          ()
         @@ fun db ->
         match receive () with
         | Types.Query query ->
           Logger.debug (fun f -> f "Got query: %s" query);
-          Pgx_async.simple_query db query;
+
+          Pgx_unix.ping db;
 
           ()
-        | _ -> failwith "unknown message");
-
-    ()
+        | _ -> failwith "unknown message")
   in
 
   pid
