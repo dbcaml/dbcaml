@@ -10,20 +10,29 @@ module Logger = Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
-let connection_worker c =
-  spawn (fun () ->
-      match receive () with
-      | Query query ->
-        Logger.debug (fun f -> f "Sending query: %s" query);
-        ()
-      | _ -> failwith "unknown message")
+type driver = { connect: unit }
+
+let connection_worker driver =
+  let pid =
+    spawn (fun () ->
+        let c = driver.connect in
+        match receive () with
+        | Query query ->
+          let _ = c in
+          Logger.debug (fun f -> f "Sending query: %s" query);
+          ()
+        | _ -> failwith "unknown message")
+  in
+
+  pid
 
 module DBCaml = struct
   let start_link ?(max_connections = 10) driver =
     let connection_manager_pid =
       spawn (fun () ->
           let connections =
-            Array.make max_connections print_int |> Array.to_list
+            Array.make max_connections (connection_worker driver)
+            |> Array.to_list
           in
 
           Logger.debug (fun f ->
@@ -31,7 +40,6 @@ module DBCaml = struct
           match receive () with
           | Query query ->
             let c = List.hd connections in
-            Logger.debug (fun f -> f "Sending query to connection: %a" Pid.pp c);
             send c (Query query)
           | ReadyStatus status ->
             Logger.debug (fun f -> f "Got status: %s" status)

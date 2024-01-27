@@ -1,15 +1,4 @@
-module PostgresDriver = struct
-  type t = {
-    host: string;
-    port: int;
-    user: string;
-    password: string;
-    database: string;
-    connection: PGOCaml.t;
-  }
-
-  let fetch_one query = query
-end
+module PostgresDriver = struct end
 
 let start_link conninfo =
   let u = Uri.of_string conninfo in
@@ -20,5 +9,4 @@ let start_link conninfo =
 
   let c = PGOCaml.connect ~host ~port ~user ~password () in
 
-  PostgresDriver.t
-  = { host; port; user; password; database = ""; connection = c }
+  c
