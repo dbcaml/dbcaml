@@ -1,4 +1,5 @@
 open Dbcaml_driver_postgres
+open Dbcaml
 open Riot
 
 let () =
@@ -9,12 +10,14 @@ let () =
 
   Logger.info (fun f -> f "Starting application");
 
-  let pool =
-    Postgres.connect
+  let connection =
+    Dbcaml.start_link
+      (Dbcaml_driver_postgres.start_link
+         "postgresql://postgres:postgres@127.0.0.1:6432/postgres?sslmode=disable")
       ~max_connections:10
-      "postgresql://postgres:postgres@127.0.0.1:6432/postgres?sslmode=disable"
   in
-
-  let _ = pool in
+  let data =
+    Dbcaml.query connection "SELECT * FROM users" |> dbcaml.map_to Users.t
+  in
 
   ()
