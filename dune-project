@@ -7,9 +7,9 @@
 (source
  (github emilpriver/dbcaml))
 
-(authors "Emil Privér <emil@priver.dev>")
+(authors "Emil Priv\195\169r <emil@priver.dev>")
 
-(maintainers "Emil Privér <emil@priver.dev>")
+(maintainers "Emil Priv\195\169r <emil@priver.dev>")
 
 (license MIT)
 
@@ -21,15 +21,4 @@
  (description "Database toolkit for OCaml")
  (depends ocaml dune)
  (tags
-  (topics "database" "ocaml")
-  ))
-
-
-(package
- (name dbcaml_driver_postgres)
- (synopsis "Postgres driver for dbcaml")
- (description "Postgres driver for dbcaml")
- (depends ocaml dune)
- (tags
-  (topics "database" "ocaml" "dbcaml")
-  ))
+  (topics "database" "ocaml")))

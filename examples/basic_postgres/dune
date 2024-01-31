@@ -1,6 +1,5 @@
 (executable
  (package dbcaml)
- (public_name basic_postgres) 
+ (public_name basic_postgres)
  (name main)
- (libraries dbcaml dbcaml_driver_postgres riot)) 
-
+ (libraries dbcaml riot))
