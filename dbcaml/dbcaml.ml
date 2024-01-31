@@ -10,8 +10,6 @@ module Logger = Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
-type driver = { connect: unit }
-
 let connection_worker driver =
   let pid =
     spawn (fun () ->
@@ -27,7 +25,7 @@ let connection_worker driver =
   pid
 
 module DBCaml = struct
-  let start_link ?(max_connections = 10) driver =
+  let start_link ?(max_connections = 10) (driver: module Driver ) =
     let connection_manager_pid =
       spawn (fun () ->
           let connections =

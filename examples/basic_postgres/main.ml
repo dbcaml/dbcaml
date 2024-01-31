@@ -11,8 +11,8 @@ let () =
   Logger.info (fun f -> f "Starting application");
 
   let connection =
-    Dbcaml.start_link
-      (Dbcaml_driver_postgres.start_link
+    Dbcaml.DBCaml.start_link
+      (Dbcaml_driver_postgres.PostgresDriver.start_link
          "postgresql://postgres:postgres@127.0.0.1:6432/postgres?sslmode=disable")
       ~max_connections:10
   in
