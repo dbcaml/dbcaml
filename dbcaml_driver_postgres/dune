@@ -1,0 +1,3 @@
+(library
+ (public_name dbcaml_driver_postgres)
+ (libraries riot uri dbcaml pgocaml pgocaml_ppx))

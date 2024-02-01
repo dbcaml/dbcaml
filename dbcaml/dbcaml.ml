@@ -9,6 +9,10 @@ type Message.t += ReadyStatus of string
 module Logger = Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
+
+module Driver = Driver
+module Connection = Connection
+
 (*
    TODO:
      1. Create a function that setups the connection and returns a connection object with PIDs
