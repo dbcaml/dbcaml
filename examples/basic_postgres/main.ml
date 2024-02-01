@@ -9,9 +9,12 @@ let () =
   Logger.info (fun f -> f "Starting application");
 
   let driver =
-    Dbcaml_driver_postgres.postgres
+    Dbcaml_driver_postgres.connection
       "postgresql://postgres:postgres@127.0.0.1:6432/postgres?sslmode=disable"
   in
 
-  let _ = driver in
+  let conn = Dbcaml.Dbcaml.start_link driver in
+
+  let _ = conn in
+
   ()

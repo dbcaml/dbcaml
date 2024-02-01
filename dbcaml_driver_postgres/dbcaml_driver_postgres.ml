@@ -31,5 +31,5 @@ module Postgres = struct
 end
 
 (*Create a new postgres driver using the module Postgress and the config provided *)
-let postgres conninfo =
+let connection conninfo =
   Dbcaml.Driver.Driver { driver = (module Postgres); config = { conninfo } }
