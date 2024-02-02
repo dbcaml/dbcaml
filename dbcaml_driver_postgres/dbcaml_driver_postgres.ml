@@ -1,5 +1,12 @@
 let ( let* ) = Result.bind
 
+let remove_first_slash s =
+  try
+    let index = String.index s '/' in
+    String.sub s 0 index ^ String.sub s (index + 1) (String.length s - index - 1)
+  with
+  | Not_found -> s (* Return the original string if no slash is found *)
+
 module Postgres = struct
   type config = { conninfo: string }
 
@@ -7,10 +14,11 @@ module Postgres = struct
     let u = Uri.of_string config.conninfo in
     let host = Uri.host u |> Option.value ~default:"localhost" in
     let port = Uri.port u |> Option.value ~default:5432 in
-    let user = Uri.userinfo u |> Option.value ~default:"postgres" in
+    let user = Uri.user u |> Option.value ~default:"postgres" in
     let password = Uri.password u |> Option.value ~default:"" in
+    let database = Uri.path u |> remove_first_slash in
 
-    let c = PGOCaml.connect ~host ~port ~user ~password () in
+    let c = PGOCaml.connect ~host ~port ~user ~password ~database () in
 
     (*
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 

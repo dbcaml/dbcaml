@@ -1,36 +1,25 @@
 open Riot
-
-type query = string
-
-type Message.t += Query of query
-
-type Message.t += ReadyStatus of string
-
-module Logger = Logger.Make (struct
-  let namespace = ["dbcaml"]
-end)
-
 module Connection = Connection
 module Driver = Driver
 
 module Dbcaml = struct
-  let start_link (driver : Driver.t) =
-    match driver with
-    | Driver { driver = (module DriverModule); config } ->
-      (match DriverModule.connect config with
-      | Ok connection ->
-        (match connection with
-        | Connection.C { conn; execute } ->
-          let rows = execute conn "select * from users" in
+  let start_link (d : Driver.t) =
+    Logger.debug (fun f -> f "Starting application");
+    let driver_connection = Driver.connect d in
 
-          List.iter (fun _ -> ()) rows;
+    Logger.debug (fun f -> f "Connecting to the database");
+    match driver_connection with
+    | Ok connection ->
+      let rows = Connection.execute connection "select * from users" in
 
-          ())
-      | Error (`msg error_message) ->
-        Logger.error (fun f -> f "Connection error: %s" error_message);
+      List.iter
+        (fun (x : Row.t) ->
+          let _ = Row.map_to x in
+          print_newline ())
+        rows;
 
-        ()
-      | _ -> ())
+      ()
+    | Error _ -> print_endline "failed"
 end
 
 (*

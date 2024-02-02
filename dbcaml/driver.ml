@@ -20,3 +20,9 @@ type t =
       config: 'config;
     }
       -> t
+
+let connect (d : t) =
+  match d with
+  | Driver { driver = (module DriverModule); config } ->
+    (try DriverModule.connect config with
+    | e -> Error (`msg (Printexc.to_string e)))

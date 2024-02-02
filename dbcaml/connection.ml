@@ -14,3 +14,8 @@ type t =
 (* Create a new connection based of type t.
    This function is used by the drivers to make it possible to have different drivers without doing a lot of matching what type the driver is *)
 let make ~conn ~execute () = Ok (C { conn; execute })
+
+let execute (c : t) query =
+  match c with
+  | C c ->
+    c.execute c.conn query |> Result.get_ok (* FIXME: handle this error *)
