@@ -14,7 +14,11 @@ module Dbcaml = struct
         rows;
 
       ()
-    | Error e -> print_endline e
+    | Error e ->
+      print_endline
+        (match e with
+        | `msg msg -> msg
+        | _ -> "unknown error")
 end
 
 (*
