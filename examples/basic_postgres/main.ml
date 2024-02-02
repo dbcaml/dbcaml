@@ -10,7 +10,7 @@ let () =
 
   let driver =
     Dbcaml_driver_postgres.connection
-      "postgresql://postgres:mysecretpassword@127.0.0.1:6432/development?sslmode=disable"
+      "postgresql://postgres:mysecretpassword@localhost:6432/development?sslmode=disable"
   in
 
   let conn = Dbcaml.Dbcaml.start_link driver in

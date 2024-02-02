@@ -1,14 +1,9 @@
-open Riot
 module Connection = Connection
 module Driver = Driver
 
 module Dbcaml = struct
   let start_link (d : Driver.t) =
-    Logger.debug (fun f -> f "Starting application");
-    let driver_connection = Driver.connect d in
-
-    Logger.debug (fun f -> f "Connecting to the database");
-    match driver_connection with
+    match Driver.connect d with
     | Ok connection ->
       let rows = Connection.execute connection "select * from users" in
 
@@ -19,7 +14,7 @@ module Dbcaml = struct
         rows;
 
       ()
-    | Error _ -> print_endline "failed"
+    | Error e -> print_endline e
 end
 
 (*

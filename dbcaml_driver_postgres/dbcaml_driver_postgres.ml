@@ -20,6 +20,8 @@ module Postgres = struct
 
     let c = PGOCaml.connect ~host ~port ~user ~password ~database () in
 
+    PGOCaml.ping c;
+
     (*
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
