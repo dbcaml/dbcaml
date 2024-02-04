@@ -18,8 +18,10 @@ module Postgres = struct
     let password = Uri.password u |> Option.value ~default:"" in
     let database = Uri.path u |> remove_first_slash in
 
+    print_endline "connecting";
     let c = PGOCaml.connect ~host ~port ~user ~password ~database () in
 
+    print_endline "connected";
     PGOCaml.ping c;
 
     (*
