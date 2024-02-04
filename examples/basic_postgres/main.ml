@@ -13,7 +13,16 @@ let () =
       "postgresql://postgres:mysecretpassword@localhost:6432/development"
   in
 
-  let conn = Dbcaml.Dbcaml.start_link driver in
+  let conn = Dbcaml.Dbcaml.start_link driver |> Result.get_ok in
+
+  let result = Dbcaml.Dbcaml.fetch_one conn "select * from users" in
+
+  List.iter
+    (fun x ->
+      let rows = Dbcaml.Row.row_to_type x in
+      List.iter (fun x -> print_endline x) rows;
+      print_newline ())
+    (Result.get_ok result);
 
   let _ = conn in
 

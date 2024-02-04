@@ -19,9 +19,10 @@ module Postgres = struct
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
      *)
-    let execute (_ : 'conn) query :
+    let execute (_ : 'conn) params query :
+        (* TODO: remove this type as it should be inherited*)
         (string option list list, [> `msg of string ]) Io.io_result =
-      let result = c#exec ~expect:[Tuples_ok] ~binary_result:true query in
+      let result = c#exec ~expect:[Tuples_ok] ~params query in
       let rows =
         result#get_all_lst |> List.map (fun x -> List.map (fun r -> Some r) x)
       in
