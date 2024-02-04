@@ -9,7 +9,8 @@ module Dbcaml = struct
 
       List.iter
         (fun (x : Row.t) ->
-          let _ = Row.map_to x in
+          let rows = Row.map_to x in
+          List.iter (fun x -> print_endline x) rows;
           print_newline ())
         rows;
 
