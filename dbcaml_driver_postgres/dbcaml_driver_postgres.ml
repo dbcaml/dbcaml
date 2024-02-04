@@ -1,3 +1,5 @@
+open Postgresql
+
 let ( let* ) = Result.bind
 
 let remove_first_slash s =
@@ -11,29 +13,20 @@ module Postgres = struct
   type config = { conninfo: string }
 
   let connect config =
-    let u = Uri.of_string config.conninfo in
-    let host = Uri.host u |> Option.value ~default:"localhost" in
-    let port = Uri.port u |> Option.value ~default:5432 in
-    let user = Uri.user u |> Option.value ~default:"postgres" in
-    let password = Uri.password u |> Option.value ~default:"" in
-    let database = Uri.path u |> remove_first_slash in
-
-    print_endline "connecting";
-    let c = PGOCaml.connect ~host ~port ~user ~password ~database () in
-
-    print_endline "connected";
-    PGOCaml.ping c;
+    let c = new connection ~conninfo:config.conninfo () in
 
     (*
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
      *)
-    let execute c query =
-      let name = "dbcaml." ^ Digest.to_hex (Digest.string query) in
-      PGOCaml.prepare c ~name ~query ();
-      let row = PGOCaml.execute c ~name ~params:[] () in
+    let execute (_ : 'conn) query :
+        (string option list list, [> `msg of string ]) Io.io_result =
+      let result = c#exec ~expect:[Tuples_ok] ~binary_result:true query in
+      let rows =
+        result#get_all_lst |> List.map (fun x -> List.map (fun r -> Some r) x)
+      in
 
-      Ok row
+      Ok rows
     in
 
     (* Create a new connection while we also want to use to create a PID *)
