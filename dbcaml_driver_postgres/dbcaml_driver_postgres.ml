@@ -33,9 +33,7 @@ module Postgres = struct
     let execute (conn : connection) (params : string array) (query : string) :
         (Dbcaml.Row.t list, 'b) Io.io_result =
       try
-        let stmt_name =
-          Digest.to_hex (Printf.sprintf "Dbcaml.%s" (Digest.to_hex query))
-        in
+        let stmt_name = Printf.sprintf "Dbcaml.%s" (Digest.string query) in
         let param_types =
           Array.make (Array.length params) (oid_of_ftype INT8)
         in
@@ -51,9 +49,14 @@ module Postgres = struct
           Ok rows
         | _ -> Error `Io_error
       with
-      | Postgresql.Error e -> Error e
+      (* FIXME: bubble up this errors *)
+      | Postgresql.Error e ->
+        print_endline (string_of_error e);
+
+        Error `Io_error
       | e ->
         print_endline (Printexc.to_string e);
+
         Error `Io_error
     in
 
