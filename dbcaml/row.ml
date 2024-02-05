@@ -1,7 +1,7 @@
 (* Row.t will be used to create the row type we want to return to the users*)
 type t = string option list
 
-let row_to_type (row : t) (t : 'to_type) =
+let row_to_type (row : t) =
   List.fold_left
     (fun acc s ->
       match s with
@@ -10,4 +10,4 @@ let row_to_type (row : t) (t : 'to_type) =
     []
     row
 
-let rows_to_type (rows : t list) (t : 'to_type) = List.map row_to_type rows
+let rows_to_type (rows : t list) = List.map row_to_type rows
