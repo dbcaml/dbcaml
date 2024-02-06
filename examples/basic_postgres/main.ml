@@ -15,7 +15,12 @@ let () =
 
   let conn = Dbcaml.Dbcaml.start_link driver |> Result.get_ok in
 
-  let result = Dbcaml.Dbcaml.fetch_one conn "select * from users" in
+  let result =
+    Dbcaml.Dbcaml.fetch_one
+      conn
+      ~params:[| "1" |]
+      "select * from users where id = $1"
+  in
 
   List.iter
     (fun x ->

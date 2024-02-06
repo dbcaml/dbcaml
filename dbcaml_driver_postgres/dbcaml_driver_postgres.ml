@@ -33,13 +33,12 @@ module Postgres = struct
     let execute (conn : connection) (params : string array) (query : string) :
         (Dbcaml.Row.t list, 'b) Io.io_result =
       try
-        let stmt_name = Printf.sprintf "Dbcaml.%s" (Digest.string query) in
-        let param_types =
-          Array.make (Array.length params) (oid_of_ftype INT8)
-        in
-        ignore (conn#prepare ~param_types stmt_name query);
+        conn#send_query
+          ~param_types:Postgresql.[| oid_of_ftype INT8; oid_of_ftype INT8 |]
+          ~params
+          query;
 
-        let result = conn#exec_prepared ~params stmt_name in
+        let result = fetch_single_result c in
 
         match result#status with
         | Command_ok ->
