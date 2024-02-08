@@ -3,12 +3,20 @@
 * This makes us able to  
 *)
 
+type ('success, 'error) result =
+  | Ok of 'success
+  | Error of 'error
+
 type t =
   | C : {
       (* 'conn is a generic *)
       conn: 'conn;
-      (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
-      execute: 'conn -> string array -> string -> (Row.t list, 'b) Io.io_result;
+          (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
+      execute:
+        'conn ->
+        string array ->
+        string ->
+        (Row.t list, [ `ExecuteError of string ]) result;
     }
       -> t
 
@@ -19,5 +27,6 @@ let make ~conn ~execute () = Ok (C { conn; execute })
 let execute c params query =
   match c with
   | C c ->
-    c.execute c.conn params query
-    |> Result.get_ok (* FIXME: handle this error *)
+    (match c.execute c.conn params query with
+    | Ok c -> Ok c
+    | Error e -> Error e)

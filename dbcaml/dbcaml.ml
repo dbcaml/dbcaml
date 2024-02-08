@@ -21,5 +21,7 @@ module Dbcaml = struct
 
     let rows = Connection.execute connection p query in
 
-    Ok rows
+    match rows with
+    | Ok l -> Ok l
+    | e -> Error e
 end

@@ -31,7 +31,7 @@ module Postgres = struct
      * This function is used by the Connection.make function to create a new connection
      *)
     let execute (conn : connection) (params : string array) (query : string) :
-        (Dbcaml.Row.t list, 'b) Io.io_result =
+        (Dbcaml.Row.t list, [ `ExecuteError of string ]) Result.t =
       try
         conn#send_query
           ~param_types:Postgresql.[| oid_of_ftype INT8; oid_of_ftype INT8 |]
@@ -46,17 +46,10 @@ module Postgres = struct
 
           let rows = List.map (fun x -> List.map unescape_bytea x) res in
           Ok rows
-        | _ -> Error `Io_error
+        | _ -> Error (`ExecuteError "Unknown error")
       with
-      (* FIXME: bubble up this errors *)
-      | Postgresql.Error e ->
-        print_endline (string_of_error e);
-
-        Error `Io_error
-      | e ->
-        print_endline (Printexc.to_string e);
-
-        Error `Io_error
+      | Postgresql.Error e -> Error (`ExecuteError (string_of_error e))
+      | e -> Error (`ExecuteError (Printexc.to_string e))
     in
 
     (* Create a new connection while we also want to use to create a PID *)
