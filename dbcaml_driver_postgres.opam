@@ -13,6 +13,9 @@ depends: [
   "ocaml"
   "dune" {>= "3.12"}
   "odoc" {with-doc}
+  "riot" {>= "0.0.8"}
+  "postgresql" {>= "5.0.0"}
+  "dbcaml"
 ]
 build: [
   ["dune" "subst"] {dev}
