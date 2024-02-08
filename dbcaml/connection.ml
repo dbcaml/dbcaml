@@ -3,22 +3,13 @@
 * This makes us able to  
 *)
 
-type execute_params =
-  | String of string
-  | Number of int
-  | Float of float
-  | Bool of bool
-
 type t =
   | C : {
       (* 'conn is a generic *)
       conn: 'conn;
       (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
       execute:
-        'conn ->
-        execute_params array ->
-        string ->
-        (Row.t list, string) Errors.result;
+        'conn -> Param.t array -> string -> (Row.t list, string) Error.result;
     }
       -> t
 

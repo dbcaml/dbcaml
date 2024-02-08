@@ -1,7 +1,8 @@
 module Connection = Connection
 module Driver = Driver
 module Row = Row
-module Errors = Errors
+module Error = Error
+module Param = Param
 
 module Dbcaml = struct
   let start_link (d : Driver.t) =
