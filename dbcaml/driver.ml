@@ -1,16 +1,13 @@
+open Riot
 (*
  * The Intf module type is used to define the interface that a driver must implement.
  * The config type is used to create a new connection
  *)
 
-type ('success, 'error) result =
-  | Ok of 'success
-  | Error of 'error
-
 module type Intf = sig
   type config
 
-  val connect : config -> (Connection.t, [> `ExecuteError of string ]) result
+  val connect : config -> (Connection.t, [> `msg of string ]) IO.io_result
 end
 
 (*
@@ -27,5 +24,6 @@ type t =
 let connect (d : t) =
   match d with
   | Driver { driver = (module DriverModule); config } ->
-    (try DriverModule.connect config with
-    | e -> Error (`msg (Printexc.to_string e)))
+    (match DriverModule.connect config with
+    | Ok e -> Ok e
+    | Error e -> Error e)

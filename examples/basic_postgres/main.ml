@@ -16,10 +16,14 @@ let () =
   let conn = Dbcaml.Dbcaml.start_link driver |> Result.get_ok in
 
   let result =
-    Dbcaml.Dbcaml.fetch_one
-      conn
-      ~params:[| "1" |]
-      "select * from users where id = $1"
+    match
+      Dbcaml.Dbcaml.fetch_one
+        conn
+        ~params:[| Number 1 |]
+        "select * from users where id = $1"
+    with
+    | Ok x -> x
+    | Error x -> failwith x
   in
 
   List.iter
@@ -27,7 +31,7 @@ let () =
       let rows = Dbcaml.Row.row_to_type x in
       List.iter (fun x -> print_endline x) rows;
       print_newline ())
-    (Result.get_ok result);
+    result;
 
   let _ = conn in
 

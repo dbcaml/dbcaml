@@ -1,16 +1,13 @@
 module Connection = Connection
 module Driver = Driver
 module Row = Row
+module Errors = Errors
 
 module Dbcaml = struct
   let start_link (d : Driver.t) =
     match Driver.connect d with
     | Ok connection -> Ok connection
-    | Error e ->
-      Error
-        (match e with
-        | `msg msg -> msg
-        | _ -> "unknown error")
+    | Error e -> Error e
 
   let fetch_one connection ?params query =
     let p =
@@ -23,5 +20,5 @@ module Dbcaml = struct
 
     match rows with
     | Ok l -> Ok l
-    | e -> Error e
+    | Error e -> Error e
 end

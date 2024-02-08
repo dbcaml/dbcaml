@@ -1,4 +1,5 @@
 open Postgresql
+open Dbcaml.Connection
 
 let ( let* ) = Result.bind
 
@@ -30,26 +31,25 @@ module Postgres = struct
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
      *)
-    let execute (conn : connection) (params : string array) (query : string) :
-        (Dbcaml.Row.t list, [ `ExecuteError of string ]) Result.t =
+    let execute
+        (conn : 'conn) (params : Dbcaml.Connection.execute_params array) query :
+        (Dbcaml.Row.t list, string) Dbcaml.Errors.result =
       try
-        conn#send_query
-          ~param_types:Postgresql.[| oid_of_ftype INT8; oid_of_ftype INT8 |]
-          ~params
-          query;
+        conn#send_query ~params query;
 
         let result = fetch_single_result c in
 
         match result#status with
-        | Command_ok ->
+        | Command_ok
+        | Tuples_ok ->
           let res = result#get_all_lst in
 
           let rows = List.map (fun x -> List.map unescape_bytea x) res in
           Ok rows
-        | _ -> Error (`ExecuteError "Unknown error")
+        | _ -> Error result#error
       with
-      | Postgresql.Error e -> Error (`ExecuteError (string_of_error e))
-      | e -> Error (`ExecuteError (Printexc.to_string e))
+      | Postgresql.Error e -> Error (string_of_error e)
+      | e -> Error (Printexc.to_string e)
     in
 
     (* Create a new connection while we also want to use to create a PID *)
