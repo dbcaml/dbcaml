@@ -19,19 +19,15 @@ let () =
     match
       Dbcaml.Dbcaml.fetch_one
         conn
-        ~params:[| "8" |]
+        ~params:[| "1" |]
         "select * from users where id = $1"
     with
     | Ok x -> x
-    | Error x -> failwith x
+    | Error x -> failwith (Dbcaml.ErrorMessages.execution_error_to_string x)
   in
 
-  List.iter
-    (fun x ->
-      let rows = Dbcaml.Row.row_to_type x in
-      List.iter (fun x -> print_endline x) rows;
-      print_newline ())
-    result;
+  let rows = Dbcaml.Row.row_to_type result in
+  List.iter (fun x -> print_endline x) rows;
 
   let _ = conn in
 

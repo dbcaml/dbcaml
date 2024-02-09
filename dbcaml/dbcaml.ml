@@ -1,7 +1,7 @@
 module Connection = Connection
 module Driver = Driver
 module Row = Row
-module Error = Error
+module ErrorMessages = Error
 module Param = Param
 
 module Dbcaml = struct
@@ -17,9 +17,10 @@ module Dbcaml = struct
       | None -> [] |> Array.of_list
     in
 
-    let rows = Connection.execute connection p query in
-
-    match rows with
-    | Ok l -> Ok l
-    | Error e -> Error e
+    match Connection.execute connection p query with
+    | Ok rows ->
+      (match rows with
+      | [] -> Error ErrorMessages.NoRows
+      | r -> Ok (List.hd r))
+    | Error _ -> Error ErrorMessages.NoRows
 end
