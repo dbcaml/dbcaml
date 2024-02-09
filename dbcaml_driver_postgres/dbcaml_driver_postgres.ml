@@ -46,8 +46,11 @@ module Postgres = struct
 
           let rows = List.map (fun x -> List.map unescape_bytea x) res in
           Ok rows
+        | Fatal_error -> Error (Dbcaml.ErrorMessages.FatalError result#error)
+        | Bad_response
+        | Nonfatal_error ->
+          Error (Dbcaml.ErrorMessages.BadResponse result#error)
         | _ -> Error Dbcaml.ErrorMessages.NoRows
-        (* TODO: handle  error and not just empty rows *)
       with
       | Postgresql.Error e ->
         Error (Dbcaml.ErrorMessages.GeneralError (string_of_error e))

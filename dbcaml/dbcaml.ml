@@ -22,5 +22,16 @@ module Dbcaml = struct
       (match rows with
       | [] -> Error ErrorMessages.NoRows
       | r -> Ok (List.hd r))
-    | Error _ -> Error ErrorMessages.NoRows
+    | Error e -> Error e
+
+  let fetch_many connection ?params query =
+    let p =
+      match params with
+      | Some opts -> opts
+      | None -> [] |> Array.of_list
+    in
+
+    match Connection.execute connection p query with
+    | Ok rows -> Ok rows
+    | Error e -> Error e
 end
