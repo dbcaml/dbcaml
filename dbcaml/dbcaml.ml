@@ -14,7 +14,7 @@ module Dbcaml = struct
     let p =
       match params with
       | Some opts -> opts
-      | None -> [] |> Array.of_list
+      | None -> []
     in
 
     match Connection.execute connection p query with
@@ -28,7 +28,7 @@ module Dbcaml = struct
     let p =
       match params with
       | Some opts -> opts
-      | None -> [] |> Array.of_list
+      | None -> []
     in
 
     match Connection.execute connection p query with

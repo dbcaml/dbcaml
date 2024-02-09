@@ -10,7 +10,7 @@ type t =
       (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
       execute:
         'conn ->
-        Param.t array ->
+        Param.t list ->
         string ->
         (Row.t list, Error.execution_error) Error.result;
     }

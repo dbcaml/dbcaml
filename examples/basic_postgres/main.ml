@@ -19,7 +19,7 @@ let () =
   (match
      Dbcaml.Dbcaml.fetch_one
        conn
-       ~params:[| "1" |]
+       ~params:["1"]
        "select * from users where id = $1"
    with
   | Ok x ->
@@ -38,7 +38,7 @@ let () =
   (match
      Dbcaml.Dbcaml.fetch_one
        conn
-       ~params:[| "1" |]
+       ~params:["1"]
        "select * from users where ids = $1"
    with
   | Ok x ->

@@ -30,12 +30,13 @@ module Postgres = struct
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
      *)
-    let execute (conn : connection) (params : Dbcaml.Param.t array) query :
+    let execute (conn : connection) (params : Dbcaml.Param.t list) query :
         ( Dbcaml.Row.t list,
           Dbcaml.ErrorMessages.execution_error )
         Dbcaml.ErrorMessages.result =
       try
-        conn#send_query ~params query;
+        let array_params = Array.of_list params in
+        conn#send_query ~params:array_params query;
 
         let result = fetch_single_result c in
 
@@ -64,5 +65,6 @@ module Postgres = struct
 end
 
 (*Create a new postgres driver using the module Postgress and the config provided *)
+
 let connection conninfo =
   Dbcaml.Driver.Driver { driver = (module Postgres); config = { conninfo } }
