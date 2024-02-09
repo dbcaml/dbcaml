@@ -1,5 +1,4 @@
 open Postgresql
-open Dbcaml.Connection
 
 let ( let* ) = Result.bind
 
@@ -31,7 +30,7 @@ module Postgres = struct
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
      *)
-    let execute (conn : 'conn) (params : Dbcaml.Param.t array) query :
+    let execute (conn : connection) (params : Dbcaml.Param.t array) query :
         (Dbcaml.Row.t list, string) Dbcaml.Error.result =
       try
         conn#send_query ~params query;
