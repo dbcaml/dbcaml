@@ -1,0 +1,58 @@
+# Contributing to DBCaml
+
+*This file is under development and will lack information. More to come *
+
+Thanks for taking the time to contribute to DBCaml ✨ All contributions are
+welcomed! This includes:
+
+* PRs with bug fixes or features
+* Examples
+* Doc fixes
+* Bug reports
+* Links blogs featuring DBCaml
+* Links to projects using DBCaml that can serve as large examples
+* Links to libraries that can be used with DBCaml
+
+More information on how DBCaml work exist at [the documentation](https://dbca.ml)
+
+### Installing from Sources
+
+To install DBCaml from sources, make sure to include all its dependencies:
+
+```sh
+; opam pin config.0.0.1 git+https://github.com/leostera/config.ml
+; opam pin libc.0.0.1 git+https://github.com/ocaml-sys/libc.ml
+; opam pin rio.0.0.8 git+https://github.com/riot-ml/riot
+; opam pin bytestring.0.0.8 git+https://github.com/riot-ml/riot
+; opam pin gluon.0.0.8 git+https://github.com/riot-ml/riot
+; opam pin riot.0.0.8 git+https://github.com/riot-ml/riot
+; opam pin dbcaml.0.0.1 git+https://github.com/dbcaml/dbcaml
+```
+
+You can run builds with:
+
+```sh
+; dune build
+```
+
+You can run all tests with
+
+```sh
+; dune test
+```
+
+# Local development
+To help with testing locally do it exist a `docker-compose.yaml` file in examples, This file contains all the database currently in use or planned to be used. 
+Running  `docker compose up` should setup the database for you, migrate and add data, and expose it. The database urls for each database are:
+
+- Postgres:postgresql://postgres:mysecretpassword@localhost:6432/development
+- MariaDB: mariadb://root:password@localhost:3307/development 
+- MySQL: mysql://root:password@localhost:3306/development
+
+# Building a driver
+A driver within DBCaml is the thing who actually talking to the database, the main DBCaml is just a interface between the user and the database. The main package do contact the driver to ask it for executing jobs.
+The way for the main package to interact with the driver is that the driver should export the interface `Driver.t`. 
+
+.... to be continued
+
+[Example driver](./dbcaml_driver_postgres)

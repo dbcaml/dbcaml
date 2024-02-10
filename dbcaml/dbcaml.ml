@@ -11,13 +11,7 @@ module Dbcaml = struct
     | Error e -> Error e
 
   let fetch_one connection ?params query =
-    let p =
-      match params with
-      | Some opts -> opts
-      | None -> []
-    in
-
-    match Connection.execute connection p query with
+    match Connection.execute connection (Param.params params) query with
     | Ok rows ->
       (match rows with
       | [] -> Error ErrorMessages.NoRows
@@ -25,13 +19,7 @@ module Dbcaml = struct
     | Error e -> Error e
 
   let fetch_many connection ?params query =
-    let p =
-      match params with
-      | Some opts -> opts
-      | None -> []
-    in
-
-    match Connection.execute connection p query with
+    match Connection.execute connection (Param.params params) query with
     | Ok rows -> Ok rows
     | Error e -> Error e
 end
