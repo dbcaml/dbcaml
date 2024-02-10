@@ -35,7 +35,9 @@ module Postgres = struct
           Dbcaml.ErrorMessages.execution_error )
         Dbcaml.ErrorMessages.result =
       try
-        let array_params = Array.of_list params in
+        let array_params =
+          Array.of_list (List.map (fun x -> conn#escape_string x) params)
+        in
         conn#send_query ~params:array_params query;
 
         let result = fetch_single_result c in

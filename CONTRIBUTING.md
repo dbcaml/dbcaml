@@ -15,7 +15,7 @@ welcomed! This includes:
 
 More information on how DBCaml work exist at [the documentation](https://dbca.ml)
 
-### Installing from Sources
+## Installing from Sources
 
 To install DBCaml from sources, make sure to include all its dependencies:
 
@@ -42,6 +42,7 @@ You can run all tests with
 ```
 
 # Local development
+
 To help with testing locally do it exist a `docker-compose.yaml` file in examples, This file contains all the database currently in use or planned to be used. 
 Running  `docker compose up` should setup the database for you, migrate and add data, and expose it. The database urls for each database are:
 
@@ -50,9 +51,17 @@ Running  `docker compose up` should setup the database for you, migrate and add 
 - MySQL: mysql://root:password@localhost:3306/development
 
 # Building a driver
-A driver within DBCaml is the thing who actually talking to the database, the main DBCaml is just a interface between the user and the database. The main package do contact the driver to ask it for executing jobs.
-The way for the main package to interact with the driver is that the driver should export the interface `Driver.t`. 
 
-.... to be continued
+A driver within DBCaml is the thing who actually talking to the database, the main DBCaml is just a interface between the user and the database. The main package do contact the driver to ask it for executing jobs.
+The way for the main package to interact with the driver is that the driver should export a module that hold the type `Driver.t`. 
 
 [Example driver](./dbcaml_driver_postgres)
+
+## Purpose of a Driver
+
+The purpose of a driver is to bridge DBCaml with a database and with that also implementing security such as TLS and escaping queries.
+When a driver is being developed is it important to have a extra look at the security.
+
+# Tests
+TBA
+
