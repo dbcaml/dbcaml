@@ -2,8 +2,8 @@
 opam-version: "2.0"
 synopsis: "Database toolkit for OCaml"
 description: "Database toolkit for OCaml"
-maintainer: ["Emil Privér <emil@priver.dev>"]
-authors: ["Emil Privér <emil@priver.dev>"]
+maintainer: ["Emil Priver <emil@priver.dev>"]
+authors: ["Emil Priver <emil@priver.dev>"]
 license: "MIT"
 tags: ["topics" "database" "ocaml"]
 homepage: "https://github.com/emilpriver/dbcaml"
@@ -12,6 +12,8 @@ bug-reports: "https://github.com/emilpriver/dbcaml/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.12"}
+  "riot"
+  "uri"
   "odoc" {with-doc}
 ]
 build: [

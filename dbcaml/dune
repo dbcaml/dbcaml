@@ -1,4 +1,4 @@
 (library
  (package dbcaml)
  (name dbcaml)
- (libraries riot uri unix))
+ (libraries riot uri))
