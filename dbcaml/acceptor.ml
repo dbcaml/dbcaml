@@ -6,13 +6,11 @@ end)
 
 type ('ctx, 'config) state = {
   initial_ctx: 'ctx;
-  handler: (module Driver.Intf with type config = 'config);
   connection: Connection.t;
 }
 
-let rec handle_job conn_sup state conn peer =
+let rec handle_job conn_sup state =
   let accepted_at = Ptime_clock.now () in
-  trace (fun f -> f "Accepted job: %a" Pid.pp peer);
 
   let child_spec =
     Connector.child_spec
@@ -26,7 +24,7 @@ let rec handle_job conn_sup state conn peer =
   | Error `Max_children ->
     debug (fun f -> f "too many conns, waiting...");
     sleep 0.100;
-    handle_job conn_sup state conn peer
+    handle_job conn_sup state
 
 let start_link state =
   let pid =
@@ -38,11 +36,8 @@ let start_link state =
   Ok pid
 
 let child_spec handler initial_ctx =
-  let connection =
-    match Driver.connect handler with
-    | Ok connection -> Ok connection
-    | Error e -> Error e
-  in
-
-  let state = { connection; initial_ctx } in
-  Supervisor.child_spec start_link state
+  match Driver.connect handler with
+  | Ok connection ->
+    let state = { connection; initial_ctx } in
+    Ok (Supervisor.child_spec start_link state)
+  | Error e -> Error e

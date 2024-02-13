@@ -4,20 +4,22 @@ module Logger = Logger.Make (struct
   let namespace = ["dbcaml"; "acceptor_pool"]
 end)
 
-type 'config state = {
+type ('ctx, 'config) state = {
   acceptors: int;
-  handler: (module Driver.Intf with type config = 'config);
+  handler: Driver.t;
+  initial_ctx: 'ctx;
 }
 
-let start_link { acceptors; handler } initial_ctx =
+let start_link { acceptors; handler; initial_ctx } =
   Logger.debug (fun f -> f "Starting %d connections" acceptors);
   let child_specs =
-    List.init acceptors (fun _ -> Acceptor.child_spec handler initial_ctx)
+    List.init acceptors (fun _ ->
+        match Acceptor.child_spec handler initial_ctx with
+        | Ok c -> c
+        | Error _ -> failwith "unknown error")
   in
   Supervisor.start_link ~child_specs ()
 
-(*
 let child_spec ~acceptors ~handler initial_ctx =
-  let state = { acceptors; handler } in
+  let state = { acceptors; handler; initial_ctx } in
   Supervisor.child_spec start_link state
-  *)

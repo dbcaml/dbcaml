@@ -6,7 +6,7 @@ module ErrorMessages = Error
 module Param = Param
 
 module Dbcaml = struct
-  let start_link (d : Driver.t) ?(max_connections = 10) =
+  let start_link ?(max_connections = 10) (d : Driver.t) =
     let child_specs =
       [
         Dynamic_supervisor.child_spec
