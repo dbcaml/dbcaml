@@ -16,6 +16,8 @@ let start_link { acceptors; handler } initial_ctx =
   in
   Supervisor.start_link ~child_specs ()
 
+(*
 let child_spec ~acceptors ~handler initial_ctx =
   let state = { acceptors; handler } in
   Supervisor.child_spec start_link state
+  *)
