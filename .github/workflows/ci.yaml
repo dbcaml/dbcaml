@@ -25,6 +25,7 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
+      - run: opam pin riot.0.0.8 git+https://github.com/riot-ml/riot#0.0.8 -y
       - run: opam install . --deps-only --with-test
       - run: opam exec -- dune build
       - run: opam exec -- dune runtest
