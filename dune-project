@@ -19,7 +19,11 @@
  (name dbcaml)
  (synopsis "Database toolkit for OCaml")
  (description "Database toolkit for OCaml")
- (depends ocaml dune riot)
+ (depends
+  ocaml
+  dune
+  (riot
+   (>= 0.0.8)))
  (tags
   (topics "database" "ocaml")))
 
@@ -27,6 +31,11 @@
  (name dbcaml_driver_postgres)
  (synopsis "Postgres driver for dbcaml")
  (description "Postgres driver for dbcaml")
- (depends ocaml dune riot postgresql)
+ (depends
+  ocaml
+  dune
+  (riot
+   (>= 0.0.8))
+  postgresql)
  (tags
   (topics "database" "ocaml" "dbcaml")))
