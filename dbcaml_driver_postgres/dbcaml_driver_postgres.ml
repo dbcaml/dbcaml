@@ -43,6 +43,7 @@ module Postgres = struct
               | Dbcaml.Param.Number i -> string_of_int i
               | Dbcaml.Param.Float i -> string_of_float i
               | Dbcaml.Param.Bool i -> string_of_bool i
+              | Dbcaml.Param.Null -> Postgresql.null
               | Dbcaml.Param.Array ar ->
                 List.map
                   (fun x ->
