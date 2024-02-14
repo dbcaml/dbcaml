@@ -31,3 +31,6 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/emilpriver/dbcaml.git"
+pin-depends: [
+  ["riot.~dev" "git+https://github.com/riot-ml/riot"]
+]
