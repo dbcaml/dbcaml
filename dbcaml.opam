@@ -12,6 +12,7 @@ bug-reports: "https://github.com/emilpriver/dbcaml/issues"
 depends: [
   "ocaml"
   "dune" {>= "3.12"}
+  "riot"
   "odoc" {with-doc}
 ]
 build: [
