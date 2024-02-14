@@ -31,5 +31,10 @@ build: [
 ]
 dev-repo: "git+https://github.com/emilpriver/dbcaml.git"
 pin-depends: [
-  ["riot.~dev" "git+https://github.com/riot-ml/riot"]
+  ["config.0.0.1" "git+https://github.com/ocaml-sys/config.ml"]
+  ["libc.0.0.1" "git+https://github.com/ocaml-sys/libc.ml"]
+  ["rio.0.0.8" "git+https://github.com/riot-ml/riot"]
+  ["bytestring.0.0.8" "git+https://github.com/riot-ml/riot"]
+  ["gluon.0.0.8" "git+https://github.com/riot-ml/riot"]
+  ["riot.0.0.8" "git+https://github.com/riot-ml/riot#v0.0.8"]
 ]
