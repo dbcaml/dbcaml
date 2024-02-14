@@ -3,6 +3,7 @@ type t =
   | Number of int
   | Bool of bool
   | Float of float
+  | Array of t list
 
 let params params =
   match params with

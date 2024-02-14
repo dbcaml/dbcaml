@@ -42,7 +42,18 @@ module Postgres = struct
               | Dbcaml.Param.String s -> s
               | Dbcaml.Param.Number i -> string_of_int i
               | Dbcaml.Param.Float i -> string_of_float i
-              | Dbcaml.Param.Bool i -> string_of_bool i)
+              | Dbcaml.Param.Bool i -> string_of_bool i
+              | Dbcaml.Param.Array ar ->
+                List.map
+                  (fun x ->
+                    match x with
+                    | Dbcaml.Param.String s -> s
+                    | Dbcaml.Param.Number i -> string_of_int i
+                    | Dbcaml.Param.Float i -> string_of_float i
+                    | Dbcaml.Param.Bool i -> string_of_bool i
+                    | _ -> "")
+                  ar
+                |> List.fold_left (fun acc str -> acc ^ str) "")
             params
           |> List.map (fun x -> conn#escape_string x)
           |> Array.of_list

@@ -19,7 +19,7 @@ let () =
   (match
      Dbcaml.Dbcaml.fetch_one
        conn
-       ~params:[String "1"]
+       ~params:[String "1"; Array [String "2"; String "3"]]
        "select * from users where id = $1"
    with
   | Ok x ->
