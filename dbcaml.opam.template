@@ -1,3 +1,1 @@
-pin-depends: [
-  ["riot" "git+https://github.com/riot-ml/riot#0.0.8"]
-]
+
