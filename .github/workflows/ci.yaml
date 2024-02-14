@@ -36,7 +36,7 @@ jobs:
           eval $(opam env)
           opam pin gluon.0.0.8 git+https://github.com/riot-ml/riot -y
           eval $(opam env)
-          opam install io
+          opam install io.0.2.0
           eval $(opam env)
           opam pin riot.0.0.8 git+https://github.com/riot-ml/riot#0.0.8 -y
           eval $(opam env)
