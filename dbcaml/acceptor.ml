@@ -11,6 +11,7 @@ type ('ctx, 'config) state = {
 
 let rec handle_job conn_sup state =
   let accepted_at = Ptime_clock.now () in
+  debug (fun f -> f "received job at %a" Ptime.pp accepted_at);
 
   let child_spec =
     Connector.child_spec
@@ -20,7 +21,9 @@ let rec handle_job conn_sup state =
   in
 
   match Dynamic_supervisor.start_child conn_sup child_spec with
-  | Ok _pid -> print_endline "hello"
+  | Ok _pid ->
+    debug (fun f -> f "running job at %a" Ptime.pp accepted_at);
+    handle_job conn_sup state
   | Error `Max_children ->
     debug (fun f -> f "too many conns, waiting...");
     sleep 0.100;

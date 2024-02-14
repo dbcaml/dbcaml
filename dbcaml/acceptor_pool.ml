@@ -1,6 +1,6 @@
 open Riot
 
-module Logger = Logger.Make (struct
+open Logger.Make (struct
   let namespace = ["dbcaml"; "acceptor_pool"]
 end)
 
@@ -11,7 +11,7 @@ type ('ctx, 'config) state = {
 }
 
 let start_link { acceptors; handler; initial_ctx } =
-  Logger.debug (fun f -> f "Starting %d connections" acceptors);
+  debug (fun f -> f "Starting %d connections" acceptors);
   let child_specs =
     List.init acceptors (fun _ ->
         match Acceptor.child_spec handler initial_ctx with
