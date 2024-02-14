@@ -27,17 +27,10 @@ jobs:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
       - run: |
           opam pin config.0.0.1 git+https://github.com/ocaml-sys/config.ml -y
-          eval $(opam env)
           opam pin libc.0.0.1 git+https://github.com/ocaml-sys/libc.ml -y
-          eval $(opam env)
           opam pin rio.0.0.8 git+https://github.com/riot-ml/riot -y
-          eval $(opam env)
           opam pin bytestring.0.0.8 git+https://github.com/riot-ml/riot -y
-          eval $(opam env)
           opam pin gluon.0.0.8 git+https://github.com/riot-ml/riot -y
-          eval $(opam env)
-          opam install io.0.2.0
-          eval $(opam env)
           opam pin riot.0.0.8 git+https://github.com/riot-ml/riot#0.0.8 -y
           eval $(opam env)
       - run: opam install . --deps-only --with-test
