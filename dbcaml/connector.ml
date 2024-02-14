@@ -19,6 +19,7 @@ let handle_query state =
     trace (fun f -> f "message timeout, trying receive...")
   (*TODO: handle this *)
   | ConnectionQuery c ->
+    debug (fun f -> f "got message with query: %s" c.query);
     (match Connection.execute state.connection c.params c.query with
     | Ok rows ->
       List.iter
