@@ -1,3 +1,3 @@
 (library
  (public_name dbcaml_driver_postgres)
- (libraries uri dbcaml config libc rio bytestring gluon riot postgresql))
+ (libraries uri dbcaml riot postgresql))
