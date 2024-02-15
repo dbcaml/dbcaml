@@ -14,15 +14,20 @@ let rec handle_query state =
   match receive () with
   | exception Receive_timeout ->
     debug (fun f -> f "message timeout, retrying...");
+
     handle_query state
   | Message_passing.Query c ->
     debug (fun f -> f "got message with query: %s" c.query);
+
     send
       c.owner
       (Message_passing.Result
          (Connection.execute state.connection c.params c.query));
+
     handle_query state
-  | _msg -> error (fun f -> f "got a message type we shouldn't get")
+  | _msg ->
+    error (fun f -> f "got a message type we shouldn't get");
+    handle_query state
 
 let start_link state =
   let pid = spawn_link (fun () -> handle_query state) in
