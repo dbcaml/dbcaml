@@ -6,7 +6,7 @@ let rec run_single_query index conn =
     match
       Dbcaml.Dbcaml.fetch_one
         conn
-        ~params:["1"]
+        ~params:[String "1"]
         "select * from users where id = $1"
     with
     | Ok x ->
