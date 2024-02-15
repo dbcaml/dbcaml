@@ -34,7 +34,7 @@ let () =
       "postgresql://postgres:mysecretpassword@localhost:6432/development"
   in
 
-  let conn = Querycaml.start_link driver |> Result.get_ok in
+  let conn = Querycaml.start_link ~max_connections:32 driver |> Result.get_ok in
 
   run_single_query 0 conn;
 

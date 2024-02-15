@@ -10,14 +10,14 @@ open Logger.Make (struct
   let namespace = ["dbcaml"; "dbcaml"]
 end)
 
-let start_link ?(max_connections = 10) (d : Driver.t) =
+let start_link ?(max_connections = 10) (driver : Driver.t) =
   let child_specs =
     [
       Dynamic_supervisor.child_spec
         ~name:"dbcaml.connection.sup"
         ~max_children:max_connections
         ();
-      Acceptor_pool.child_spec ~acceptors:max_connections ~handler:d ();
+      Acceptor_pool.child_spec ~acceptors:max_connections ~handler:driver ();
     ]
   in
 

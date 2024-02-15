@@ -14,7 +14,7 @@ let start_link { acceptors; handler; initial_ctx } =
   debug (fun f -> f "Starting %d connections" acceptors);
   let child_specs =
     List.init acceptors (fun _ ->
-        match Acceptor.child_spec handler initial_ctx with
+        match Connector.child_spec handler initial_ctx with
         | Ok c -> c
         | Error _ -> failwith "unknown error")
   in
