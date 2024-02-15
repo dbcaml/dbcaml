@@ -1,0 +1,4 @@
+(library
+ (package querycaml)
+ (name querycaml)
+ (libraries riot dbcaml uri))

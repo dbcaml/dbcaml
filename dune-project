@@ -21,7 +21,7 @@
  (description "Database toolkit for OCaml")
  (depends ocaml dune riot uri)
  (tags
-  (topics "database" "ocaml")))
+  (topics "database" "dbcaml")))
 
 (package
  (name dbcaml_driver_postgres)
@@ -29,4 +29,12 @@
  (description "Postgres driver for dbcaml")
  (depends ocaml dune riot dbcaml postgresql uri)
  (tags
-  (topics "database" "ocaml" "dbcaml")))
+  (topics "database" "dbcaml" "dbcaml")))
+
+(package
+ (name querycaml)
+ (synopsis "Query composer for DBcaml")
+ (description "Query composer for DBcaml")
+ (depends ocaml dune dbcaml)
+ (tags
+  (topics "database" "dbcaml")))

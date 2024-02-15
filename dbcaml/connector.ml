@@ -23,8 +23,7 @@ let handle_query state =
     (match Connection.execute state.connection c.params c.query with
     | Ok rows ->
       List.iter
-        (fun x ->
-          let rows = Row.row_to_type x in
+        (fun rows ->
           List.iter (fun x -> print_endline x) rows;
           print_newline ())
         rows

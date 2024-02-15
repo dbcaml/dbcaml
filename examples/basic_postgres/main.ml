@@ -4,13 +4,13 @@ let rec run_single_query index conn =
   Printf.printf "Running query %d\n" index;
   let _ =
     match
-      Dbcaml.Dbcaml.fetch_one
+      Querycaml.fetch_one
         conn
-        ~params:[String "1"]
+        ~params:[Querycaml.Param.String "1"]
         "select * from users where id = $1"
     with
     | Ok x ->
-      let rows = Dbcaml.Row.row_to_type x in
+      let rows = Querycaml.Row.row_to_type x in
       (* Iterate over each column and print it's values *)
       List.iter (fun x -> print_endline x) rows
     | Error x ->

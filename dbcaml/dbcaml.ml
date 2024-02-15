@@ -3,7 +3,8 @@ module Connection = Connection
 module Driver = Driver
 module Row = Row
 module ErrorMessages = Error
-module Param = Param
+module Query = Query
+module AcceptorPool = Acceptor_pool
 
 type Message.t += ConnectionQuery of Query.t
 
@@ -20,18 +21,4 @@ module Dbcaml = struct
     in
 
     Supervisor.start_link ~restart_limit:10 ~child_specs ()
-
-  let fetch_one pid ?params query =
-    let p = Param.params params in
-    send pid (ConnectionQuery { query; params = p });
-
-    let example : Row.t = ["Hello"; "world"] in
-    Ok example
-
-  (*match Connection.execute connection (Param.params params) query with
-    | Ok rows ->
-      (match rows with
-      | [] -> Error ErrorMessages.NoRows
-      | r -> Ok (List.hd r))
-    | Error e -> Error e *)
 end
