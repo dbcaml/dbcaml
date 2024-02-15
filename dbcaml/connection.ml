@@ -12,7 +12,7 @@ type t =
         'conn ->
         string list ->
         string ->
-        (Row.t list, Error.execution_error) Error.result;
+        (Row.t list, Result.execution_error) Result.result;
     }
       -> t
 

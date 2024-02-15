@@ -1,7 +1,5 @@
 open Riot
 
-type Message.t += ConnectionQuery of Query.t
-
 open Logger.Make (struct
   let namespace = ["dbcaml"; "connector"]
 end)
@@ -12,22 +10,18 @@ type ('state, 'err) state = {
   ctx: 'state;
 }
 
-let handle_query state =
-  trace (fun f -> f "receiving process message...");
-  match receive ~after:500L () with
+let rec handle_query state =
+  debug (fun f -> f "received message from acceptor");
+  match receive () with
   | exception Receive_timeout ->
-    trace (fun f -> f "message timeout, trying receive...")
-  (*TODO: handle this *)
-  | ConnectionQuery c ->
+    error (fun f -> f "message timeout, retrying...");
+    handle_query state
+  | Message_passing.Query c ->
     debug (fun f -> f "got message with query: %s" c.query);
-    (match Connection.execute state.connection c.params c.query with
-    | Ok rows ->
-      List.iter
-        (fun rows ->
-          List.iter (fun x -> print_endline x) rows;
-          print_newline ())
-        rows
-    | Error e -> failwith (Error.execution_error_to_string e))
+    send
+      c.owner
+      (Message_passing.Result
+         (Connection.execute state.connection c.params c.query))
   | _msg -> error (fun f -> f "got a message type we shouldn't get")
 
 let start_link state =

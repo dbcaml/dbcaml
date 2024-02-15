@@ -9,10 +9,16 @@ type ('ctx, 'config) state = {
   connection: Connection.t;
 }
 
+let handle_query_job pid =
+  match receive () with
+  | Message_passing.Query c ->
+    print_endline c.query;
+    send pid (Message_passing.Query c)
+  | _ -> ()
+
 let rec handle_job conn_sup state =
   let accepted_at = Ptime_clock.now () in
   debug (fun f -> f "received job at %a" Ptime.pp accepted_at);
-
   let child_spec =
     Connector.child_spec
       ~accepted_at
@@ -20,9 +26,15 @@ let rec handle_job conn_sup state =
       ~ctx:state.initial_ctx
   in
 
+  let p = self () in
+
   match Dynamic_supervisor.start_child conn_sup child_spec with
-  | Ok _pid ->
-    debug (fun f -> f "running job at %a" Ptime.pp accepted_at);
+  | Ok pid ->
+    debug (fun f ->
+        f "parent: %a child: %a m: %a " Pid.pp p Pid.pp (self ()) Pid.pp pid);
+
+    handle_query_job pid;
+
     handle_job conn_sup state
   | Error `Max_children ->
     debug (fun f -> f "too many conns, waiting...");
