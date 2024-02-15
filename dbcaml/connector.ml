@@ -5,17 +5,17 @@ open Logger.Make (struct
 end)
 
 type ('state, 'err) state = {
-  connection: Connection.t;
+  handler: Driver.t;
   initial_ctx: 'state;
 }
 
-let rec handle_query state =
+let rec handle_query state connection =
   debug (fun f -> f "PID %a is ready to receive message..." Pid.pp (self ()));
   match receive () with
   | exception Receive_timeout ->
     debug (fun f -> f "message timeout, retrying...");
 
-    handle_query state
+    handle_query state connection;
   | Message_passing.Query c ->
     debug (fun f -> f "got message with query: %s" c.query);
 
@@ -24,19 +24,22 @@ let rec handle_query state =
       (Message_passing.Result
          (Connection.execute state.connection c.params c.query));
 
-    handle_query state
+    handle_query state connection;
   | _msg ->
     error (fun f -> f "got a message type we shouldn't get");
-    handle_query state
+    handle_query state connection;
 
 let start_link state =
-  let pid = spawn_link (fun () -> handle_query state) in
+  let pid =
+    spawn_link (fun () ->
+        match Driver.connect state.handler with
+        | Ok connection -> handle_query state connection
+        | Error e -> Error e)
+  in
 
   Ok pid
 
+(* TODO: don't start connection, start in spawn_link *)
 let child_spec handler initial_ctx =
-  match Driver.connect handler with
-  | Ok connection ->
-    let state = { connection; initial_ctx } in
-    Ok (Supervisor.child_spec start_link state)
-  | Error e -> Error e
+  let state = { handler; initial_ctx } in
+  Ok (Supervisor.child_spec start_link state)
