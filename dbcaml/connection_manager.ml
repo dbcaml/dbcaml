@@ -9,7 +9,7 @@ type ('ctx, 'config) state = {
   handler: Driver.t;
   initial_ctx: 'ctx;
 }
-
+(*
 let start_link { acceptors; handler; initial_ctx } =
   debug (fun f -> f "Starting %d connections" acceptors);
   let child_specs =
@@ -23,3 +23,4 @@ let start_link { acceptors; handler; initial_ctx } =
 let child_spec ~acceptors ~handler initial_ctx =
   let state = { acceptors; handler; initial_ctx } in
   Supervisor.child_spec start_link state
+  *)

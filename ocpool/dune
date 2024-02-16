@@ -1,0 +1,4 @@
+(library
+ (package ocpool)
+ (name ocpool)
+ (libraries riot))

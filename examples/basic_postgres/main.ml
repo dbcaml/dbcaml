@@ -1,5 +1,6 @@
-open Riot
+(*
 
+open Riot
 let rec run_single_query index conn =
   Printf.printf "Running query %d\n" index;
   let _ =
@@ -39,3 +40,5 @@ let () =
   run_single_query 0 conn;
 
   ()
+
+  *)

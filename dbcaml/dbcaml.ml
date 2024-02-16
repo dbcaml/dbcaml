@@ -4,12 +4,12 @@ module Driver = Driver
 module Row = Row
 module Result = Result
 module Query = Query
-module AcceptorPool = Acceptor_pool
 
 open Logger.Make (struct
   let namespace = ["dbcaml"; "dbcaml"]
 end)
 
+(*
 let start_link ?(max_connections = 10) (driver : Driver.t) =
   let child_specs =
     [
@@ -17,12 +17,15 @@ let start_link ?(max_connections = 10) (driver : Driver.t) =
         ~name:"dbcaml.connection.sup"
         ~max_children:max_connections
         ();
-      Acceptor_pool.child_spec ~acceptors:max_connections ~handler:driver ();
+      Connection_manager.child_spec
+        ~acceptors:max_connections
+        ~handler:driver
+        ();
     ]
   in
 
   Supervisor.start_link ~restart_limit:10 ~child_specs ()
-
+*)
 let execute pid ?params query =
   let p =
     match params with
