@@ -1,7 +1,7 @@
 open Riot
 
 open Logger.Make (struct
-  let namespace = ["dbcaml"; "acceptor_pool"]
+  let namespace = ["dbcaml"; "connection_query"]
 end)
 
 type ('ctx, 'config) state = {
