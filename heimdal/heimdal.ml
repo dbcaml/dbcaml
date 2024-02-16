@@ -1,14 +1,14 @@
 open Riot
 
 open Logger.Make (struct
-  let namespace = ["ocpool"]
+  let namespace = ["heimdal"]
 end)
 
 let start_link ?(max_connections = 10) item =
   let child_specs =
     [
       Dynamic_supervisor.child_spec
-        ~name:"ocpool.connection.sup"
+        ~name:"heimdal.connection.sup"
         ~max_children:max_connections
         ();
       Connection_manager.child_spec ~acceptors:max_connections ~item ();

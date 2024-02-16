@@ -1,0 +1,5 @@
+(executable
+ (package heimdal)
+ (public_name basic_pool)
+ (name main)
+ (libraries heimdal riot))

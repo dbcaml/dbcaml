@@ -32,9 +32,9 @@
   (topics "database" "dbcaml" "dbcaml")))
 
 (package
- (name ocpool)
+ (name heimdal)
  (synopsis "")
- (description "A Connection pool")
+ (description "A connection pool")
  (depends ocaml (riot (>= 0.0.8)) dune)
  (tags
   (topics "connection pool" "riot")))
