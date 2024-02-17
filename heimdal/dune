@@ -1,4 +1,0 @@
-(library
- (package heimdal)
- (name heimdal)
- (libraries riot))

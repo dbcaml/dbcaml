@@ -1,4 +1,4 @@
 (library
  (package dbcaml)
  (name dbcaml)
- (libraries riot uri heimdal))
+ (libraries riot uri poolparty))

@@ -10,7 +10,7 @@ open Logger.Make (struct
 end)
 
 let start_link ?(connections = 10) (driver : Driver.t) =
-  let pool = Heimdal.start_link ~acceptors:connections in
+  let pool = Poolparty.start_link ~acceptors:connections in
 
   let _ =
     List.init connections (fun _ ->
