@@ -6,26 +6,28 @@ module Result = Result
 module Query = Query
 
 open Logger.Make (struct
-  let namespace = ["dbcaml"; "dbcaml"]
+  let namespace = ["dbcaml"]
 end)
 
-(*
-let start_link ?(max_connections = 10) (driver : Driver.t) =
-  let child_specs =
-    [
-      Dynamic_supervisor.child_spec
-        ~name:"dbcaml.connection.sup"
-        ~max_children:max_connections
-        ();
-      Connection_manager.child_spec
-        ~acceptors:max_connections
-        ~handler:driver
-        ();
-    ]
+let start_link ?(connections = 10) (driver : Driver.t) =
+  let pool = Heimdal.start_link ~acceptors:connections in
+
+  let _ =
+    List.init connections (fun _ ->
+        let _ =
+          spawn (fun () ->
+              match Driver.connect driver with
+              | Ok _ -> ()
+              | Error _ -> error (fun f -> f "failed to start driver"))
+        in
+
+        ())
   in
 
-  Supervisor.start_link ~restart_limit:10 ~child_specs ()
-*)
+  let _ = pool in
+
+  ()
+
 let execute pid ?params query =
   let p =
     match params with

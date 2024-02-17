@@ -1,29 +1,24 @@
 open Riot
 
 open Logger.Make (struct
-  let namespace = ["heimdal"; "holder"]
+  let namespace = ["heimdal"; "child"]
 end)
 
-type ('ctx, 'item) state = {
-  item: 'item;
-  initial_ctx: 'ctx;
-  connection_manager_pid: Pid.t;
-}
+let rec wait_for_job connection_manager_pid item =
+  (match receive () with
+  | Message_passing.ChildLock request_pid ->
+    send
+      connection_manager_pid
+      (Message_passing.CheckOut { request_pid; child_pid = self () })
+  | Message_passing.CheckedOut consumer_pid -> send consumer_pid item
+  | _ -> ());
 
-(*
-   * 1. checkin on start
-   * 2. respond to request for usage and send a copy of the item to the pid that requests it
-   * 3. Automastic checkout when we get a request and then check in to the connection manager when we're done with a job
-*)
-let loop state =
-  print_endline "loop";
-  let _ = state in
+  wait_for_job connection_manager_pid item
 
-  ()
+let new_holder connection_manager_pid item =
+  let child_pid =
+    spawn_link (fun () -> wait_for_job connection_manager_pid item)
+  in
+  send connection_manager_pid (Message_passing.CheckIn child_pid);
 
-let init state = Ok (spawn_link (fun () -> loop state))
-
-let child_spec ~item ~connection_manager_pid initial_ctx =
-  let state = { item; connection_manager_pid; initial_ctx } in
-
-  Ok (Supervisor.child_spec init state)
+  info (fun f -> f "Got a message with a type I don't know about")

@@ -4,15 +4,18 @@ open Logger.Make (struct
   let namespace = ["heimdal"]
 end)
 
-let start_link ?(max_connections = 10) item =
-  let child_specs =
-    [
-      Dynamic_supervisor.child_spec
-        ~name:"heimdal.connection.sup"
-        ~max_children:max_connections
-        ();
-      Connection_manager.child_spec ~acceptors:max_connections ~item ();
-    ]
+let start_link ~pool_size =
+  let connection_manager_pid =
+    spawn (fun () -> Connection_manager.start_link pool_size)
   in
 
-  Supervisor.start_link ~restart_limit:10 ~child_specs ()
+  connection_manager_pid
+
+let add_item connection_manager_pid child_pid =
+  send connection_manager_pid (Message_passing.CheckIn child_pid)
+
+let lock connection_manager_pid child_pid =
+  send connection_manager_pid (Message_passing.CheckOut child_pid)
+
+let unlock connection_manager_pid child_pid =
+  send connection_manager_pid (Message_passing.CheckIn child_pid)
