@@ -10,6 +10,10 @@ open Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
+(*
+ * start_link is the main function for Dbcaml, starts the Supervisor which 
+ * controls the Pool manager
+ *)
 let start_link ?(connections = 10) (driver : Driver.t) =
   let pool_id = Poolparty.start_link ~pool_size:connections in
 

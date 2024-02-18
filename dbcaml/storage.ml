@@ -8,6 +8,10 @@ type status =
   | Ready
   | Buzy
 
+(*
+   * This function try to find the specific key in the storage,
+   * and if it don't exist do it add it, otherwise it do replace it
+*)
 let add_or_replace global_storage storage_mutex key value =
   Mutex.lock storage_mutex;
   (match Hashtbl.find_opt global_storage key with
@@ -26,6 +30,11 @@ let remove global_storage storage_mutex key =
   Hashtbl.remove global_storage key;
   Mutex.unlock storage_mutex
 
+(*
+   * This function fold over all available items in the global_storage
+   * and try to find someone which are ready, when it finds a holder which is available do it return it
+   * otherwise do it return a error to let the request know it needs to wait
+*)
 let available_holder global_storage storage_mutex =
   Mutex.lock storage_mutex;
   let result =
