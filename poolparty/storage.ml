@@ -9,6 +9,7 @@ type status =
   | Buzy
 
 let add_or_replace global_storage storage_mutex key value =
+  Mutex.lock storage_mutex;
   (match Hashtbl.find_opt global_storage key with
   | Some _ -> Hashtbl.replace global_storage key value
   | None -> Hashtbl.add global_storage key value);
