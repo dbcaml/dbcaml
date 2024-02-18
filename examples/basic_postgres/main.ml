@@ -37,7 +37,7 @@ let () =
       "postgresql://postgres:mysecretpassword@localhost:6432/development"
   in
 
-  Dbcaml.start_link ~connections:1 driver;
+  Dbcaml.start_link ~connections:2 driver;
 
   (* run_single_query 0 conn; *)
   sleep 10.1;

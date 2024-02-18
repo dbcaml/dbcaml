@@ -12,7 +12,7 @@ let start_link ~pool_size =
   connection_manager_pid
 
 let add_item connection_manager_pid item =
-  send connection_manager_pid (Message_passing.NewHolder item)
+  Holder.new_holder connection_manager_pid item
 
 let get_holder_item connection_manager_pid =
   send connection_manager_pid (Message_passing.LockHolder (self ()));
