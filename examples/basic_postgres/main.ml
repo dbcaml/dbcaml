@@ -8,7 +8,10 @@ let rec run_single_query index conn =
   info (fun f -> f "Running query for PID: %a" Pid.pp (self ()));
   let _ =
     match
-      Dbcaml.fetch_one conn ~params:["1"] "select * from users where id = $1"
+      Dbcaml.fetch_one
+        conn
+        ~params:[Dbcaml.Param.String "1"]
+        "select * from users where id = $1"
     with
     | Ok x ->
       info (fun f -> f "Executed query %d for pid %a" index Pid.pp (self ()));

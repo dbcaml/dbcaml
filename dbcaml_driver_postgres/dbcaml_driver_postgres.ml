@@ -30,11 +30,35 @@ module Postgres = struct
      * Create the execute function that also use the PGOCaml.connection to send a request to Postgres database. 
      * This function is used by the Connection.make function to create a new connection
      *)
-    let execute (conn : connection) (params : string list) query :
+    let execute (conn : connection) (params : Dbcaml.Param.t list) query :
         (Dbcaml.Row.t list, Dbcaml.Res.execution_error) Dbcaml.Res.result =
       try
         let array_params =
-          params |> List.map (fun x -> conn#escape_string x) |> Array.of_list
+          params
+          |> List.map (fun value ->
+                 match value with
+                 | Dbcaml.Param.String s -> s
+                 | Dbcaml.Param.Number i -> string_of_int i
+                 | Dbcaml.Param.Float i -> string_of_float i
+                 | Dbcaml.Param.Bool i -> string_of_bool i
+                 | Dbcaml.Param.Null -> null
+                 | Dbcaml.Param.Array a ->
+                   List.map
+                     (fun value ->
+                       match value with
+                       | Dbcaml.Param.String s -> Printf.sprintf "'%s'" s
+                       | Dbcaml.Param.Number i ->
+                         Printf.sprintf "'%s'" (string_of_int i)
+                       | Dbcaml.Param.Float i ->
+                         Printf.sprintf "'%s'" (string_of_float i)
+                       | Dbcaml.Param.Bool i ->
+                         Printf.sprintf "'%s'" (string_of_bool i)
+                       | Dbcaml.Param.Null -> Printf.sprintf "'%s'" null
+                       | Dbcaml.Param.Array _ -> "")
+                     a
+                   |> String.concat ",")
+          |> List.map (fun x -> conn#escape_string x)
+          |> Array.of_list
         in
         conn#send_query ~params:array_params query;
 

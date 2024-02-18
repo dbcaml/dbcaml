@@ -4,6 +4,7 @@ module Driver = Driver
 module Row = Row
 module Res = Res
 module Query = Query
+module Param = Param
 
 open Logger.Make (struct
   let namespace = ["dbcaml"]
