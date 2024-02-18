@@ -10,7 +10,6 @@ type ('ctx, 'item) state = {
 }
 
 let rec handle_messages global_storage storage_mutex =
-  let current_pid = self () in
   (match receive () with
   (*
    * CheckIn triggers when a holder is either reigstered for the first time or 
@@ -20,14 +19,6 @@ let rec handle_messages global_storage storage_mutex =
     debug (fun f -> f "Check in pid: %a" Pid.pp child_pid);
     (* Storage the current holder PID as ready to handle jobs in our in memory table *)
     Storage.add_or_replace global_storage storage_mutex child_pid Storage.Ready
-  (*
-   * NewHolder triggers when a holder is registered and want to be stored in the in memory table. 
-   * After holder have registered do the holder send a message to pool_manager to let it know that
-   * it's ready to handle job
-   *)
-  | Message_passing.NewHolder item ->
-    debug (fun f -> f "Storing a new holder");
-    Holder.new_holder current_pid item
   (*
    * LockHolder is used to allow clients to request a lock on a process
     * When this message is sent to the manager do the manager set the state of the holder to buzy

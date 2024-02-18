@@ -27,7 +27,7 @@ let start_link ?(connections = 10) (driver : Driver.t) =
   in
 
   (* let it boot *)
-  sleep 2.1;
+  sleep 0.2;
 
   let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
 

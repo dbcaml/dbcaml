@@ -6,6 +6,8 @@ end)
 
 let rec wait_for_job connection_manager_pid (item : 'item) =
   let holder_pid = self () in
+  debug (fun f -> f "%a is waiting for job" Pid.pp holder_pid);
+
   (match receive () with
   (*
    * The holder waits for a CheckOut message. When the holder get a CheckOut message 
