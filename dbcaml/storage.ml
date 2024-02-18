@@ -26,7 +26,7 @@ let remove global_storage storage_mutex key =
   Hashtbl.remove global_storage key;
   Mutex.unlock storage_mutex
 
-let rec available_holder global_storage storage_mutex =
+let available_holder global_storage storage_mutex =
   Mutex.lock storage_mutex;
   let result =
     Hashtbl.fold
@@ -39,8 +39,6 @@ let rec available_holder global_storage storage_mutex =
   in
   Mutex.unlock storage_mutex;
 
-  try List.hd result with
-  | _ ->
-    debug (fun f -> f "no available holder, retrying...");
-    sleep 0.100;
-    available_holder global_storage storage_mutex
+  match List.length result with
+  | 0 -> Error "No available items"
+  | _ -> Ok (List.hd result)

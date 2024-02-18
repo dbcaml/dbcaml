@@ -9,7 +9,7 @@ type ('ctx, 'item) state = {
   initial_ctx: 'ctx;
 }
 
-let rec handle_messages global_storage storage_mutex =
+let rec handle_messages connection_manager_pid global_storage storage_mutex =
   (match receive () with
   (*
    * CheckIn triggers when a holder is either reigstered for the first time or 
@@ -27,20 +27,28 @@ let rec handle_messages global_storage storage_mutex =
   | Message_passing.LockHolder requester_pid ->
     debug (fun f ->
         f "Acquire a holder lock for requester: %a" Pid.pp requester_pid);
-    let item = Storage.available_holder global_storage storage_mutex in
-    let (holder_pid, _) = item in
-    Storage.add_or_replace global_storage storage_mutex holder_pid Storage.Buzy;
-    debug (fun f ->
-        f
-          "Selected and locked holder %a for requester %a"
-          Pid.pp
-          holder_pid
-          Pid.pp
-          requester_pid);
-    send holder_pid (Message_passing.CheckOut requester_pid)
+    (match Storage.available_holder global_storage storage_mutex with
+    | Ok c ->
+      let (holder_pid, _) = c in
+      Storage.add_or_replace
+        global_storage
+        storage_mutex
+        holder_pid
+        Storage.Buzy;
+      debug (fun f ->
+          f
+            "Selected and locked holder %a for requester %a"
+            Pid.pp
+            holder_pid
+            Pid.pp
+            requester_pid);
+      send holder_pid (Message_passing.CheckOut requester_pid)
+    | Error _ ->
+      debug (fun f -> f "not enough holders, retrying...");
+      send connection_manager_pid (Message_passing.LockHolder requester_pid))
   | _ -> error (fun f -> f "Got a message with a type I don't know about"));
 
-  handle_messages global_storage storage_mutex
+  handle_messages connection_manager_pid global_storage storage_mutex
 
 (*
 * 2. Create a in-memory storage where we can store PIDs and the state.
@@ -55,7 +63,7 @@ let start_link { pool_size; _ } =
 
   let storage_mutex = Mutex.create () in
 
-  handle_messages global_storage storage_mutex
+  handle_messages (self ()) global_storage storage_mutex
 
 let child_spec ~pool_size initial_ctx =
   let state = { pool_size; initial_ctx } in
