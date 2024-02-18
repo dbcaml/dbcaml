@@ -11,9 +11,11 @@ let rec wait_for_job connection_manager_pid (item : 'item) =
    * The holder waits for a CheckOut message. When the holder get a CheckOut message 
    * do it send whatever it's holding to the requester
    *)
-  | Message_passing.CheckOut request_pid ->
-    send request_pid (Message_passing.HolderMessage { item; holder_pid })
-  | _ -> ());
+  | Message_passing.CheckOut requester_pid ->
+    debug (fun f ->
+        f "Sending what i'm holding to requester %a" Pid.pp requester_pid);
+    send requester_pid (Message_passing.HolderMessage { item; holder_pid })
+  | _ -> error (fun f -> f "Unknown message"));
 
   (*
   * loop the process over and over again
