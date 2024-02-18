@@ -16,52 +16,34 @@ let start_link ?(connections = 2) (driver : Driver.t) =
     List.init connections (fun _ ->
         let _ =
           spawn (fun () ->
-              Poolparty.add_item pool_id "Hello World";
-
               match Driver.connect driver with
-              | Ok _ -> ()
+              | Ok c -> Poolparty.add_item pool_id c
               | Error _ -> error (fun f -> f "failed to start driver"))
         in
 
         ())
   in
 
-  (* let it boot *)
-  sleep 0.2;
+  Ok pool_id
 
-  let _ =
-    List.init 10 (fun _ ->
-        spawn (fun () ->
-            let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
-
-            print_string "asking for a holder item in the pool";
-            print_endline item.item;
-
-            Poolparty.release pool_id item.holder_pid))
-  in
-
-  sleep 10.1;
-
-  ()
-
-let execute pid ?params query =
+let fetch_one pool_id ?params query =
   let p =
     match params with
     | Some opts -> opts
     | None -> []
   in
 
-  (* send current PID to the child so it can send the result back to this process *)
-  let owner = self () in
+  let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
 
-  print_endline "i'm called";
+  let result =
+    match Connection.execute item.item p query with
+    | Ok rows ->
+      (match rows with
+      | [] -> Error Execution_result.NoRows
+      | r -> Ok (List.hd r))
+    | Error e -> Error e
+  in
 
-  error (fun f -> f "owner: %a" Pid.pp owner);
+  Poolparty.release pool_id item.holder_pid;
 
-  send pid (Message_passing.Query { query; params = p; owner });
-  print_endline "have pid";
-  error (fun f -> f "got: %a" Pid.pp pid);
-
-  match receive () with
-  | Message_passing.Result q -> q
-  | _ -> Error (Execution_result.GeneralError "unknown")
+  result

@@ -42,15 +42,3 @@
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
-
-(package
- (name poolparty)
- (synopsis "")
- (description "A connection pool")
- (depends
-  ocaml
-  (riot
-   (>= 0.0.8))
-  dune)
- (tags
-  (topics "connection pool" "riot")))

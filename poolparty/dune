@@ -1,4 +1,0 @@
-(library
- (package poolparty)
- (name poolparty)
- (libraries riot uri))
