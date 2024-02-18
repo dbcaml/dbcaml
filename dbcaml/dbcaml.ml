@@ -9,7 +9,7 @@ open Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
-let start_link ?(connections = 10) (driver : Driver.t) =
+let start_link ?(connections = 2) (driver : Driver.t) =
   let pool_id = Poolparty.start_link ~pool_size:connections in
 
   let _ =
@@ -29,12 +29,18 @@ let start_link ?(connections = 10) (driver : Driver.t) =
   (* let it boot *)
   sleep 0.2;
 
-  let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
+  let _ =
+    List.init 10 (fun _ ->
+        spawn (fun () ->
+            let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
 
-  print_string "asking for a holder item in the pool";
-  print_endline item.item;
+            print_string "asking for a holder item in the pool";
+            print_endline item.item;
 
-  Poolparty.release pool_id item.holder_pid;
+            Poolparty.release pool_id item.holder_pid))
+  in
+
+  sleep 10.1;
 
   ()
 
