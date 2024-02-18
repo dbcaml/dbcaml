@@ -1,16 +1,18 @@
 open Riot
 
 open Logger.Make (struct
-  let namespace = ["poolparty"; "child"]
+  let namespace = ["poolparty"; "holder"]
 end)
 
 let rec wait_for_job connection_manager_pid (item : 'item) =
+  let holder_pid = self () in
   (match receive () with
   (*
    * The holder waits for a CheckOut message. When the holder get a CheckOut message 
    * do it send whatever it's holding to the requester
    *)
-  | Message_passing.CheckOut request_pid -> send request_pid item
+  | Message_passing.CheckOut request_pid ->
+    send request_pid (Message_passing.HolderMessage { item; holder_pid })
   | _ -> ());
 
   (*
@@ -30,4 +32,4 @@ let new_holder connection_manager_pid (item : 'item) =
   in
   send connection_manager_pid (Message_passing.CheckIn child_pid);
 
-  info (fun f -> f "Got a message with a type I don't know about")
+  debug (fun f -> f "Created a new holder with pid: %a" Pid.pp child_pid)

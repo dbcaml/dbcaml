@@ -8,10 +8,10 @@ type status =
   | Ready
   | Buzy
 
-let change global_storage storage_mutex key value =
-  debug (fun f -> f "changeing value for pid: %a" Pid.pp key);
-  Mutex.lock storage_mutex;
-  Hashtbl.replace global_storage key value;
+let add_or_replace global_storage storage_mutex key value =
+  (match Hashtbl.find_opt global_storage key with
+  | Some _ -> Hashtbl.replace global_storage key value
+  | None -> Hashtbl.add global_storage key value);
   Mutex.unlock storage_mutex
 
 let get global_storage storage_mutex key =
@@ -31,7 +31,7 @@ let rec available_holder global_storage storage_mutex =
     Hashtbl.fold
       (fun key x accu ->
         match x with
-        | Ready -> (x, key) :: accu
+        | Ready -> (key, x) :: accu
         | _ -> accu)
       global_storage
       []
@@ -40,6 +40,6 @@ let rec available_holder global_storage storage_mutex =
 
   try List.hd result with
   | _ ->
-    debug (fun f -> f "not available holder, retrying...");
+    debug (fun f -> f "no available holder, retrying...");
     sleep 0.100;
     available_holder global_storage storage_mutex

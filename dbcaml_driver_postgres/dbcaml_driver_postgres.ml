@@ -31,8 +31,9 @@ module Postgres = struct
      * This function is used by the Connection.make function to create a new connection
      *)
     let execute (conn : connection) (params : string list) query :
-        (Dbcaml.Row.t list, Dbcaml.Result.execution_error) Dbcaml.Result.result
-        =
+        ( Dbcaml.Row.t list,
+          Dbcaml.Execution_result.execution_error )
+        Dbcaml.Execution_result.result =
       try
         let array_params =
           params |> List.map (fun x -> conn#escape_string x) |> Array.of_list
@@ -48,15 +49,15 @@ module Postgres = struct
 
           let rows = List.map (fun x -> List.map unescape_bytea x) res in
           Ok rows
-        | Fatal_error -> Error (Dbcaml.Result.FatalError result#error)
+        | Fatal_error -> Error (Dbcaml.Execution_result.FatalError result#error)
         | Bad_response
         | Nonfatal_error ->
-          Error (Dbcaml.Result.BadResponse result#error)
-        | _ -> Error Dbcaml.Result.NoRows
+          Error (Dbcaml.Execution_result.BadResponse result#error)
+        | _ -> Error Dbcaml.Execution_result.NoRows
       with
       | Postgresql.Error e ->
-        Error (Dbcaml.Result.GeneralError (string_of_error e))
-      | e -> Error (Dbcaml.Result.GeneralError (Printexc.to_string e))
+        Error (Dbcaml.Execution_result.GeneralError (string_of_error e))
+      | e -> Error (Dbcaml.Execution_result.GeneralError (Printexc.to_string e))
     in
 
     (* Create a new connection while we also want to use to create a PID *)

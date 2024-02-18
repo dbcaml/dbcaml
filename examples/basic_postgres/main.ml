@@ -1,6 +1,6 @@
-(*
+open Riot
 
-let rec run_single_query index conn =
+(*let rec run_single_query index conn =
   Printf.printf "Running query %d\n" index;
   let _ =
     match
@@ -20,6 +20,7 @@ let rec run_single_query index conn =
 
     ()
   )
+*)
 
 let () =
   Riot.run @@ fun () ->
@@ -29,15 +30,15 @@ let () =
 
   Logger.info (fun f -> f "Starting application");
 
+  sleep 1.0;
+
   let driver =
     Dbcaml_driver_postgres.connection
       "postgresql://postgres:mysecretpassword@localhost:6432/development"
   in
 
-  let conn = Querycaml.start_link ~max_connections:32 driver |> Result.get_ok in
+  Dbcaml.start_link ~connections:1 driver;
 
-  run_single_query 0 conn;
-
+  (* run_single_query 0 conn; *)
+  sleep 10.1;
   ()
-
-  *)

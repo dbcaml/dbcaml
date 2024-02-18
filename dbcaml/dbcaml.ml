@@ -2,7 +2,7 @@ open Riot
 module Connection = Connection
 module Driver = Driver
 module Row = Row
-module Result = Result
+module Execution_result = Execution_result
 module Query = Query
 
 open Logger.Make (struct
@@ -10,12 +10,14 @@ open Logger.Make (struct
 end)
 
 let start_link ?(connections = 10) (driver : Driver.t) =
-  let pool = Poolparty.start_link ~acceptors:connections in
+  let pool_id = Poolparty.start_link ~pool_size:connections in
 
   let _ =
     List.init connections (fun _ ->
         let _ =
           spawn (fun () ->
+              Poolparty.add_item pool_id "Hello World";
+
               match Driver.connect driver with
               | Ok _ -> ()
               | Error _ -> error (fun f -> f "failed to start driver"))
@@ -24,7 +26,15 @@ let start_link ?(connections = 10) (driver : Driver.t) =
         ())
   in
 
-  let _ = pool in
+  (* let it boot *)
+  sleep 2.1;
+
+  let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
+
+  print_string "asking for a holder item in the pool";
+  print_endline item.item;
+
+  Poolparty.release pool_id item.holder_pid;
 
   ()
 
@@ -48,4 +58,4 @@ let execute pid ?params query =
 
   match receive () with
   | Message_passing.Result q -> q
-  | _ -> Error (Result.GeneralError "unknown")
+  | _ -> Error (Execution_result.GeneralError "unknown")
