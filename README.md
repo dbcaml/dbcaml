@@ -16,6 +16,8 @@
 
 DBCaml is a async database toolkit built on <a href="https://github.com/riot-ml/riot">Riot</a>, an actor-model multi-core scheduler for OCaml 5. DBCaml is inspired by [Elixirs](https://github.com/elixir-ecto/ecto) where the developer can spin up a connection manager and connections the manager takes cares of. 
 
+** Note: DBCaml is currently in development and is not ready for production. Only for testing purposes **
+
 ```ocaml
 
 let driver =
