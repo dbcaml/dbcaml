@@ -4,31 +4,6 @@ open Logger.Make (struct
   let namespace = ["Dbcaml example"]
 end)
 
-let rec run_single_query index conn =
-  info (fun f -> f "Running query for PID: %a" Pid.pp (self ()));
-  let _ =
-    match
-      Dbcaml.fetch_one
-        conn
-        ~params:[Dbcaml.Param.String "1"]
-        "select * from users where id = $1"
-    with
-    | Ok x ->
-      info (fun f -> f "Executed query %d for pid %a" index Pid.pp (self ()));
-      let rows = Dbcaml.Row.row_to_type x in
-      (* Iterate over each column and print it's values *)
-      List.iter (fun x -> print_endline x) rows
-    | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x)
-  in
-
-  if index <= 100 then (
-    let _ = run_single_query (index + 1) conn in
-
-    Unix.sleep 1;
-
-    ()
-  )
-
 let () =
   Riot.run @@ fun () ->
   let _ = Logger.start () |> Result.get_ok in
@@ -44,15 +19,43 @@ let () =
 
   let pool_id = Dbcaml.start_link ~connections:10 driver |> Result.get_ok in
 
-  let _ =
-    List.init 20 (fun _ ->
-        let _ =
-          spawn (fun () ->
-              let _ = run_single_query 0 pool_id in
-              ())
-        in
-        ())
-  in
+  (* Fetch 1 row from the database *)
+  (match
+     Dbcaml.fetch_one
+       pool_id
+       ~params:[Dbcaml.Param.String "1"]
+       "select * from users where id = $1"
+   with
+  | Ok x ->
+    let rows = Dbcaml.Row.row_to_type x in
+    (* Iterate over each column and print it's values *)
+    List.iter (fun x -> print_endline x) rows
+  | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
 
-  sleep 15.0;
+  (* Fetch multiple rows from the database *)
+  (match
+     Dbcaml.fetch_many
+       pool_id
+       ~params:[Dbcaml.Param.String "1"]
+       "select * from users where id = $1"
+   with
+  | Ok x ->
+    List.iter
+      (fun x ->
+        let rows = Dbcaml.Row.row_to_type x in
+        (* Iterate over each column and print it's values *)
+        List.iter (fun x -> print_endline x) rows)
+      x
+  | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
+
+  (* Exec a query to the database *)
+  (match
+     Dbcaml.exec
+       pool_id
+       ~params:[Dbcaml.Param.String "1"]
+       "select * from users where id = $1"
+   with
+  | Ok _ -> print_endline "Executed successfully"
+  | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
+
   ()
