@@ -17,27 +17,28 @@
 DBCaml is a async database toolkit built on <a href="https://github.com/riot-ml/riot">Riot</a>, an actor-model multi-core scheduler for OCaml 5. DBCaml is inspired by [Elixirs](https://github.com/elixir-ecto/ecto) where the developer can spin up a connection manager and connections the manager takes cares of. 
 
 ```ocaml
+
 let driver =
     Dbcaml_driver_postgres.connection
       "postgresql://postgres:mysecretpassword@localhost:6432/development"
   in
 
-  let conn = Dbcaml.Dbcaml.start_link driver |> Result.get_ok in
+  let pool_id = Dbcaml.start_link ~connections:10 driver |> Result.get_ok in
 
-  print_endline "Sending 1 query to the database...";
+  (* Fetch 1 row from the database *)
   (match
-     Dbcaml.Dbcaml.fetch_one
-       conn
-       ~params:["1"]
+     Dbcaml.fetch_one
+       pool_id
+       ~params:[Dbcaml.Param.String "1"]
        "select * from users where id = $1"
    with
   | Ok x ->
     let rows = Dbcaml.Row.row_to_type x in
     (* Iterate over each column and print it's values *)
     List.iter (fun x -> print_endline x) rows
-  | Error x ->
-    print_endline (Dbcaml.ErrorMessages.execution_error_to_string x);
-    failwith "");
+  | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
+
+
 
 ```
 DBCaml aims to offer:
