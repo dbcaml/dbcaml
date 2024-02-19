@@ -6,7 +6,7 @@ end)
 
 type status =
   | Ready
-  | Buzy
+  | Busy
 
 (*
    * This function try to find the specific key in the storage,

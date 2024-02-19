@@ -34,7 +34,7 @@ let rec handle_messages connection_manager_pid global_storage storage_mutex =
         global_storage
         storage_mutex
         holder_pid
-        Storage.Buzy;
+        Storage.Busy;
       debug (fun f ->
           f
             "Selected and locked holder %a for requester %a"
