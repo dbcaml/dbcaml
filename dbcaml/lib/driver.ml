@@ -1,4 +1,3 @@
-open Riot
 (*
  * The Intf module type is used to define the interface that a driver must implement.
  * The config type is used to create a new connection
@@ -7,7 +6,22 @@ open Riot
 module type Intf = sig
   type config
 
-  val connect : config -> (Connection.t, [> `msg of string ]) IO.io_result
+  val connect :
+    config ->
+    ( Connection.t,
+      [> `Closed
+      | `Connection_closed
+      | `Eof
+      | `Exn of exn
+      | `Msg of string
+      | `No_info
+      | `Noop
+      | `Process_down
+      | `Timeout
+      | `Unix_error of Unix.error
+      | `Would_block
+      ] )
+    result
 end
 
 (*
