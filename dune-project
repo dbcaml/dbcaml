@@ -22,6 +22,7 @@
  (depends
   ocaml
   dune
+  (alcotest :with-test)
   (riot
    (>= 0.0.8))
   uri)
@@ -29,16 +30,48 @@
   (topics "database" "dbcaml")))
 
 (package
- (name dbcaml_driver_postgres)
+ (name silo)
+ (synopsis "silo is a query library for dbcaml")
+ (description "silo is a query library for dbcaml")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  (dbcaml
+   (= :version))
+  (riot
+   (>= 0.0.8))
+  uri)
+ (tags
+  (topics "database" "dbcaml")))
+
+(package
+ (name dbcaml-driver-postgres)
  (synopsis "Postgres driver for dbcaml")
  (description "Postgres driver for dbcaml")
  (depends
   ocaml
+  (alcotest :with-test)
   dune
   (riot
    (>= 0.0.8))
   dbcaml
-  postgresql
+  bytestring
+  cryptokit
+  castore
+  random
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
+
+(package
+ (name buffer_tools)
+ (synopsis "Buffer tools for DBcaml")
+ (description "Buffer tools for DBcaml")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  bytestring)
+ (tags
+  (topics "bytes" "enbcoder" "ocaml")))

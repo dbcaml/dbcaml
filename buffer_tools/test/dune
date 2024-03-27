@@ -1,0 +1,35 @@
+(test
+ (package buffer_tools)
+ (name encode_int32_test)
+ (modules encode_int32_test)
+ (libraries buffer_tools alcotest))
+
+(test
+ (package buffer_tools)
+ (name encode_string_test)
+ (modules encode_string_test)
+ (libraries buffer_tools alcotest))
+
+(test
+ (package buffer_tools)
+ (name encode_bool_test)
+ (modules encode_bool_test)
+ (libraries buffer_tools alcotest))
+
+(test
+ (package buffer_tools)
+ (name encode_float_test)
+ (modules encode_float_test)
+ (libraries buffer_tools alcotest))
+
+(test
+ (package buffer_tools)
+ (name put_length_prefixed_test)
+ (modules put_length_prefixed_test)
+ (libraries buffer_tools alcotest))
+
+(test
+ (package buffer_tools)
+ (name put_str)
+ (modules put_str)
+ (libraries buffer_tools alcotest))

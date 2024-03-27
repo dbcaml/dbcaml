@@ -1,7 +1,6 @@
 type t =
-  | Number of int
   | String of string
+  | Number of int
   | Float of float
   | Bool of bool
   | Null
-  | Array of t list

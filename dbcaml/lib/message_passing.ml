@@ -1,8 +1,6 @@
 open Riot
 
-type Message.t +=
-  | Result of (Row.t list, Res.execution_error) Res.result
-  | Query of Query.t
+type Message.t += Result of (string list list, Res.execution_error) Res.result
 
 type holder_item = {
   holder_pid: Pid.t;
