@@ -14,7 +14,7 @@
 </p>
 
 
-DBCaml is a async database toolkit built on <a href="https://github.com/riot-ml/riot">Riot</a>, an actor-model multi-core scheduler for OCaml 5. DBCaml is inspired by [Elixirs](https://github.com/elixir-ecto/ecto) where the developer can spin up a connection manager and connections the manager takes cares of. 
+DBCaml is an async database toolkit built on <a href="https://github.com/riot-ml/riot">Riot</a>, an actor-model multi-core scheduler for OCaml 5. DBCaml is inspired by [Elixirs](https://github.com/elixir-ecto/ecto) where the developer can spin up a connection manager and connections the manager takes cares of. 
 
 ** Note: DBCaml is currently in development and is not ready for production. Only for testing purposes **
 
@@ -45,15 +45,15 @@ let driver =
 ```
 DBCaml aims to offer:
 
-* **Database pooling**. Built with using Riots lightweight process to spin up a connection pool.
+* **Database pooling**. Built using Riots lightweight process to spin up a connection pool.
 
-* **Database Agnostic**. Support for Postgres, and more to come(MySQL, MariaDB, SQLite)
+* **Database Agnostic**. Support for Postgres, and more to come (MySQL, MariaDB, SQLite).
 
-* **Built in security**. With built in security allows users to focus on writing queries and don't be afraid of security breaches.
+* **Built in security**. With built-in security it allows users to focus on writing queries, without being afraid of security breaches.
 
-* **Cross Platform**. DBCaml compiles anywhere
+* **Cross Platform**. DBCaml compiles anywhere!
 
-* **Not an ORM**. DBCaml is not an orm, it simple handle the boring stuff you don't want to deal with and allow you to have full insight on what's going on.
+* **Not an ORM**. DBCaml is not an orm, it simply handles the boring stuff you don't want to deal with and allows you to have full insight on what's going on.
 
 ## Quick Start
 
@@ -67,4 +67,4 @@ After that, you can use any of the [examples](./examples) as a base for your app
 dune exec ./my_app.exe
 ```
 # Important
-DBCaml is in heavily development, the content in this repo will change
+DBCaml is heavily in development, the content in this repo will change!
