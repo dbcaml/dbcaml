@@ -30,22 +30,6 @@
   (topics "database" "dbcaml")))
 
 (package
- (name silo)
- (synopsis "silo is a query library for dbcaml")
- (description "silo is a query library for dbcaml")
- (depends
-  ocaml
-  (alcotest :with-test)
-  dune
-  (dbcaml
-   (= :version))
-  (riot
-   (>= 0.0.8))
-  uri)
- (tags
-  (topics "database" "dbcaml")))
-
-(package
  (name dbcaml-driver-postgres)
  (synopsis "Postgres driver for dbcaml")
  (description "Postgres driver for dbcaml")

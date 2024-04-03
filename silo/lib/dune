@@ -1,4 +1,0 @@
-(library
- (package silo)
- (name silo)
- (libraries riot dbcaml uri))

@@ -1,5 +1,5 @@
 (executable
- (package silo)
+ (package dbcaml)
  (public_name basic_postgres)
  (name main)
- (libraries dbcaml_driver_postgres dbcaml silo riot))
+ (libraries dbcaml_driver_postgres dbcaml riot))

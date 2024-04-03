@@ -14,7 +14,7 @@ let remove_first_letter_if_slash str =
   else
     str
 
-let make conninfo =
+let make ~conninfo =
   let uri = Uri.of_string conninfo in
   let user = Uri.user uri |> Option.value ~default:"" in
   let password = Uri.password uri |> Option.value ~default:"" in

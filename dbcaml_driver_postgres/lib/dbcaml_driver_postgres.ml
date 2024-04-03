@@ -1,8 +1,5 @@
 module Bs = Bytestring
-
-open Riot.Logger.Make (struct
-  let namespace = ["dbcaml"; "dbcaml_postgres_driver"]
-end)
+module Pg_arguments = Pg_arguments
 
 let ( let* ) = Result.bind
 
@@ -12,22 +9,36 @@ module Postgres = struct
   let connect config =
     let* (conn, conninfo) = Pg.connect config.conninfo in
 
-    let* (message_format, startup_response) =
-      Startup.start conn conninfo.user conninfo.database
+    let* (message_format, _) =
+      Startup.start ~conn ~username:conninfo.user ~database:conninfo.database
     in
 
-    let* conn =
-      Authentication.authenticate
-        conn
-        message_format
-        startup_response
-        conninfo.user
-        conninfo.password
+    let* _ =
+      match message_format with
+      | Message_format.Authentication ->
+        let* _ =
+          Scram_auth.authenticate
+            ~conn
+            ~is_plus:false
+            ~username:conninfo.user
+            ~password:conninfo.password
+        in
+
+        Ok conn
+      | mf ->
+        Error
+          (`Msg
+            (Printf.sprintf
+               "Unexpected message format: %s"
+               (Message_format.to_string ~format:mf)))
     in
 
-    let execute (_ : Pg.t) (_ : Dbcaml.Connection.param list) _ :
+    let execute (_ : Pg.t) (params : Dbcaml.Param.t list) query :
         (bytes, Dbcaml.Res.execution_error) Dbcaml.Res.result =
-      Error (Dbcaml.Res.GeneralError "Not implemented")
+      match Executer.execute ~conn ~query ~params with
+      | Ok response -> Ok (Bytes.of_string response)
+      | Error (`Msg e) -> Error (Dbcaml.Res.ExecutionError e)
+      | Error _ -> Error (Dbcaml.Res.ExecutionError "Unknown error")
     in
 
     (* Create a new connection which we also want to use to create a PID *)

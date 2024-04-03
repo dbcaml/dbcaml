@@ -55,7 +55,7 @@ let from_u8 (v : char) : (message_format, string) result =
   | 't' -> Ok ParameterDescription
   | _ -> Error (Printf.sprintf "unknown message type: %c" v)
 
-let to_string (format : message_format) : string =
+let to_string ~(format : message_format) : string =
   match format with
   | Authentication -> "Authentication"
   | BackendKeyData -> "BackendKeyData"

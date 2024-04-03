@@ -2,6 +2,7 @@ open Riot
 module Connection = Connection
 module Driver = Driver
 module Res = Res
+module Param = Param
 
 open Logger.Make (struct
   let namespace = ["dbcaml"]
@@ -30,17 +31,22 @@ let start_link ?(connections = 10) (driver : Driver.t) =
 
   Ok pool_id
 
-let execute pool_id params query =
-  let p =
-    match params with
-    | Some opts -> opts
-    | None -> []
-  in
-
+let execute pool_id query =
   let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
 
-  let result = Connection.execute item.item p query in
+  let result = Connection.execute item.item query in
 
   Poolparty.release pool_id item.holder_pid;
 
   result
+
+let fetch_one pool_id ?params query =
+  let p =
+    match params with
+    | Some p -> p
+    | None -> []
+  in
+
+  match execute pool_id p query with
+  | Ok rows -> Ok rows
+  | Error e -> Error e
