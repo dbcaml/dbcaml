@@ -14,7 +14,7 @@ let () =
 
   let driver =
     Dbcaml_driver_postgres.connection
-      "postgresql://postgres:postgres@localhost:6432/postgres"
+      "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
   in
 
   let pool_id = Dbcaml.start_link ~connections:10 driver |> Result.get_ok in
