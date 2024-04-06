@@ -1,7 +1,5 @@
 open Riot
 
-let ( let* ) = Result.bind
-
 open Logger.Make (struct
   let namespace = ["dbcaml"; "dbcaml_driver_postgres"]
 end)
