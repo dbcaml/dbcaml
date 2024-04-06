@@ -23,7 +23,7 @@ let () =
   in
 
   (match Silo_postgres.fetch_one pool_id ~query:"select * from users" with
-  | Ok x -> Printf.printf "%Sn" (String.of_bytes x)
+  | Ok x -> Printf.printf "%Sn" (Streaming.Stream.to_string x)
   | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
 
   ()

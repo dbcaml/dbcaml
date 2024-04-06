@@ -34,7 +34,7 @@ let start_link ?(connections = 10) (driver : Driver.t) =
 
   Ok pool_id
 
-(** raw_execute send a query to the database and return raw bytes *)
+(** raw_exeute send a query to the database and return raw bytes *)
 let raw_execute connection_manager_id params query =
   let p =
     match params with

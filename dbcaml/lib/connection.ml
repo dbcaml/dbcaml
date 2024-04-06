@@ -9,7 +9,11 @@ type t =
       conn: 'conn;
       (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
       execute:
-        'conn -> Param.t list -> string -> (bytes, Res.execution_error) result;
+        (* FIXME: we should return streaming here from the driver *)
+        'conn ->
+        Param.t list ->
+        string ->
+        (char Streaming.stream, Res.execution_error) result;
     }
       -> t
 

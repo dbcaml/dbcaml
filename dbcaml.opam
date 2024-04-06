@@ -15,6 +15,7 @@ depends: [
   "alcotest" {with-test}
   "riot" {>= "0.0.8"}
   "uri"
+  "streaming"
   "odoc" {with-doc}
 ]
 build: [

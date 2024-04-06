@@ -3,6 +3,7 @@
  (public_name dbcaml-driver-postgres)
  (libraries
   riot
+  streaming
   uri
   dbcaml
   bytestring

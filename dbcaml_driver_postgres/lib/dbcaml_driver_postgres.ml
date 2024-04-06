@@ -35,7 +35,7 @@ module Postgres = struct
 
     let execute conn params query =
       match Executer.execute ~conn ~query ~params with
-      | Ok response -> Ok (Bytes.of_string response)
+      | Ok response -> Ok (Streaming.Stream.of_string response)
       | Error (`Msg e) -> Error (Dbcaml.Res.ExecutionError e)
       | Error _ -> Error (Dbcaml.Res.ExecutionError "Unknown error")
     in

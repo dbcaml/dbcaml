@@ -25,7 +25,8 @@
   (alcotest :with-test)
   (riot
    (>= 0.0.8))
-  uri)
+  uri
+  streaming)
  (tags
   (topics "database" "dbcaml")))
 
@@ -44,6 +45,7 @@
   cryptokit
   castore
   random
+  streaming
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
@@ -56,6 +58,7 @@
   ocaml
   (alcotest :with-test)
   dune
+  streaming
   dbcaml)
  (tags
   (topics "postgres" "ocaml")))
