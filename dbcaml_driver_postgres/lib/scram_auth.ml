@@ -34,10 +34,6 @@ let parse_payload ~payload_str =
     []
     parts
 
-let remove_bytes s =
-  let pattern = Str.regexp "[\000-\031\127-\255]" in
-  Str.global_replace pattern "" s
-
 let verify_server_proof ~server_key ~auth_message ~verifier =
   let server_signature = scram_hmac ~key:server_key ~text:auth_message in
   let decoded_verifier = Base64.decode_exn verifier in

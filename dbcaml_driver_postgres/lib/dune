@@ -10,5 +10,4 @@
   random
   cryptokit
   mirage-crypto
-  buffer_tools
   castore))

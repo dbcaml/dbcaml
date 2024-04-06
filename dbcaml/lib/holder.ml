@@ -4,12 +4,12 @@ open Logger.Make (struct
   let namespace = ["poolparty"; "holder"]
 end)
 
-type ('ctx, 'item) state = {
+type 'ctx state = {
   connection_manager_pid: Pid.t;
-  item: 'item;
+  item: Connection.t;
 }
 
-let rec wait_for_job connection_manager_pid (item : 'item) =
+let rec wait_for_job connection_manager_pid item =
   let holder_pid = self () in
   debug (fun f -> f "%a is waiting for job" Pid.pp holder_pid);
 
@@ -18,10 +18,10 @@ let rec wait_for_job connection_manager_pid (item : 'item) =
    * The holder waits for a CheckOut message. When the holder get a CheckOut message 
    * do it send whatever it's holding to the requester
    *)
-  | Message_passing.CheckOut requester_pid ->
+  | Messages.CheckOut requester_pid ->
     debug (fun f ->
         f "Sending what i'm holding to requester %a" Pid.pp requester_pid);
-    send requester_pid (Message_passing.HolderMessage { item; holder_pid })
+    send requester_pid (Messages.HolderMessage (holder_pid, item))
   | _ -> error (fun f -> f "Unknown message"));
 
   (*
@@ -41,7 +41,7 @@ let holder_start_link { connection_manager_pid; item } =
     spawn_link (fun () -> wait_for_job connection_manager_pid item)
   in
 
-  send connection_manager_pid (Message_passing.CheckIn child_pid);
+  send connection_manager_pid (Messages.CheckIn child_pid);
 
   debug (fun f -> f "Created a new holder with pid: %a" Pid.pp child_pid);
 

@@ -17,21 +17,21 @@ let () =
       "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
   in
 
-  let pool_id = Dbcaml.start_link ~connections:10 driver |> Result.get_ok in
-
-  (match Dbcaml.fetch_one pool_id "select * from users" with
+  let _ = Dbcaml.start_link ~connections:10 driver |> Result.get_ok in
+  (*
+  (match Dbcaml.fetch_many pool_id "select * from users" with
   | Ok x -> Printf.printf "%Sn" (String.of_bytes x)
   | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
 
   (match
-     Dbcaml.fetch_one
+     Dbcaml.fetch_many
        pool_id
        ~params:[Dbcaml.Param.Number 20]
        "select * from users where id > $1"
    with
   | Ok x -> Printf.printf "fetch_one response %Sn" (String.of_bytes x)
   | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
-
+*)
   (*
     (* Fetch multiple rows from the database *)
     (match

@@ -49,13 +49,13 @@
   (topics "database" "dbcaml" "dbcaml")))
 
 (package
- (name buffer_tools)
- (synopsis "Buffer tools for DBcaml")
- (description "Buffer tools for DBcaml")
+ (name silo-postgres)
+ (synopsis "Silo")
+ (description "Silo")
  (depends
   ocaml
   (alcotest :with-test)
   dune
-  bytestring)
+  dbcaml)
  (tags
-  (topics "bytes" "enbcoder" "ocaml")))
+  (topics "postgres" "ocaml")))

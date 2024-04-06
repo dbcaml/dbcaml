@@ -1,30 +1,33 @@
-let ( let* ) = Option.bind
+let ( let* ) = Result.bind
 
-type t =
-  | ConnectionInformation : {
-      host: string;
-      port: int;
-      username: string;
-      password: string;
-      schema: string;
-      database: string;
-    }
-      -> t
+type connection_information = {
+  user: string;
+  password: string;
+  database: string;
+  host: string;
+  port: int;
+  sslmode: bool;
+}
 
-let remove_leading_slash initial_string =
-  if String.length initial_string > 0 && String.get initial_string 0 = '/' then
-    String.sub initial_string 1 (String.length initial_string - 1)
+let remove_first_letter_if_slash str =
+  if String.starts_with ~prefix:"/" str then
+    String.sub str 1 (String.length str - 1)
   else
-    initial_string
+    str
 
-let of_string connection_info =
-  let parsed_url = Uri.of_string connection_info in
-  let* host = Uri.host parsed_url in
-  let* port = Uri.port parsed_url in
-  let* username = Uri.user parsed_url in
-  let* password = Uri.password parsed_url in
-  let database = Uri.path parsed_url |> remove_leading_slash in
+let make ~conninfo =
+  let uri = Uri.of_string conninfo in
+  let user = Uri.user uri |> Option.value ~default:"" in
+  let password = Uri.password uri |> Option.value ~default:"" in
+  let database = Uri.path uri |> remove_first_letter_if_slash in
+  let host = Uri.host uri |> Option.value ~default:"localhost" in
+  let port = Uri.port uri |> Option.value ~default:5432 in
+  let sslmode =
+    Uri.get_query_param uri "sslmode"
+    |> Option.value ~default:"disabled"
+    |> String.equal "disabled"
+    (* We only want sslmode to be false is sslmode is enabled and have value "disabled" *)
+    |> not
+  in
 
-  Some
-    (ConnectionInformation
-       { host; port; username; password; schema = "postgresql"; database })
+  { user; password; database; host; port; sslmode }

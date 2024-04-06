@@ -1,0 +1,4 @@
+(library
+ (name silo)
+ (public_name silo-postgres)
+ (libraries))

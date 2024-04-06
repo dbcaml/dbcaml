@@ -33,8 +33,7 @@ module Postgres = struct
                (Message_format.to_string ~format:mf)))
     in
 
-    let execute (_ : Pg.t) (params : Dbcaml.Param.t list) query :
-        (bytes, Dbcaml.Res.execution_error) Dbcaml.Res.result =
+    let execute conn params query =
       match Executer.execute ~conn ~query ~params with
       | Ok response -> Ok (Bytes.of_string response)
       | Error (`Msg e) -> Error (Dbcaml.Res.ExecutionError e)

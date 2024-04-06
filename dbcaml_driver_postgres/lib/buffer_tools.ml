@@ -1,5 +1,3 @@
-module Encode = Encode
-
 let put_length_prefixed buffer f =
   let new_buffer = Buffer.create 1 in
 

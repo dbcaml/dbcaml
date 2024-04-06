@@ -4,6 +4,8 @@ module Driver = Driver
 module Res = Res
 module Param = Param
 
+let ( let* ) = Result.bind
+
 open Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
@@ -13,14 +15,15 @@ end)
  * controls the Pool manager
  *)
 let start_link ?(connections = 10) (driver : Driver.t) =
-  let pool_id = Poolparty.start_link ~pool_size:connections in
+  let pool_id = Pool.start_link ~pool_size:connections in
 
   let pids =
     List.init connections (fun _ ->
         let pid =
           spawn (fun () ->
               match Driver.connect driver with
-              | Ok c -> Poolparty.add_item pool_id c
+              | Ok c ->
+                Pool.add_connection ~connection_manager_pid:pool_id ~item:c
               | Error _ -> error (fun f -> f "failed to start driver"))
         in
 
@@ -31,22 +34,12 @@ let start_link ?(connections = 10) (driver : Driver.t) =
 
   Ok pool_id
 
-let execute pool_id query =
-  let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
+(** raw_execute send a query to the database and return raw bytes *)
+let raw_execute connection_manager_id params query =
+  let* (holder_pid, connection) = Pool.get_connection connection_manager_id in
 
-  let result = Connection.execute item.item query in
+  let result = Connection.execute connection params query in
 
-  Poolparty.release pool_id item.holder_pid;
+  Pool.release_connection connection_manager_id ~holder_pid;
 
-  result
-
-let fetch_one pool_id ?params query =
-  let p =
-    match params with
-    | Some p -> p
-    | None -> []
-  in
-
-  match execute pool_id p query with
-  | Ok rows -> Ok rows
-  | Error e -> Error e
+  Ok result

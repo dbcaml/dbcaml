@@ -1,4 +1,0 @@
-(library
- (name buffer_tools)
- (public_name buffer_tools)
- (libraries bytestring))

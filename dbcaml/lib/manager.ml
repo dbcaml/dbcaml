@@ -15,7 +15,7 @@ let rec handle_messages connection_manager_pid global_storage storage_mutex =
    * CheckIn triggers when a holder is either reigstered for the first time or 
    * have been unlocked by a process so it can go on duty again
    *)
-  | Message_passing.CheckIn child_pid ->
+  | Messages.CheckIn child_pid ->
     debug (fun f -> f "Check in pid: %a" Pid.pp child_pid);
     (* Storage the current holder PID as ready to handle jobs in our in memory table *)
     Storage.add_or_replace global_storage storage_mutex child_pid Storage.Ready
@@ -24,7 +24,7 @@ let rec handle_messages connection_manager_pid global_storage storage_mutex =
     * When this message is sent to the manager do the manager set the state of the holder to buzy
     * and then tell the holder to send whatever it holds to the client that requested a lock.
    *)
-  | Message_passing.LockHolder requester_pid ->
+  | Messages.LockHolder requester_pid ->
     debug (fun f ->
         f "Acquire a holder lock for requester: %a" Pid.pp requester_pid);
     (match Storage.available_holder global_storage storage_mutex with
@@ -35,6 +35,7 @@ let rec handle_messages connection_manager_pid global_storage storage_mutex =
         storage_mutex
         holder_pid
         Storage.Busy;
+
       debug (fun f ->
           f
             "Selected and locked holder %a for requester %a"
@@ -42,10 +43,11 @@ let rec handle_messages connection_manager_pid global_storage storage_mutex =
             holder_pid
             Pid.pp
             requester_pid);
-      send holder_pid (Message_passing.CheckOut requester_pid)
+
+      send holder_pid (Messages.CheckOut requester_pid)
     | Error _ ->
       debug (fun f -> f "not enough holders, retrying...");
-      send connection_manager_pid (Message_passing.LockHolder requester_pid))
+      send connection_manager_pid (Messages.LockHolder requester_pid))
   | _ -> error (fun f -> f "Got a message with a type I don't know about"));
 
   handle_messages connection_manager_pid global_storage storage_mutex
