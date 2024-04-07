@@ -1,4 +1,4 @@
-open Dbcaml_driver_postgres.Pg_arguments
+open Messages.Bind
 
 let test_escape_no_quotes () =
   Alcotest.(check string)

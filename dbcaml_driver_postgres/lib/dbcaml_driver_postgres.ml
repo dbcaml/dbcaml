@@ -1,5 +1,4 @@
 module Bs = Bytestring
-module Pg_arguments = Pg_arguments
 
 let ( let* ) = Result.bind
 
@@ -9,9 +8,17 @@ module Postgres = struct
   let connect config =
     let* (conn, conninfo) = Pg.connect config.conninfo in
 
-    let* (message_format, _) =
-      Startup.start ~conn ~username:conninfo.user ~database:conninfo.database
+    Pg_logger.debug "Sending startup message";
+    let* _ =
+      Pg.send
+        conn
+        ~buffer:
+          (Messages.Startup.start
+             ~username:conninfo.user
+             ~database:conninfo.database)
     in
+
+    let* (_, message_format, _) = Pg.receive conn in
 
     let* _ =
       match message_format with
@@ -33,15 +40,15 @@ module Postgres = struct
                (Message_format.to_string ~format:mf)))
     in
 
-    let execute conn params query =
-      match Executer.execute ~conn ~query ~params with
+    let query ~connection ~params ~query ~row_limit =
+      match Executer.query ~conn:connection ~query ~row_limit ~params with
       | Ok response -> Ok (Streaming.Stream.of_string response)
       | Error (`Msg e) -> Error (Dbcaml.Res.ExecutionError e)
       | Error _ -> Error (Dbcaml.Res.ExecutionError "Unknown error")
     in
 
     (* Create a new connection which we also want to use to create a PID *)
-    let* conn = Dbcaml.Connection.make ~conn ~execute () in
+    let* conn = Dbcaml.Connection.make ~conn ~query () in
 
     Ok conn
 end

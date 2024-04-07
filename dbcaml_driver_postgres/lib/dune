@@ -6,6 +6,7 @@
   streaming
   uri
   dbcaml
+  messages
   bytestring
   str
   random

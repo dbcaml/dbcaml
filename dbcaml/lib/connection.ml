@@ -8,19 +8,21 @@ type t =
       (* 'conn is a generic *)
       conn: 'conn;
       (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
-      execute:
-        (* FIXME: we should return streaming here from the driver *)
-        'conn ->
-        Param.t list ->
-        string ->
+      query:
+        connection:
+          (* FIXME: we should return streaming here from the driver *)
+          'conn ->
+        params:Param.t list ->
+        query:string ->
+        row_limit:int ->
         (char Streaming.stream, Res.execution_error) result;
     }
       -> t
 
 (* Create a new connection based of type t.
    This function is used by the drivers to make it possible to have different drivers without doing a lot of matching what type the driver is *)
-let make ~conn ~execute () = Ok (C { conn; execute })
+let make ~conn ~query () = Ok (C { conn; query })
 
-let execute conn params query =
+let query ~conn ~params ~query ~row_limit =
   match conn with
-  | C c -> c.execute c.conn params query
+  | C c -> c.query ~connection:c.conn ~params ~query ~row_limit

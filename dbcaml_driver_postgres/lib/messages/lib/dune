@@ -1,0 +1,4 @@
+(library
+ (name messages)
+ (package dbcaml-driver-postgres)
+ (libraries riot dbcaml))

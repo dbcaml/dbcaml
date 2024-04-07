@@ -1,5 +1,7 @@
 let ( let* ) = Result.bind
 
+open Messages
+
 let scram_hi ~data ~salt ~iterations =
   Pbkdf.pbkdf2
     ~prf:`SHA256

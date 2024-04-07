@@ -35,7 +35,7 @@ let start_link ?(connections = 10) (driver : Driver.t) =
   Ok pool_id
 
 (** raw_exeute send a query to the database and return raw bytes *)
-let raw_execute connection_manager_id params query =
+let raw_query ?(row_limit = 0) connection_manager_id ~params ~query =
   let p =
     match params with
     | Some opts -> opts
@@ -48,7 +48,7 @@ let raw_execute connection_manager_id params query =
     | Error e -> failwith e
   in
 
-  let result = Connection.execute connection p query in
+  let result = Connection.query ~conn:connection ~params:p ~query ~row_limit in
 
   Pool.release_connection connection_manager_id ~holder_pid;
 
