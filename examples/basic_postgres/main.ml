@@ -15,15 +15,21 @@ let () =
   let pool_id =
     match
       Silo_postgres.start
-        ~connections:10
+        ~connections:4
         "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
     with
     | Ok conn -> conn
     | Error e -> failwith e
   in
 
-  (match Silo_postgres.fetch_one pool_id ~query:"select * from users" with
-  | Ok x -> Silo_postgres.map_to_type x
-  | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
+  let _ =
+    match
+      Silo_postgres.fetch_one pool_id ~query:"select * from users limit 10"
+    with
+    | Ok x ->
+      let _ = Silo_postgres.to_type x in
+      ()
+    | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x)
+  in
 
   ()

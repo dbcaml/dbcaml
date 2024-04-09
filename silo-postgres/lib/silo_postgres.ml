@@ -10,4 +10,6 @@ let fetch_one ?(params = None) connection_manager_pid ~query =
 
   result
 
-let map_to_type message = Map.map_to_type message
+let to_type message =
+  let bytes_stream = Streaming.Stream.to_string message |> Bytes.of_string in
+  Decode.decode_row_description bytes_stream

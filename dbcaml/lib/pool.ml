@@ -2,7 +2,7 @@ open Riot
 module Messages = Messages
 
 open Logger.Make (struct
-  let namespace = ["poolparty"]
+  let namespace = ["dbcaml"; "pool"]
 end)
 
 let start_link ~pool_size =
@@ -11,11 +11,6 @@ let start_link ~pool_size =
   match Supervisor.start_link ~restart_limit:10 ~child_specs () with
   | Ok s -> s
   | Error _ -> failwith "Failed to start link"
-
-let add_connection ~connection_manager_pid ~item =
-  let _ = Holder.new_holder connection_manager_pid item in
-
-  ()
 
 let get_connection connection_manager_pid =
   send connection_manager_pid (Messages.LockHolder (self ()));
