@@ -1,3 +1,5 @@
+let ( let* ) = Result.bind
+
 let start ?(connections = 10) conninfo =
   let driver = Dbcaml_driver_postgres.connection conninfo in
 
@@ -12,4 +14,8 @@ let fetch_one ?(params = None) connection_manager_pid ~query =
 
 let to_type message =
   let bytes_stream = Streaming.Stream.to_string message |> Bytes.of_string in
-  Decode.decode_row_description bytes_stream
+  let* headers = Decode.decode_row_description bytes_stream in
+
+  List.iter (fun (x : Decode.field) -> print_string x.name) headers;
+
+  Ok (Bytes.of_string "")
