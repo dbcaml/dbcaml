@@ -59,6 +59,21 @@
   (alcotest :with-test)
   dune
   streaming
+  serde
+  serde_derive
   dbcaml)
  (tags
   (topics "postgres" "ocaml")))
+
+(package
+ (name serde-postgres)
+ (synopsis "serde-postgres")
+ (description "serde-postgres")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  serde
+  serde_derive)
+ (tags
+  (topics "postgres" "serde" "ocaml")))

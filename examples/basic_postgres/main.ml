@@ -4,6 +4,12 @@ open Logger.Make (struct
   let namespace = ["dbcaml"; "dbcaml_driver_postgres"]
 end)
 
+type user = {
+  id: int;
+  name: string;
+}
+[@@deriving serialize, deserialize]
+
 let () =
   Riot.run @@ fun () ->
   let _ = Logger.start () |> Result.get_ok in
@@ -23,9 +29,7 @@ let () =
   in
 
   let _ =
-    match
-      Silo_postgres.fetch_one pool_id ~query:"select * from users limit 10"
-    with
+    match Silo_postgres.fetch_one pool_id ~query:"select * from users" with
     | Ok x ->
       let _ = Silo_postgres.to_type x in
       ()

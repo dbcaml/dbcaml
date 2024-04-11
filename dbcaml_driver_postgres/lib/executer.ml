@@ -35,6 +35,7 @@ let query_with_params ~conn ~query ~row_limit ~params =
   Buffer.add_buffer buffer sync_buffer;
 
   let* _ = Pg.send conn ~buffer in
+
   Parse_message.wait_for_response conn
 
 let query ~conn ~params ~query ~row_limit =

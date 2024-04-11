@@ -43,7 +43,11 @@ let raw_query ?(row_limit = 0) connection_manager_id ~params ~query =
     | Error e -> failwith e
   in
 
-  let result = Connection.query ~conn:connection ~params:p ~query ~row_limit in
+  let result =
+    match Connection.query ~conn:connection ~params:p ~query ~row_limit with
+    | Ok s -> Ok (Streaming.Stream.to_string s)
+    | Error e -> Error (Res.execution_error_to_string e)
+  in
 
   Pool.release_connection connection_manager_id ~holder_pid;
 

@@ -47,9 +47,8 @@ let get_str_nul buf =
   (value, new_bytes)
 
 let rec decode_row index amount_fields (acc : field list) buf =
-  if index < amount_fields then (
+  if index < amount_fields then
     let (name, buf) = get_str_nul buf in
-    Printf.printf "name: %s \n" name;
     let (relation_id, buf) =
       let (value, new_buf) = get_i32 buf in
       if Int32.compare value Int32.zero = 0 then
@@ -57,7 +56,6 @@ let rec decode_row index amount_fields (acc : field list) buf =
       else
         (Some (Int32.to_int value), new_buf)
     in
-    Printf.printf "relation_id: %d \n" (Option.get relation_id);
     let (relation_attribute_no, buf) =
       let (value, new_buf) = get_i16 buf in
       if value == 0 then
@@ -65,19 +63,14 @@ let rec decode_row index amount_fields (acc : field list) buf =
       else
         (Some value, new_buf)
     in
-    Printf.printf
-      "relation_attribute_no: %d \n"
-      (Option.get relation_attribute_no);
     let (data_type_id, buf) = get_u32 buf in
     let data_type_id = Int32.to_int data_type_id in
-    Printf.printf "data_type_id: %d \n" data_type_id;
     let (data_type_size, buf) = get_i16 buf in
-    Printf.printf "data_type_size: %d \n" data_type_size;
     let (type_modifier, buf) = get_i32 buf in
     let type_modifier = Int32.to_int type_modifier in
-    Printf.printf "type_modifier: %d \n" type_modifier;
     let (format, buf) = get_i16 buf in
-    Printf.printf "format: %d \n" format;
+
+    let buf = Bytes.sub buf 1 (Bytes.length buf - 1) in
 
     let f =
       {
@@ -92,19 +85,20 @@ let rec decode_row index amount_fields (acc : field list) buf =
     in
     (* TODO: return the new buffer without row description*)
     decode_row (index + 1) amount_fields (acc @ [f]) buf
-  ) else
-    acc
+  else
+    (acc, buf)
 
 let decode_row_description buf : (field list, string) result =
-  Printf.printf "%S\n\n" (Bytes.to_string buf);
-  let (cnt, buf) = get_u16 buf in
-  print_newline ();
-  print_newline ();
-  Printf.printf "Value: %d" cnt;
-  Printf.printf "%S" (String.of_bytes buf);
-  print_newline ();
-  print_newline ();
+  let (amount_of_columns, buf) = get_u16 buf in
 
-  let fields = decode_row 0 cnt [] buf in
+  let (fields, buf) = decode_row 0 amount_of_columns [] buf in
+
+  List.iter
+    (fun (x : field) ->
+      print_endline x.name;
+      ())
+    fields;
+
+  Printf.printf "%S" (String.of_bytes buf);
 
   Ok fields

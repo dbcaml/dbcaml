@@ -2,4 +2,4 @@
  (package dbcaml)
  (public_name basic_postgres)
  (name main)
- (libraries silo-postgres riot))
+ (libraries silo-postgres serde serde_derive riot))
