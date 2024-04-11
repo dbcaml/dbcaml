@@ -4,43 +4,35 @@ let ( let* ) = Result.bind
 
 module Postgres = struct
   module Parser = struct
-    type t = { lexbuf: Lexing.lexbuf }
+    type t = { value: bytes }
 
-    let debug t =
-      let buf = Bytes.unsafe_to_string t.lexbuf.lex_buffer in
-      let padding = " " ^ String.make t.lexbuf.lex_curr_pos ' ' ^ "^" in
-      Printf.printf "buff:\n`%s`\n%s\n" buf padding
+    let debug t = Printf.printf "buff: %S" t
 
-    let of_bytes string = { lexbuf = Lexing.from_string string }
+    let of_bytes value = { value }
 
     let _run fn = Ok (fn ())
 
-    let peek { lexbuf; _ } =
-      if lexbuf.lex_curr_pos < lexbuf.lex_buffer_len then
-        Some (Bytes.unsafe_to_string lexbuf.lex_buffer).[lexbuf.lex_curr_pos]
-      else
-        None
+    let peek { value } = None (*FIXME: figure out what this is*)
 
-    let read_bool { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_bool yojson lexbuf)
+    let read_bool { value } =
+      _run (fun () -> bool_of_string (String.of_bytes value))
 
-    let read_string { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_string yojson lexbuf)
+    let read_string { value } = _run (fun () -> String.of_bytes value)
 
-    let read_int8 { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_int8 yojson lexbuf)
+    let read_int8 { value } =
+      _run (fun () -> int_of_string (String.of_bytes value))
 
-    let read_int { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_int yojson lexbuf)
+    let read_int { value } =
+      _run (fun () -> int_of_string (String.of_bytes value))
 
-    let read_int32 { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_int32 yojson lexbuf)
+    let read_int32 { value } =
+      _run (fun () -> String.of_bytes value |> Int32.of_string)
 
-    let read_int64 { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_int64 yojson lexbuf)
+    let read_int64 { value } =
+      _run (fun () -> String.of_bytes value |> Int64.of_string)
 
-    let read_float { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_number yojson lexbuf)
+    let read_float { value } =
+      _run (fun () -> float_of_string_opt (String.of_bytes value))
 
     let read_null_if_possible { lexbuf } =
       _run (fun () -> Yojson.Safe.read_null_if_possible yojson lexbuf)
