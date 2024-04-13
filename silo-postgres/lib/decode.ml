@@ -88,7 +88,7 @@ let rec decode_row index amount_fields (acc : field list) buf =
   else
     (acc, buf)
 
-let decode_row_description buf : (field list, string) result =
+let decode_row_description buf =
   let (amount_of_columns, buf) = get_u16 buf in
 
   let (fields, buf) = decode_row 0 amount_of_columns [] buf in
@@ -101,4 +101,4 @@ let decode_row_description buf : (field list, string) result =
 
   Printf.printf "%S" (String.of_bytes buf);
 
-  Ok fields
+  Ok (buf, fields)

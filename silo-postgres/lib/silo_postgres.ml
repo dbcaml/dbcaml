@@ -13,9 +13,12 @@ let fetch_one ?(params = None) connection_manager_pid ~query =
   result
 
 let to_type message =
-  let bytes_stream = Streaming.Stream.to_string message |> Bytes.of_string in
-  let* headers = Decode.decode_row_description bytes_stream in
+  let* (buffer, headers) =
+    Decode.decode_row_description (Bytes.of_string message)
+  in
 
   List.iter (fun (x : Decode.field) -> print_string x.name) headers;
+
+  Printf.printf "%S" (Bytes.to_string buffer);
 
   Ok (Bytes.of_string "")

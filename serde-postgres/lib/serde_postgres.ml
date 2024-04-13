@@ -12,7 +12,7 @@ module Postgres = struct
 
     let _run fn = Ok (fn ())
 
-    let peek { value } = None (*FIXME: figure out what this is*)
+    let peek _ = None (*FIXME: figure out what this is*)
 
     let read_bool { value } =
       _run (fun () -> bool_of_string (String.of_bytes value))
@@ -34,42 +34,10 @@ module Postgres = struct
     let read_float { value } =
       _run (fun () -> float_of_string_opt (String.of_bytes value))
 
-    let read_null_if_possible { lexbuf } =
+    let read_null_if_possible { value } =
       _run (fun () -> Yojson.Safe.read_null_if_possible yojson lexbuf)
 
-    let read_null { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_null yojson lexbuf)
-
-    let read_object_start { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_lcurl yojson lexbuf)
-
-    let read_field_sep { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_object_sep yojson lexbuf)
-
-    let read_object_end { lexbuf; _ } =
-      _run (fun () ->
-          try Yojson.Safe.read_object_end lexbuf with
-          | Yojson.End_of_object -> ())
-
-    let read_open_bracket { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_lbr yojson lexbuf)
-
-    let read_close_bracket { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_rbr yojson lexbuf)
-
-    let read_comma { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_comma yojson lexbuf)
-
-    let read_colon { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_colon yojson lexbuf)
-
-    let skip_space { lexbuf } =
-      _run (fun () -> Yojson.Safe.read_space yojson lexbuf) |> ignore;
-      ()
-
-    let skip_any { lexbuf } =
-      _run (fun () -> Yojson.Safe.skip_json yojson lexbuf) |> ignore;
-      ()
+    let read_null _ = _run (fun () -> "") (* FIXME: change this *)
   end
 end
 
@@ -116,13 +84,13 @@ module Deserializer = struct
     let* str = De.deserialize_string self in
     Visitor.visit_string self visitor str
 
+  (*TODO: read sequence *)
   let deserialize_sequence self s ~size de =
-    let* () = Parser.read_open_bracket s.reader in
     s.kind <- First;
     let* v = De.deserialize self (de ~size) in
-    let* () = Parser.read_close_bracket s.reader in
     Ok v
 
+  (**)
   let deserialize_element self s de =
     match Parser.peek s.reader with
     | Some ']' -> Ok None
@@ -131,7 +99,7 @@ module Deserializer = struct
         if s.kind = First then
           Ok ()
         else
-          Parser.read_comma s.reader
+          Ok ()
       in
       s.kind <- Rest;
       let* v = De.deserialize self de in
@@ -175,7 +143,7 @@ module Deserializer = struct
       Parser.skip_space s.reader;
       let* () = Parser.read_object_end s.reader in
       Ok value
-    | Some c -> failwith (Format.sprintf "what: %c" c)
+    | Some c -> failwith (Printf.sprintf "what: %c" c)
     | None -> failwith "unexpected eof"
 
   let deserialize_key self s visitor =
