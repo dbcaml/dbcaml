@@ -20,7 +20,7 @@ module Postgres = struct
     let read_string { value } = _run (fun () -> String.of_bytes value)
 
     let read_int8 { value } =
-      _run (fun () -> int_of_string (String.of_bytes value))
+      _run (fun () -> int_of_string (String.of_bytes value) |> char_of_int)
 
     let read_int { value } =
       _run (fun () -> int_of_string (String.of_bytes value))
@@ -32,12 +32,17 @@ module Postgres = struct
       _run (fun () -> String.of_bytes value |> Int64.of_string)
 
     let read_float { value } =
-      _run (fun () -> float_of_string_opt (String.of_bytes value))
+      _run (fun () -> float_of_string (String.of_bytes value))
 
-    let read_null_if_possible { value } =
-      _run (fun () -> Yojson.Safe.read_null_if_possible yojson lexbuf)
+    let read_null _ = _run (fun () -> ()) (* FIXME: change this *)
 
-    let read_null _ = _run (fun () -> "") (* FIXME: change this *)
+    let read_object_start _ = _run (fun () -> ()) (* FIXME: change this *)
+
+    let read_object_end _ = _run (fun () -> ()) (* FIXME: change this *)
+
+    let skip_row_information _ = () (* FIXME: change this *)
+
+    let read_end _ = _run (fun () -> ()) (* FIXME: change this *)
   end
 end
 
@@ -72,6 +77,8 @@ module Deserializer = struct
   let deserialize_string _self state = Parser.read_string state.reader
 
   let deserialize_option self { reader; _ } de =
+    print_int 12;
+    print_newline ();
     match Parser.peek reader with
     | Some 'n' ->
       let* () = Parser.read_null reader in
@@ -81,17 +88,23 @@ module Deserializer = struct
       Ok (Some v)
 
   let deserialize_identifier self _state visitor =
+    print_int 11;
+    print_newline ();
     let* str = De.deserialize_string self in
     Visitor.visit_string self visitor str
 
   (*TODO: read sequence *)
   let deserialize_sequence self s ~size de =
+    print_int 10;
+    print_newline ();
     s.kind <- First;
     let* v = De.deserialize self (de ~size) in
     Ok v
 
   (**)
   let deserialize_element self s de =
+    print_int 9;
+    print_newline ();
     match Parser.peek s.reader with
     | Some ']' -> Ok None
     | _ ->
@@ -105,49 +118,62 @@ module Deserializer = struct
       let* v = De.deserialize self de in
       Ok (Some v)
 
-  let deserialize_unit_variant _self _state = Ok ()
+  let deserialize_unit_variant _self _state =
+    print_int 8;
+    print_newline ();
+    Ok ()
 
-  let deserialize_newtype_variant self { reader; _ } de =
-    let* () = Parser.read_colon reader in
+  let deserialize_newtype_variant self _ de =
+    print_int 7;
+    print_newline ();
     De.deserialize self de
 
-  let deserialize_tuple_variant self { reader; _ } ~size de =
-    let* () = Parser.read_colon reader in
+  let deserialize_tuple_variant self _ ~size de =
+    print_int 6;
+    print_newline ();
     De.deserialize_sequence self size de
 
-  let deserialize_record_variant self { reader; _ } ~size de =
-    let* () = Parser.read_colon reader in
+  let deserialize_record_variant self _ ~size de =
+    print_int 5;
+    print_newline ();
     De.deserialize_record self "" size (de ~size)
 
   let deserialize_variant self { reader; _ } de ~name:_ ~variants:_ =
-    Parser.skip_space reader;
+    print_int 4;
+    print_newline ();
+    Parser.skip_row_information reader;
     match Parser.peek reader with
     | Some '{' ->
       let* () = Parser.read_object_start reader in
-      Parser.skip_space reader;
+      Parser.skip_row_information reader;
       let* value = De.deserialize self de in
-      Parser.skip_space reader;
+      Parser.skip_row_information reader;
       let* () = Parser.read_object_end reader in
       Ok value
     | Some '"' -> De.deserialize self de
     | _ -> assert false
 
   let deserialize_record self s ~name:_ ~size:_ fields =
-    Parser.skip_space s.reader;
+    print_int 3;
+    print_newline ();
+    Printf.printf "%S" (Bytes.to_string s.reader.value);
+    Parser.skip_row_information s.reader;
     match Parser.peek s.reader with
     | Some '{' ->
       let* () = Parser.read_object_start s.reader in
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
       s.kind <- First;
       let* value = De.deserialize self fields in
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
       let* () = Parser.read_object_end s.reader in
       Ok value
     | Some c -> failwith (Printf.sprintf "what: %c" c)
     | None -> failwith "unexpected eof"
 
   let deserialize_key self s visitor =
-    Parser.skip_space s.reader;
+    print_int 11;
+    print_newline ();
+    Parser.skip_row_information s.reader;
     match Parser.peek s.reader with
     | Some '}' -> Ok None
     | _ ->
@@ -155,48 +181,52 @@ module Deserializer = struct
         if s.kind = First then
           Ok ()
         else
-          Parser.read_comma s.reader
+          Parser.read_end s.reader
       in
       s.kind <- Rest;
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
       let* str = De.deserialize_string self in
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
       let* key = Visitor.visit_string self visitor str in
-      Parser.skip_space s.reader;
-      let* () = Parser.read_colon s.reader in
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
+      let* () = Parser.read_end s.reader in
+      Parser.skip_row_information s.reader;
       Ok (Some key)
 
   let deserialize_field self s ~name:_ de =
-    Parser.skip_space s.reader;
+    print_int 2;
+    print_newline ();
+    Parser.skip_row_information s.reader;
     De.deserialize self de
 
   let deserialize_ignored_any _self s =
-    Parser.skip_space s.reader;
+    print_int 1;
+    print_newline ();
+    Parser.skip_row_information s.reader;
     match Parser.peek s.reader with
     | Some '}' -> Ok ()
     | Some ',' ->
-      let* _ = Parser.read_comma s.reader in
-      Parser.skip_space s.reader;
-      let _ = Parser.skip_any s.reader in
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
+      Parser.skip_row_information s.reader;
       Ok ()
     | Some _ ->
-      Parser.skip_space s.reader;
-      let _ = Parser.skip_any s.reader in
-      Parser.skip_space s.reader;
+      Parser.skip_row_information s.reader;
+      Parser.skip_row_information s.reader;
       Ok ()
     | None -> failwith "unexpected eof"
 end
 
-let of_row de string =
-  let state =
-    Deserializer.{ reader = Postgres.Parser.of_bytes string; kind = First }
-  in
-  Serde.deserialize (module Deserializer) state de
+let rec parse_row buf de acc =
+  if Bytes.get buf 0 = 'D' then
+    let state =
+      Deserializer.{ reader = Postgres.Parser.of_bytes buf; kind = First }
+    in
+    let row = Serde.deserialize (module Deserializer) state de parse_row in
+    parse_row buf (acc @ [row])
+  else
+    acc
 
 let of_rows de string =
-  let state =
-    Deserializer.{ reader = Postgres.Parser.of_bytes string; kind = First }
-  in
-  Serde.deserialize (module Deserializer) state de
+  Printf.printf " Data: \n\n %S  \n\n" (Bytes.to_string string);
+
+  parse_row string de []

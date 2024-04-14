@@ -93,12 +93,4 @@ let decode_row_description buf =
 
   let (fields, buf) = decode_row 0 amount_of_columns [] buf in
 
-  List.iter
-    (fun (x : field) ->
-      print_endline x.name;
-      ())
-    fields;
-
-  Printf.printf "%S" (String.of_bytes buf);
-
   Ok (buf, fields)

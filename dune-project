@@ -51,7 +51,7 @@
   (topics "database" "dbcaml" "dbcaml")))
 
 (package
- (name silo-postgres)
+ (name silo)
  (synopsis "Silo")
  (description "Silo")
  (depends

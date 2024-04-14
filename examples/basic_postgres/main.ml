@@ -1,41 +1,46 @@
 open Riot
 
 open Logger.Make (struct
-  let namespace = ["dbcaml"; "dbcaml_driver_postgres"]
+  let namespace = ["examples"; "basic_postgres"]
 end)
 
-(* type user = { *)
-(*   id: int; *)
-(*   name: string; *)
-(* } *)
-(* [@@deriving serialize, deserialize] *)
+type user = {
+  id: int;
+  name: string;
+}
+[@@deriving serialize, deserialize]
 
 let () =
   Riot.run @@ fun () ->
   let _ = Logger.start () |> Result.get_ok in
-
   set_log_level (Some Logger.Debug);
-
   info (fun f -> f "Starting application");
 
+  (* Start the database connection pool *)
   let pool_id =
     match
-      Silo_postgres.start
+      Silo.start
         ~connections:4
-        "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
+        (Dbcaml_driver_postgres.connection
+           "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled")
     with
     | Ok conn -> conn
     | Error e -> failwith e
   in
 
-  let _ =
+  (* Fetch the user and return the user to a variable *)
+  let fetched_user =
     match
-      Silo_postgres.fetch_one pool_id ~query:"select * from users limit 1"
+      Silo.fetch_one
+        pool_id
+        ~query:"select name, id from users limit 10"
+        ~deserializer:deserialize_user
     with
-    | Ok x ->
-      let _ = Silo_postgres.to_type x in
-      ()
-    | Error x -> print_endline x
+    | Ok x -> x
+    | Error x -> failwith x
   in
+
+  (* Print the users name *)
+  print_endline fetched_user.name;
 
   ()

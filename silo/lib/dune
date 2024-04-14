@@ -1,0 +1,4 @@
+(library
+ (name silo)
+ (public_name silo)
+ (libraries dbcaml dbcaml-driver-postgres serde-postgres streaming))
