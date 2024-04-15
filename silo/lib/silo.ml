@@ -17,9 +17,9 @@ let config ~connections ~driver ~connection_string =
 
 let connect ~config =
   match config with
-  | Config (module Driver) ->
-    Dbcaml.start_link ~connections:config.connections connection
-  | _ -> Error "Failed to match"
+  | Config { driver = (module DriverModule); connections; connection_string } ->
+    let connection = DriverModule.connection connection_string in
+    Dbcaml.start_link ~connections connection
 
 let fetch_one ?(params = None) connection_manager_pid ~query ~deserializer =
   let* result =
