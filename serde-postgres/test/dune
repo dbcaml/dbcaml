@@ -1,0 +1,4 @@
+(test
+ (name test_serde)
+ (package serde-postgres)
+ (libraries alcotest))

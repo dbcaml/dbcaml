@@ -156,7 +156,7 @@ module Deserializer = struct
   let deserialize_record self s ~name:_ ~size:_ fields =
     print_int 3;
     print_newline ();
-    Printf.printf "%S" (Bytes.to_string s.reader.value);
+    Printf.printf "dagen d : %S" (Bytes.to_string s.reader.value);
     Parser.skip_row_information s.reader;
     match Parser.peek s.reader with
     | Some '{' ->
@@ -221,12 +221,10 @@ let rec parse_row buf de acc =
     let state =
       Deserializer.{ reader = Postgres.Parser.of_bytes buf; kind = First }
     in
+    let row_length = 120 in
     let* row = Serde.deserialize (module Deserializer) state de in
     parse_row buf de (acc @ [row])
   else
     Ok acc
 
-let of_rows de string =
-  Printf.printf " Data: \n\n %S  \n\n" (Bytes.to_string string);
-
-  parse_row string de []
+let of_rows de string = parse_row string de []
