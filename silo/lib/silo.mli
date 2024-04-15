@@ -1,6 +1,15 @@
 open Riot
 
-val start : ?connections:int -> Dbcaml.Driver.t -> (Pid.t, string) result
+type t
+
+module type Intf = sig
+  val connection : string -> Dbcaml.Driver.t
+end
+
+val config :
+  connections:int -> driver:(module Intf) -> connection_string:string -> t
+
+val connect : config:t -> (Pid.t, string) result
 
 val fetch_one :
   ?params:Dbcaml.Param.t list option ->

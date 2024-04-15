@@ -221,10 +221,10 @@ let rec parse_row buf de acc =
     let state =
       Deserializer.{ reader = Postgres.Parser.of_bytes buf; kind = First }
     in
-    let row = Serde.deserialize (module Deserializer) state de parse_row in
-    parse_row buf (acc @ [row])
+    let* row = Serde.deserialize (module Deserializer) state de in
+    parse_row buf de (acc @ [row])
   else
-    acc
+    Ok acc
 
 let of_rows de string =
   Printf.printf " Data: \n\n %S  \n\n" (Bytes.to_string string);
