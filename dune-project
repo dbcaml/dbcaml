@@ -24,8 +24,9 @@
   dune
   (alcotest :with-test)
   (riot
-   (>= 0.0.8))
-  uri)
+   (>= 0.0.9))
+  uri
+  streaming)
  (tags
   (topics "database" "dbcaml")))
 
@@ -38,24 +39,42 @@
   (alcotest :with-test)
   dune
   (riot
-   (>= 0.0.8))
+   (>= 0.0.9))
   dbcaml
   bytestring
   cryptokit
   castore
   random
+  streaming
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
 
 (package
- (name buffer_tools)
- (synopsis "Buffer tools for DBcaml")
- (description "Buffer tools for DBcaml")
+ (name silo-postgres)
+ (synopsis "Silo postgres")
+ (description "Silo postgres")
  (depends
   ocaml
   (alcotest :with-test)
   dune
-  bytestring)
+  streaming
+  serde
+  serde_postgres
+  serde_derive
+  dbcaml)
  (tags
-  (topics "bytes" "enbcoder" "ocaml")))
+  (topics "postgres" "ocaml")))
+
+(package
+ (name serde-postgres)
+ (synopsis "serde-postgres")
+ (description "serde-postgres")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  serde
+  serde_derive)
+ (tags
+  (topics "postgres" "serde" "ocaml")))

@@ -14,7 +14,7 @@ let rec parse_response message_type message =
   | CloseComplete ->
     (match Message_format.message (Bytes.of_string message) with
     | Error _ as e -> e
-    | Ok (mt, m) -> parse_response mt m)
+    | Ok (mt, _, m) -> parse_response mt m)
   (* FIXME: implement me, this should be some parsing *)
   | DataRow -> Ok message
   (* FIXME: implement me. used when exec queries is the one used. *)
@@ -30,6 +30,6 @@ let rec parse_response message_type message =
            message))
 
 let wait_for_response conn =
-  let* (_, message_type, message) = Pg.receive conn in
+  let* (_, message_type, _size, message) = Pg.receive conn in
 
   parse_response message_type message

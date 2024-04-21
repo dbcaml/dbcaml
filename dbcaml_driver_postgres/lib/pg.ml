@@ -21,11 +21,11 @@ let send (Conn { writer; _ } as conn) ~buffer =
 let receive (Conn { reader; _ } as conn) =
   let* data = Bs.with_bytes (fun buf -> IO.read reader buf) in
 
-  let* (message_type, message) =
+  let* (message_type, size, message) =
     Message_format.message (Bs.to_string data |> Bytes.of_string)
   in
 
-  Ok (conn, message_type, message)
+  Ok (conn, message_type, size, message)
 
 let make_connection ~reader ~writer ~uri ~addr =
   Conn { writer; reader; uri; addr }

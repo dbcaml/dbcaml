@@ -86,7 +86,8 @@ let message buf =
     | Error e -> raise (Error e)
   in
 
-  (* Postgres start each message with the type and the length of each message so we offset the message with 5 bytes to get just the message *)
-  let message = Bytes.sub buf 5 (Bytes.length buf - 5) |> String.of_bytes in
+  let size = Bytes.get_int32_be buf 1 in
 
-  Ok (message_type, message)
+  let message = Bytes.to_string buf in
+
+  Ok (message_type, size, message)

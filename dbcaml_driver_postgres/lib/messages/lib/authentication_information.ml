@@ -1,6 +1,6 @@
 let ( let* ) = Result.bind
 
-type connection_information = {
+type authentication_information = {
   user: string;
   password: string;
   database: string;

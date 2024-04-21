@@ -4,6 +4,8 @@ module Driver = Driver
 module Res = Res
 module Param = Param
 
+let ( let* ) = Result.bind
+
 open Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
@@ -13,40 +15,40 @@ end)
  * controls the Pool manager
  *)
 let start_link ?(connections = 10) (driver : Driver.t) =
-  let pool_id = Poolparty.start_link ~pool_size:connections in
+  let pool_id = Pool.start_link ~pool_size:connections in
 
-  let pids =
-    List.init connections (fun _ ->
-        let pid =
-          spawn (fun () ->
-              match Driver.connect driver with
-              | Ok c -> Poolparty.add_item pool_id c
-              | Error _ -> error (fun f -> f "failed to start driver"))
-        in
-
-        pid)
+  let child_specs =
+    List.init connections (fun _ -> Driver.child_spec pool_id driver)
   in
 
-  wait_pids pids;
+  let _ =
+    match Supervisor.start_link ~restart_limit:10 ~child_specs () with
+    | Ok _ -> ()
+    | Error _ -> failwith "Failed to start supervisor"
+  in
 
   Ok pool_id
 
-let execute pool_id query =
-  let item = Poolparty.get_holder_item pool_id |> Result.get_ok in
-
-  let result = Connection.execute item.item query in
-
-  Poolparty.release pool_id item.holder_pid;
-
-  result
-
-let fetch_one pool_id ?params query =
+(** raw_exeute send a query to the database and return raw bytes *)
+let raw_query ?(row_limit = 0) connection_manager_id ~params ~query =
   let p =
     match params with
-    | Some p -> p
+    | Some opts -> opts
     | None -> []
   in
 
-  match execute pool_id p query with
-  | Ok rows -> Ok rows
-  | Error e -> Error e
+  let (holder_pid, connection) =
+    match Pool.get_connection connection_manager_id with
+    | Ok h -> h
+    | Error e -> failwith e
+  in
+
+  let result =
+    match Connection.query ~conn:connection ~params:p ~query ~row_limit with
+    | Ok s -> Ok (Streaming.Stream.to_string s)
+    | Error e -> Error (Res.execution_error_to_string e)
+  in
+
+  Pool.release_connection connection_manager_id ~holder_pid;
+
+  result

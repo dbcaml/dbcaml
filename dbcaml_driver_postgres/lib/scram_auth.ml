@@ -1,5 +1,7 @@
 let ( let* ) = Result.bind
 
+open Messages
+
 let scram_hi ~data ~salt ~iterations =
   Pbkdf.pbkdf2
     ~prf:`SHA256
@@ -34,10 +36,6 @@ let parse_payload ~payload_str =
     []
     parts
 
-let remove_bytes s =
-  let pattern = Str.regexp "[\000-\031\127-\255]" in
-  Str.global_replace pattern "" s
-
 let verify_server_proof ~server_key ~auth_message ~verifier =
   let server_signature = scram_hmac ~key:server_key ~text:auth_message in
   let decoded_verifier = Base64.decode_exn verifier in
@@ -70,9 +68,10 @@ let authenticate ~conn ~is_plus ~username ~password =
     (Printf.sprintf "Sending initial %s message to server" mechanism);
 
   let* _ = Pg.send conn ~buffer:buf in
-  let* (_, _, server_first_message) = Pg.receive conn in
+  let* (_, _, _size, server_first_message) = Pg.receive conn in
+  (* The server_first_message comes with type and length of the total message which is not information we really need so we offset the bytes with 9 *)
   let server_first_message =
-    String.sub server_first_message 4 (String.length server_first_message - 4)
+    String.sub server_first_message 9 (String.length server_first_message - 9)
   in
 
   let parsed_payload = parse_payload ~payload_str:server_first_message in
@@ -105,10 +104,11 @@ let authenticate ~conn ~is_plus ~username ~password =
   Pg_logger.debug "Sending final SCRAM-SHA-256 message to server";
 
   let* _ = Pg.send conn ~buffer:buf in
-  let* (_, _, message) = Pg.receive conn in
+  let* (_, _, _size, message) = Pg.receive conn in
 
+  (* The server_first_message comes with type and length of the total message which is not information we really need so we offset the bytes with 9 *)
   let message =
-    String.sub message 4 (String.length message - 4)
+    String.sub message 9 (String.length message - 9)
     |> String.split_on_char ','
     |> List.hd
   in

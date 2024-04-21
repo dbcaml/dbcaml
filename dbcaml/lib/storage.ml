@@ -1,7 +1,7 @@
 open Riot
 
 open Logger.Make (struct
-  let namespace = ["poolparty"; "storage"]
+  let namespace = ["dbcaml"; "storage"]
 end)
 
 type status =

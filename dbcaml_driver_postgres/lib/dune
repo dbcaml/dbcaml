@@ -3,12 +3,13 @@
  (public_name dbcaml-driver-postgres)
  (libraries
   riot
+  streaming
   uri
   dbcaml
+  messages
   bytestring
   str
   random
   cryptokit
   mirage-crypto
-  buffer_tools
   castore))

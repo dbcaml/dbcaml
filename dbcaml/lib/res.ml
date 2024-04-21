@@ -1,7 +1,3 @@
-type ('success, 'error) result =
-  | Ok of 'success
-  | Error of 'error
-
 type connection_error =
   | ConnectionError of string
   | AuthenticationError of string

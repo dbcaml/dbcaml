@@ -1,0 +1,6 @@
+(test
+ (name test_serde)
+ (package serde-postgres)
+ (libraries alcotest serde_postgres)
+ (preprocess
+  (pps serde_derive)))

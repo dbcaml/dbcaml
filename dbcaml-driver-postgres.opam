@@ -13,12 +13,13 @@ depends: [
   "ocaml"
   "alcotest" {with-test}
   "dune" {>= "3.12"}
-  "riot" {>= "0.0.8"}
+  "riot" {>= "0.0.9"}
   "dbcaml"
   "bytestring"
   "cryptokit"
   "castore"
   "random"
+  "streaming"
   "uri"
   "odoc" {with-doc}
 ]
@@ -37,3 +38,6 @@ build: [
   ]
 ]
 dev-repo: "git+https://github.com/emilpriver/dbcaml.git"
+pin-depends: [
+  ["random.0.0.2" "git+https://github.com/leostera/random"]
+]
