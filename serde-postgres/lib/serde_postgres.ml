@@ -29,6 +29,13 @@ let find_end_of_item s =
   in
   aux 0 false
 
+let unescape_string s =
+  let len = String.length s in
+  if len >= 2 && String.get s 0 = '\"' && String.get s (len - 1) = '\"' then
+    String.sub s 1 (len - 2)
+  else
+    s
+
 module Postgres = struct
   module Parser = struct
     type t = {
@@ -296,8 +303,9 @@ module Deserializer = struct
              (Parser.get_current_buf state.reader |> Bytes.to_string))
       | false -> Parser.read_column_length state.reader
     in
-    let value = Parser.read_string state.reader ~length in
-    value
+    let* value = Parser.read_string state.reader ~length in
+
+    Ok (unescape_string value)
 
   let deserialize_option self state de =
     let length = Parser.get_length state.reader |> Int32.to_int in

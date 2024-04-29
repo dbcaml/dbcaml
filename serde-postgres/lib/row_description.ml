@@ -95,6 +95,7 @@ module Decode = struct
       (acc, Bytes.sub state.buf state.pos (Bytes.length state.buf - state.pos))
 end
 
+(* Decode the row description so we can get which columns we have in the message. And then return the buffer without the RowDescription *)
 let decode_row_description buf =
   let state = Decode.make buf in
 
