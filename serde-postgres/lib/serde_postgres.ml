@@ -7,6 +7,28 @@ let rec string_of_char_list clist =
   | [] -> ""
   | head :: tail -> Char.escaped head ^ string_of_char_list tail
 
+(* Function to find the end of an item in a comma-separated list with potential quoted and escaped parts *)
+let find_end_of_item s =
+  let s_len = String.length s in
+
+  (* Finds the end of the current item, considering escaping and quoted strings *)
+  let rec aux pos inside_quotes =
+    if pos >= s_len then
+      pos
+    (* If reached end of string, return position *)
+    else
+      match s.[pos] with
+      | '}' when not inside_quotes ->
+        pos (* Include '}' as part of the structure end *)
+      | '"' -> aux (pos + 1) (not inside_quotes) (* Toggle quote state *)
+      | '\\' when pos + 1 < s_len ->
+        aux pos inside_quotes (* Skip escaped character *)
+      | ',' when not inside_quotes ->
+        pos (* Return position at comma, end of item *)
+      | _ -> aux (pos + 1) inside_quotes
+  in
+  aux 0 false
+
 module Postgres = struct
   module Parser = struct
     type t = {
@@ -111,8 +133,12 @@ module Postgres = struct
       s.value_pos <- s.value_pos + length;
       Ok value
 
+    let read_char_no_move s = Bytes.get s.value s.value_pos
+
+    let read_next_char_no_move s = Bytes.get s.value (s.value_pos + 1)
+
     let read_char s =
-      let value = Bytes.get s.value s.value_pos in
+      let value = read_char_no_move s in
       (* Increase position with 1 as we read 1 bytes*)
       s.value_pos <- s.value_pos + 1;
       value
@@ -129,7 +155,6 @@ module Postgres = struct
         |> string_of_char_list
         |> float_of_string
       in
-      s.value_pos <- s.value_pos + length;
       Ok value
 
     (* Row values is just 4 bytes with the value of -1. If we get a NULL value do we simply offset the pos with 4 *)
@@ -194,12 +219,12 @@ module Deserializer = struct
     mutable is_escaped_string: bool;
   }
 
-  let nest { reader; _ } =
+  let nest { reader; column_names; _ } =
     {
       reader;
       kind = First;
       in_sequence = false;
-      column_names = [];
+      column_names;
       current_column_idx = 0;
       in_list = false;
       list_length = 0;
@@ -267,18 +292,18 @@ module Deserializer = struct
       match state.in_list with
       | true ->
         Ok
-          (Parser.element_item_length
-             ~escaped_string:state.is_escaped_string
-             state.reader)
+          (find_end_of_item
+             (Parser.get_current_buf state.reader |> Bytes.to_string))
       | false -> Parser.read_column_length state.reader
     in
-    Parser.read_string state.reader ~length
+    let value = Parser.read_string state.reader ~length in
+    value
 
-  let deserialize_option self s de =
-    let length = Parser.get_length s.reader |> Int32.to_int in
+  let deserialize_option self state de =
+    let length = Parser.get_length state.reader |> Int32.to_int in
     match length with
     | -1 ->
-      let* _ = Parser.read_null s.reader in
+      let* _ = Parser.read_null state.reader in
       Ok None
     | _ ->
       let* v = De.deserialize self de in
@@ -288,72 +313,75 @@ module Deserializer = struct
     let* str = De.deserialize_string self in
     Visitor.visit_string self visitor str
 
-  let deserialize_sequence self s ~size de =
-    let* _ =
-      match Parser.read_row_description s.reader with
-      | Ok (Some column_names) ->
-        s.column_names <- column_names;
-        Ok ()
-      | Ok None -> Ok ()
-      | _ -> failwith "unexpected eof"
-    in
+  let deserialize_sequence self state ~size de =
+    (match Parser.read_char_no_move state.reader with
+    (* If we begin with reading a DataRow do we know that we are parsing list of rercords. Otherwise we are not parsing a list of records *)
+    | 'D' -> state.in_sequence <- true
+    | _ -> ());
     let* rows = De.deserialize self (de ~size) in
     Ok rows
 
-  let deserialize_element self s de =
-    match Parser.peek s.reader with
-    | Some '}' ->
-      s.in_list <- false;
-      s.kind <- First;
+  let deserialize_element self state de =
+    match
+      (Parser.read_char_no_move state.reader, state.in_sequence, state.in_list)
+    with
+    (* This match case handles the beginning of a new sequence, aka when we are parsing elements and not just list of strings *)
+    | ('}', _, true) ->
+      let _ = Parser.peek state.reader in
+      state.in_list <- false;
+      state.kind <- First;
       Ok None
-    | Some peek ->
-      let* () =
-        if s.kind = First then
-          let* _ = Parser.read_list_open s.reader in
-          Ok ()
-        else
-          Ok ()
-      in
-      s.in_list <- true;
-      s.kind <- Rest;
-      s.is_escaped_string <- peek = '\"';
+    | ('}', true, false) ->
+      Error (`Msg "we shouldn't read end for array and be in sequence mode")
+    | ('D', true, false) ->
+      (* Set column index to 0 everytime we start a new DataRow as we are now parsing a new row and it would be a index offset unless we reset the current column index  *)
+      state.current_column_idx <- 0;
       let* v = De.deserialize self de in
-      let* _ = Parser.read_comma s.reader in
       Ok (Some v)
-    | None -> failwith "unexpected value"
+      (* we dont have more rows to deserialize so we close. C = Command Complete *)
+    | ('C', true, false) ->
+      Ok None
+      (* Handle if we are in list mode but we are not parsing the first item *)
+    | (_, _, true) ->
+      state.in_list <- true;
+      state.kind <- Rest;
+      let* v = De.deserialize self de in
+      let* _ = Parser.read_comma state.reader in
+      Ok (Some v)
+    | (_, _, false) ->
+      let* _ = Parser.read_int32_be state.reader ~length:4 in
+      let* _ = Parser.read_list_open state.reader in
+      state.in_list <- true;
+      state.kind <- Rest;
+      let* v = De.deserialize self de in
+      let* _ = Parser.read_comma state.reader in
+      Ok (Some v)
 
-  let deserialize_unit_variant _self _state = Ok ()
+  let deserialize_unit_variant _self _state =
+    Error (`Msg "variants deserialize not supported")
 
-  let deserialize_newtype_variant self _ de = De.deserialize self de
+  let deserialize_newtype_variant _self _state _de =
+    Error (`Msg "variants deserialize not supported")
 
-  let deserialize_tuple_variant self _state ~size de =
-    De.deserialize_sequence self size de
+  let deserialize_tuple_variant _self _state ~size:_ _de =
+    Error (`Msg "variants deserialize not supported")
 
-  let deserialize_record_variant self _state ~size de =
-    De.deserialize_record self "" size (de ~size)
+  let deserialize_record_variant _self _state ~size:_ _de =
+    Error (`Msg "variants deserialize not supported")
 
-  let deserialize_variant _self { reader; _ } _de ~name:_ ~variants:_ =
-    match Parser.peek reader with
-    | _ -> assert false
+  let deserialize_variant _self _state _de ~name:_ ~variants:_ =
+    Error (`Msg "variants deserialize not supported")
 
-  let deserialize_record self s ~name:_ ~size:_ fields =
-    let* _ =
-      match Parser.read_row_description s.reader with
-      | Ok (Some column_names) ->
-        s.column_names <- column_names;
-        Ok ()
-      | Ok None -> Ok ()
-      | _ -> failwith "unexpected eof"
-    in
-    match Parser.peek s.reader with
-    | Some 'D' ->
-      s.kind <- First;
-      let* _ = Parser.read_int32_be ~length:4 s.reader in
-      let* _ = Parser.read_int16_be ~length:2 s.reader in
+  let deserialize_record self state ~name:_ ~size:_ fields =
+    match (Parser.peek state.reader, state.in_sequence) with
+    | (Some 'D', false) ->
+      state.kind <- First;
+      let* _ = Parser.read_int32_be ~length:4 state.reader in
+      let* _ = Parser.read_int16_be ~length:2 state.reader in
       let* value = De.deserialize self fields in
       Ok value
-    | Some c -> failwith (Printf.sprintf "what: %C" c)
-    | None -> failwith "unexpected eof"
+    | (Some c, false) -> failwith (Printf.sprintf "what: %C" c)
+    | (_, _) -> failwith "unexpected eof"
 
   let deserialize_key self state visitor =
     match state.current_column_idx < List.length state.column_names with
@@ -364,7 +392,7 @@ module Deserializer = struct
       Ok (Some key)
     | false -> Ok None
 
-  let deserialize_field self _s ~name:_ de = De.deserialize self de
+  let deserialize_field self _state ~name:_ de = De.deserialize self de
 
   let deserialize_ignored_any _self s =
     match Parser.peek s.reader with
@@ -374,14 +402,24 @@ module Deserializer = struct
     | None -> failwith "unexpected eof"
 end
 
+(* TODO: improve this comment *)
+
+(** Deserialize bytes from Postgres. of_bytes needs that the bytes starts with 'T' (DataRowDescription) field in order to operate as normal. 
+    The DataRowDescription field is used by the deserializer to know which fields that exist in what order. 
+    This means that the record could start with field id and name as order but the message from postgres don't need to be in that order.   *)
 let of_bytes de buf =
+  let* (buf, columns) = Row_description.decode_row_description buf in
+  let column_names =
+    List.map (fun (x : Row_description.field) -> x.name) columns
+  in
+
   let state =
     Deserializer.
       {
         reader = Postgres.Parser.of_bytes buf;
         kind = First;
         in_sequence = false;
-        column_names = [];
+        column_names;
         current_column_idx = 0;
         in_list = false;
         list_length = 0;

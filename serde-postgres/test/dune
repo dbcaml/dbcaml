@@ -1,5 +1,14 @@
 (test
- (name test_serde)
+ (name test_serde_deserialize)
+ (modules test_serde_deserialize)
+ (package serde-postgres)
+ (libraries alcotest serde_postgres)
+ (preprocess
+  (pps serde_derive)))
+
+(test
+ (name test_serde_deserialize_list)
+ (modules test_serde_deserialize_list)
  (package serde-postgres)
  (libraries alcotest serde_postgres)
  (preprocess

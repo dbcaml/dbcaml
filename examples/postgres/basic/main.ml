@@ -41,10 +41,9 @@ let () =
     Silo_postgres.fetch_many
       db
       ~query:
-        "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users limit 10"
+        "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users limit 2"
       ~deserializer:deserialize_user
   in
-  let fetched_user = List.hd fetched_user in
 
   (* Print the users name *)
   print_endline fetched_user.name;

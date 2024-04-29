@@ -60,7 +60,7 @@
   dune
   streaming
   serde
-  serde_postgres
+  serde-postgres
   serde_derive
   dbcaml)
  (tags
@@ -74,7 +74,7 @@
   ocaml
   (alcotest :with-test)
   dune
-  serde
-  serde_derive)
+  (serde (>= 0.0.2))
+  (serde_derive (>= 0.0.2)))
  (tags
   (topics "postgres" "serde" "ocaml")))
