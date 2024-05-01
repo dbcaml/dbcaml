@@ -13,7 +13,6 @@ depends: [
   "ocaml"
   "alcotest" {with-test}
   "dune" {>= "3.12"}
-  "streaming"
   "serde"
   "serde-postgres"
   "serde_derive"

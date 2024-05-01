@@ -13,7 +13,7 @@ type t =
         params:Param.t list ->
         query:string ->
         row_limit:int ->
-        (char Streaming.stream, Res.execution_error) result;
+        (bytes, Res.execution_error) result;
     }
       -> t
 

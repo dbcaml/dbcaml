@@ -88,6 +88,4 @@ let message buf =
 
   let size = Bytes.get_int32_be buf 1 in
 
-  let message = Bytes.to_string buf in
-
-  Ok (message_type, size, message)
+  Ok (message_type, size, buf)

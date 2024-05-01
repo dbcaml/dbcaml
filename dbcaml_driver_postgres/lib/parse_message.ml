@@ -1,10 +1,24 @@
 open Message_format
+module StringMap = Map.Make (String)
 
 let ( let* ) = Result.bind
 
+let get_message_parts ~message =
+  let parts = String.split_on_char '\000' message in
+  List.fold_left
+    (fun acc part ->
+      if String.length part > 1 then
+        let head = String.get part 0 in
+        let tail = String.sub part 1 (String.length part - 1) in
+        (head, tail) :: acc
+      else
+        acc)
+    []
+    parts
+
 let read_message buf =
   let size = Bytes.get_int32_be buf 1 in
-  let total_message_length = 1 + Int32.to_int size in
+  let total_message_length = (Int32.unsigned_to_int size |> Option.get) + 1 in
   let message = Bytes.sub buf 0 total_message_length in
 
   let new_buffer =
@@ -27,7 +41,7 @@ let rec parse_response acc message =
   | RowDescription ->
     let* (message, new_buffer) = read_message message in
     if Bytes.length new_buffer > 0 then
-      parse_response (acc @ [Bytes.to_string message]) new_buffer
+      parse_response (acc @ [message]) new_buffer
     else
       Ok acc
   | ReadyForQuery
@@ -43,10 +57,22 @@ let rec parse_response acc message =
       parse_response acc new_buffer
     else
       Ok acc
-  | _ -> Ok acc
+  | ErrorResponse ->
+    let parse_error_message =
+      get_message_parts ~message:(String.of_bytes message)
+    in
+    let error_message = List.assoc 'M' parse_error_message in
+    Error (`Msg error_message)
+  | mt ->
+    Error
+      (`Msg
+        (Printf.sprintf
+           "unexpected message_type: %S"
+           (Message_format.to_string ~format:mt)))
 
 let wait_for_response conn =
   let* (_, _message_type, _size, message) = Pg.receive conn in
-  let* messages = parse_response [] (Bytes.of_string message) in
 
-  Ok (String.concat String.empty messages)
+  let* messages = parse_response [] message in
+
+  Ok (Bytes.concat Bytes.empty messages)

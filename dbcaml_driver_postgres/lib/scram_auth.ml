@@ -71,7 +71,8 @@ let authenticate ~conn ~is_plus ~username ~password =
   let* (_, _, _size, server_first_message) = Pg.receive conn in
   (* The server_first_message comes with type and length of the total message which is not information we really need so we offset the bytes with 9 *)
   let server_first_message =
-    String.sub server_first_message 9 (String.length server_first_message - 9)
+    Bytes.sub server_first_message 9 (Bytes.length server_first_message - 9)
+    |> Bytes.to_string
   in
 
   let parsed_payload = parse_payload ~payload_str:server_first_message in
@@ -106,6 +107,7 @@ let authenticate ~conn ~is_plus ~username ~password =
   let* _ = Pg.send conn ~buffer:buf in
   let* (_, _, _size, message) = Pg.receive conn in
 
+  let message = Bytes.to_string message in
   (* The server_first_message comes with type and length of the total message which is not information we really need so we offset the bytes with 9 *)
   let message =
     String.sub message 9 (String.length message - 9)

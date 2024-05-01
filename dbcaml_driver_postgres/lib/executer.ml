@@ -37,7 +37,6 @@ let query ~conn ~query ~row_limit ~params =
   let* _ = Pg.send conn ~buffer in
   let* execute_buffer = Parse_message.wait_for_response conn in
 
-  let response = describe_response ^ execute_buffer in
-  Printf.printf "response: %S \n\n" response;
+  let response = Bytes.concat Bytes.empty [describe_response; execute_buffer] in
 
   Ok response

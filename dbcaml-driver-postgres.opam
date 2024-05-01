@@ -19,7 +19,6 @@ depends: [
   "cryptokit"
   "castore"
   "random"
-  "streaming"
   "uri"
   "odoc" {with-doc}
 ]

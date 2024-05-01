@@ -25,8 +25,7 @@
   (alcotest :with-test)
   (riot
    (>= 0.0.9))
-  uri
-  streaming)
+  uri)
  (tags
   (topics "database" "dbcaml")))
 
@@ -45,7 +44,6 @@
   cryptokit
   castore
   random
-  streaming
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
@@ -58,7 +56,6 @@
   ocaml
   (alcotest :with-test)
   dune
-  streaming
   serde
   serde-postgres
   serde_derive
@@ -74,7 +71,9 @@
   ocaml
   (alcotest :with-test)
   dune
-  (serde (>= 0.0.2))
-  (serde_derive (>= 0.0.2)))
+  (serde
+   (>= 0.0.2))
+  (serde_derive
+   (>= 0.0.2)))
  (tags
   (topics "postgres" "serde" "ocaml")))

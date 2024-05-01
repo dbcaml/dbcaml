@@ -42,7 +42,7 @@ module Postgres = struct
 
     let query ~connection ~params ~query ~row_limit =
       match Executer.query ~conn:connection ~query ~row_limit ~params with
-      | Ok response -> Ok (Streaming.Stream.of_string response)
+      | Ok response -> Ok response
       | Error (`Msg e) -> Error (Dbcaml.Res.ExecutionError e)
       | Error _ -> Error (Dbcaml.Res.ExecutionError "Unknown error")
     in
