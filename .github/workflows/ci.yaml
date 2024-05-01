@@ -12,11 +12,9 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - macos-latest
           - ubuntu-latest
         ocaml-compiler:
           - "5.1"
-
     runs-on: ${{ matrix.os }}
     services:
       postgres:
@@ -45,7 +43,7 @@ jobs:
           migrations_folder: "./examples/postgres/migrations"
           wait_timeout: "30"
           migrations_table: "schema_migrations"
-          database_url: "postgresql://postgres:postgres@localhost:6432/development?sslmode=disable"
+          database_url: "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
       - run: opam install . --deps-only --with-test
       - run: opam exec -- dune build
       - run: opam exec -- dune runtest
