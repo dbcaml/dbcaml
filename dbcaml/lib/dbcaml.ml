@@ -2,7 +2,7 @@ open Riot
 module Connection = Connection
 module Driver = Driver
 module Res = Res
-module Param = Param
+module Params = Params
 
 let ( let* ) = Result.bind
 

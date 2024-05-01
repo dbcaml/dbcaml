@@ -39,7 +39,7 @@
   dune
   (riot
    (>= 0.0.9))
-  dbcaml
+  (dbcaml :version)
   bytestring
   cryptokit
   castore
@@ -57,9 +57,9 @@
   (alcotest :with-test)
   dune
   serde
-  serde-postgres
+  (serde-postgres :version)
   serde_derive
-  dbcaml)
+  (serde-postgres :version))
  (tags
   (topics "postgres" "ocaml")))
 

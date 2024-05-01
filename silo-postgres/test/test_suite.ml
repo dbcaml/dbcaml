@@ -1,6 +1,5 @@
-open Alcotest
-
 let () =
+  let open Alcotest in
   run
     "Serde Postgres deserializer test"
     [

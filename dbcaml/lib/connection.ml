@@ -10,7 +10,7 @@ type t =
       (* This function takes a 'generic conn and a query. And return a Row.T list which is our type of a row *)
       query:
         connection:'conn ->
-        params:Param.t list ->
+        params:Params.t list ->
         query:string ->
         row_limit:int ->
         (bytes, Res.execution_error) result;

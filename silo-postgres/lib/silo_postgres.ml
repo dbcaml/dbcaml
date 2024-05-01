@@ -1,5 +1,7 @@
 let ( let* ) = Result.bind
 
+module Params = Dbcaml.Params
+
 module type Intf = sig
   val connection : string -> Dbcaml.Driver.t
 end

@@ -14,13 +14,43 @@ let escape_sql_value value =
 let serialize_param param =
   let value =
     match param with
-    | Dbcaml.Param.String str -> str
-    | Dbcaml.Param.Number i ->
+    | Dbcaml.Params.String str -> str
+    | Dbcaml.Params.Number i ->
       let buffer = Buffer.create 4 in
       Buffer.add_int32_be buffer (Int32.of_int i);
       Buffer.contents buffer
-    | Dbcaml.Param.Float f -> string_of_float f
-    | Dbcaml.Param.Bool b -> string_of_bool b
+    | Dbcaml.Params.Float f -> string_of_float f
+    | Dbcaml.Params.Bool b -> string_of_bool b
+    | Dbcaml.Params.StringArray s ->
+      let buffer = Buffer.create 20 in
+      Buffer.add_int32_be buffer (Int32.of_int 1);
+      Buffer.add_int32_be buffer (Int32.of_int 0);
+      (* 1015 is the OID for varchar array *)
+      Buffer.add_bytes buffer (Bytes.of_string "1015");
+      Buffer.add_int32_be buffer (List.length s |> Int32.of_int);
+      Buffer.add_int32_be buffer (Int32.of_int 1);
+      List.iter
+        (fun x ->
+          Buffer_tools.put_length_prefixed buffer (fun buf ->
+              Buffer.add_string buf x);
+          ())
+        s;
+      Buffer.contents buffer
+    | Dbcaml.Params.NumberArray s ->
+      let buffer = Buffer.create 20 in
+      Buffer.add_int32_be buffer (Int32.of_int 1);
+      Buffer.add_int32_be buffer (Int32.of_int 0);
+      (* 1015 is the OID for varchar array *)
+      Buffer.add_bytes buffer (Bytes.of_string "1015");
+      Buffer.add_int32_be buffer (List.length s |> Int32.of_int);
+      Buffer.add_int32_be buffer (Int32.of_int 1);
+      List.iter
+        (fun x ->
+          Buffer_tools.put_length_prefixed buffer (fun buf ->
+              Buffer.add_int32_be buf (Int32.of_int x));
+          ())
+        s;
+      Buffer.contents buffer
   in
 
   escape_sql_value value

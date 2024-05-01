@@ -14,7 +14,7 @@ depends: [
   "alcotest" {with-test}
   "dune" {>= "3.12"}
   "riot" {>= "0.0.9"}
-  "dbcaml"
+  "dbcaml" {version}
   "bytestring"
   "cryptokit"
   "castore"

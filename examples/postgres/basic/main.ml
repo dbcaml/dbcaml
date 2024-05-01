@@ -71,7 +71,7 @@ let () =
       db
       ~query:
         "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users where id < $1 limit 2"
-      ~params:[Dbcaml.Param.Number 3]
+      ~params:[Silo_postgres.Params.Number 3]
       ~deserializer:deserialize_users
   in
 
