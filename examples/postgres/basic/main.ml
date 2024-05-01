@@ -41,7 +41,7 @@ let () =
 
   (* Fetch the user and return the user to a variable *)
   let* fetched_users =
-    Silo_postgres.fetch
+    Silo_postgres.query
       db
       ~query:
         "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users limit 2"
@@ -67,7 +67,7 @@ let () =
 
   (* Fetch the user and return the user to a variable *)
   let* fetched_users =
-    Silo_postgres.fetch
+    Silo_postgres.query
       db
       ~query:
         "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users where id < $1 limit 2"

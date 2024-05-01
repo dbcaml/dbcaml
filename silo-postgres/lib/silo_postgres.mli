@@ -10,7 +10,7 @@ val config : connections:int -> connection_string:string -> t
 
 val connect : config:t -> (Pid.t, [> `Msg of string ]) result
 
-val fetch :
+val query :
   ?params:Dbcaml.Param.t list ->
   Pid.t ->
   query:string ->

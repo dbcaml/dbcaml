@@ -22,7 +22,7 @@ let connect ~config =
     let connection = DriverModule.connection connection_string in
     Dbcaml.start_link ~connections connection
 
-let fetch ?(params = []) connection_manager_pid ~query ~deserializer =
+let query ?(params = []) connection_manager_pid ~query ~deserializer =
   let params =
     if List.length params > 0 then
       Some params

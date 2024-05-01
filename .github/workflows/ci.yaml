@@ -18,6 +18,20 @@ jobs:
           - "5.1"
 
     runs-on: ${{ matrix.os }}
+    services:
+      postgres:
+        image: postgres:15.6
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6432:5432
     steps:
       - name: Checkout tree
         uses: actions/checkout@v4
@@ -25,6 +39,13 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: ${{ matrix.ocaml-compiler }}
+      - name: Make migrations
+        uses: emilpriver/geni@main
+        with:
+          migrations_folder: "./examples/postgres/migrations"
+          wait_timeout: "30"
+          migrations_table: "schema_migrations"
+          database_url: "postgresql://postgres:postgres@localhost:6432/development?sslmode=disable"
       - run: opam install . --deps-only --with-test
       - run: opam exec -- dune build
       - run: opam exec -- dune runtest
