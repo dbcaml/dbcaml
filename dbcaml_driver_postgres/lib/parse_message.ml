@@ -2,34 +2,51 @@ open Message_format
 
 let ( let* ) = Result.bind
 
-let rec parse_response message_type message =
+let read_message buf =
+  let size = Bytes.get_int32_be buf 1 in
+  let total_message_length = 1 + Int32.to_int size in
+  let message = Bytes.sub buf 0 total_message_length in
+
+  let new_buffer =
+    Bytes.sub buf total_message_length (Bytes.length buf - total_message_length)
+  in
+
+  Ok (message, new_buffer)
+
+(* parse_response reads the message and filter which messages to keep. Some of the messages such as CloseComplete are we not
+   not interested in but we want the data in RowDescription for instance *)
+let rec parse_response acc message =
+  let message_type =
+    match from_u8 (Bytes.get message 0) with
+    | Ok v -> v
+    | Error e -> raise (Error e)
+  in
   match message_type with
-  | ReadyForQuery -> Ok message
+  | DataRow
+  | CommandComplete
+  | RowDescription ->
+    let* (message, new_buffer) = read_message message in
+    if Bytes.length new_buffer > 0 then
+      parse_response (acc @ [Bytes.to_string message]) new_buffer
+    else
+      Ok acc
+  | ReadyForQuery
   | ParseComplete
   | BindComplete
-  | ParameterDescription
   | NoData
   | EmptyQueryResponse
   | PortalSuspended
-  | CloseComplete ->
-    (match Message_format.message (Bytes.of_string message) with
-    | Error _ as e -> e
-    | Ok (mt, _, m) -> parse_response mt m)
-  (* FIXME: implement me, this should be some parsing *)
-  | DataRow -> Ok message
-  (* FIXME: implement me. used when exec queries is the one used. *)
-  | CommandComplete -> Ok message
-  (* FIXME: implement me. used when a pair of new rows is on the way to be sent to the query *)
-  | RowDescription -> Ok message
-  | m ->
-    Error
-      (`Msg
-        (Printf.sprintf
-           "Unexpected message type(%s), got message: %s"
-           (Message_format.to_string ~format:m)
-           message))
+  | CloseComplete
+  | ParameterDescription ->
+    let* (_message, new_buffer) = read_message message in
+    if Bytes.length new_buffer > 0 then
+      parse_response acc new_buffer
+    else
+      Ok acc
+  | _ -> Ok acc
 
 let wait_for_response conn =
-  let* (_, message_type, _size, message) = Pg.receive conn in
+  let* (_, _message_type, _size, message) = Pg.receive conn in
+  let* messages = parse_response [] (Bytes.of_string message) in
 
-  parse_response message_type message
+  Ok (String.concat String.empty messages)

@@ -21,10 +21,10 @@ let start_link ?(connections = 10) (driver : Driver.t) =
     List.init connections (fun _ -> Driver.child_spec pool_id driver)
   in
 
-  let _ =
+  let* _supervisor_pid =
     match Supervisor.start_link ~restart_limit:10 ~child_specs () with
-    | Ok _ -> ()
-    | Error _ -> failwith "Failed to start supervisor"
+    | Ok pid -> Ok pid
+    | Error _ -> Error (`Msg "Failed to start supervisor")
   in
 
   Ok pool_id

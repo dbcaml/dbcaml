@@ -6,3 +6,4 @@ module Startup = Startup
 module Buffer_tools = Buffer_tools
 module Execute = Execute
 module Prepare = Prepare
+module Describe = Describe

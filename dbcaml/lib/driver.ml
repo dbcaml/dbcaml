@@ -67,10 +67,6 @@ let rec wait_for_job connection_manager_pid item =
   *)
   wait_for_job connection_manager_pid item
 
-(*
-  TODO: we need to figure out if this is good enough or if we could make sure that the Supervisor
-  knows the state of each connection so if the connection dies do the supervisor reboot it
-*)
 let start_link { connection_manager_pid; driver } =
   let* conn =
     match driver with

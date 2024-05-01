@@ -12,8 +12,9 @@ type t =
     }
       -> t
 
-let config ~connections ~driver ~connection_string =
-  Config { driver; connections; connection_string }
+let config ~connections ~connection_string =
+  Config
+    { driver = (module Dbcaml_driver_postgres); connections; connection_string }
 
 let connect ~config =
   match config with
@@ -21,12 +22,17 @@ let connect ~config =
     let connection = DriverModule.connection connection_string in
     Dbcaml.start_link ~connections connection
 
-let fetch_many ?(params = None) connection_manager_pid ~query ~deserializer =
+let fetch ?(params = []) connection_manager_pid ~query ~deserializer =
+  let params =
+    if List.length params > 0 then
+      Some params
+    else
+      None
+  in
+
   let* result = Dbcaml.raw_query connection_manager_pid ~params ~query in
 
   let result_bytes = Bytes.of_string result in
-
-  Printf.printf "%S\n" result;
 
   match Serde_postgres.of_bytes deserializer result_bytes with
   | Ok t -> Ok t
