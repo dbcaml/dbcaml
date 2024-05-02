@@ -23,6 +23,7 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
           POSTGRES_DB: postgres
+          PGUSER: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -45,5 +46,5 @@ jobs:
           migrations_table: "schema_migrations"
           database_url: "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
       - run: opam install . --deps-only --with-test
-      - run: dune build
-      - run: dune runtest
+      - run: opam exec -- dune build
+      - run: opam exec -- dune runtest

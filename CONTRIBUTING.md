@@ -20,6 +20,10 @@ More information on how DBCaml work exist at [the documentation](https://dbca.ml
 To install DBCaml from sources, make sure to include all its dependencies:
 
 ```sh
+; opam pin dbcaml.0.0.1 git+https://github.com/dbcaml/dbcaml
+; opam pin dbcaml-driver-postgres.0.0.1 git+https://github.com/dbcaml/dbcaml
+; opam pin serde-postgres.0.0.1 git+https://github.com/dbcaml/dbcaml
+; opam pin silo-postgres.0.0.1 git+https://github.com/dbcaml/dbcaml
 ```
 
 You can run builds with:
@@ -31,7 +35,7 @@ You can run builds with:
 You can run all tests with
 
 ```sh
-; dune test
+; dune runtest
 ```
 
 # Local development
@@ -54,7 +58,4 @@ The way for the main package to interact with the driver is that the driver shou
 
 The purpose of a driver is to bridge DBCaml with a database and with that also implementing security such as TLS and escaping queries.
 When a driver is being developed is it important to have a extra look at the security.
-
-# Tests
-TBA
 
