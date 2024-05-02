@@ -5,6 +5,7 @@ open Logger.Make (struct
   let namespace = ["dbcaml"; "pool"]
 end)
 
+(* Creates the pool and return a Supervisor that make sure the pool is up and running *)
 let start_link ~pool_size =
   let child_specs = [Manager.child_spec ~pool_size ()] in
 
@@ -12,6 +13,7 @@ let start_link ~pool_size =
   | Ok s -> s
   | Error _ -> failwith "Failed to start link"
 
+(* Function to ask for a connection within the pool and then return the actual connection to the requester *)
 let get_connection connection_manager_pid =
   send connection_manager_pid (Messages.LockHolder (self ()));
 
@@ -19,5 +21,6 @@ let get_connection connection_manager_pid =
   | Messages.HolderMessage (holder_pid, conn) -> Ok (holder_pid, conn)
   | _ -> Error "didn't get the message I expected"
 
+(* used to release a connection after it's been used so other processes can use it *)
 let release_connection connection_manager_pid ~holder_pid =
   send connection_manager_pid (Messages.CheckIn holder_pid)

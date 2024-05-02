@@ -1,4 +1,4 @@
-(** Create a buffer with a sync message *)
+(** Tells postgres to sync so we get the response  *)
 let database () =
   let sync_buffer = Buffer.create 20 in
   Buffer.add_char sync_buffer 'S';

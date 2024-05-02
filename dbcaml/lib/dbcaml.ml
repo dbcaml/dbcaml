@@ -12,7 +12,7 @@ end)
 
 (*
  * start_link is the main function for Dbcaml, starts the Supervisor which 
- * controls the Pool manager
+ * controls the Pool manager.
  *)
 let start_link ?(connections = 10) (driver : Driver.t) =
   let pool_id = Pool.start_link ~pool_size:connections in
@@ -29,7 +29,11 @@ let start_link ?(connections = 10) (driver : Driver.t) =
 
   Ok pool_id
 
-(** raw_exeute send a query to the database and return raw bytes *)
+(** 
+* raw_exeute send a query to the database and return raw bytes.
+* It handles asking for a lock a item in the pool and releasing after query is done.
+* It handles asking for a lock a item in the pool and releasing after query is done
+*)
 let raw_query ?(row_limit = 0) connection_manager_id ~params ~query =
   let p =
     match params with

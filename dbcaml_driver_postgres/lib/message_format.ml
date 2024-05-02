@@ -1,5 +1,6 @@
 let ( let* ) = Result.bind
 
+(* Message format is the message types that Postgres send backs on queries *)
 type message_format =
   | Authentication
   | BackendKeyData
@@ -30,6 +31,7 @@ type message = {
 
 exception Error of string
 
+(** Return which message format it is based on char. This char is normally the first char in the message. Ex D for DataRow *)
 let from_u8 (v : char) : (message_format, string) result =
   match v with
   | '1' -> Ok ParseComplete

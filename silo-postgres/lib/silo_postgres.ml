@@ -14,16 +14,22 @@ type t =
     }
       -> t
 
+(** Create a new config based on the provided params.  *)
 let config ~connections ~connection_string =
   Config
     { driver = (module Dbcaml_driver_postgres); connections; connection_string }
 
+(** 
+  Start a connection to the database.
+  This spins up a pool and creates the amount of connections provided in the config
+*)
 let connect ~config =
   match config with
   | Config { driver = (module DriverModule); connections; connection_string } ->
     let connection = DriverModule.connection connection_string in
     Dbcaml.start_link ~connections connection
 
+(* Check if we have rows back. If we don't have rows shouldn't we try to start a deserializer as there is no data *)
 let check_amount_rows message =
   let data_row_description_length =
     Bytes.get_int32_be message 1 |> Int32.to_int
@@ -68,7 +74,7 @@ let parse_command_complete message =
   with
   | _ -> Error "failed to parse command complete message"
 
-(** execute sends a execute command to the database and returns the amount of rows affected. Ideal to use for insert,update and delete queries  *)
+(** Execute sends a execute command to the database and returns the amount of rows affected. Ideal to use for insert,update and delete queries  *)
 let execute ?(params = []) connection_manager_pid ~query =
   let params =
     if List.length params > 0 then

@@ -16,6 +16,7 @@ let get_message_parts ~message =
     []
     parts
 
+(* Read the response from Postgres and return the message and the buffer after the message *)
 let read_message buf =
   let size = Bytes.get_int32_be buf 1 in
   let total_message_length = (Int32.unsigned_to_int size |> Option.get) + 1 in
@@ -70,6 +71,7 @@ let rec parse_response acc message =
            "unexpected message_type: %S"
            (Message_format.to_string ~format:mt)))
 
+(* Wait for the response from database and then parse it *)
 let wait_for_response conn =
   let* (_, _message_type, _size, message) = Pg.receive conn in
 

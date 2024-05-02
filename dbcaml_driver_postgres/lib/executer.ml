@@ -8,6 +8,7 @@ let params_to_oid (params : Dbcaml.Params.t list) =
 let _base64_encode input =
   Cryptokit.transform_string (Cryptokit.Base64.encode_compact ()) input
 
+(** Execute the query, params on the provided connection and returns a message which includes DataRowDescripion, DataRows and CommandComplete*)
 let query ~conn ~query ~row_limit ~params =
   let sync_buffer = Sync.database () in
   let statement_id = "dbcaml_s_" ^ Nonce.random_string 20 in

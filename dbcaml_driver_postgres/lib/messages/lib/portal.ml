@@ -1,3 +1,4 @@
+(** Close a portal *)
 let close ~portal_name =
   let sync_buffer = Buffer.create 20 in
   Buffer.add_char sync_buffer 'C';

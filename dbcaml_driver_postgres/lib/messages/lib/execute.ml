@@ -1,3 +1,4 @@
+(** Execute function is used to tell postgres is time to execute the function as all the data required should be sent *)
 let execute ~portal_name ~row_limit =
   let execute_buffer = Buffer.create 20 in
   Buffer.add_char execute_buffer 'E';

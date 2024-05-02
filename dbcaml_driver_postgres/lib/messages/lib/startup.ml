@@ -3,6 +3,10 @@ module Bs = Bytestring
 
 let ( let* ) = Result.bind
 
+(** 
+  Startup message is used so postgres knows that it's time to create a new connection.
+  This message normally returns the available auth messages
+*)
 let start ~username ~database =
   let buffer = Buffer.create 20 in
 

@@ -1,3 +1,4 @@
+(** Prepare a new query with generated statement*)
 let prepare ~statement_id ~params_oid ~query =
   let params_oid_length = List.length params_oid in
   (* Create a buffer with the size of the statement_id, query's length.

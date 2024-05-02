@@ -1,3 +1,6 @@
+(* The bind message is used to tell postgres what params we are sending to the database *)
+
+(* Escape a string before we send it to the database *)
 let escape_sql_value value =
   let buffer = Buffer.create (String.length value) in
   String.iter
@@ -11,14 +14,17 @@ let escape_sql_value value =
     value;
   Buffer.contents buffer
 
+(* Encode int32 to bytes*)
 let encode_int32 n =
   let result = Bytes.create 4 in
   Bytes.set_int32_be result 0 n;
   result
 
+(* Encode int8 to bytes*)
 let encode_int8 n = Bytes.make 1 (Char.chr n)
 
-let serialize_param param =
+(* Function used to encode a param into bytes that postgres can read *)
+let encode_param param =
   match param with
   | Dbcaml.Params.String str -> escape_sql_value str |> Bytes.of_string
   | Dbcaml.Params.Number i -> encode_int32 (Int32.of_int i)
@@ -86,28 +92,19 @@ let serialize_param param =
     Bytes.concat Bytes.empty [header; content]
 
 let encode_value value =
-  let serialized_value = serialize_param value in
-  let buffer = Buffer.create (Bytes.length serialized_value + 4) in
+  let value_param = encode_param value in
+  let buffer = Buffer.create (Bytes.length value_param + 4) in
 
   let len =
-    match Bytes.length serialized_value with
+    match Bytes.length value_param with
     | 0 -> -1
     | len -> len
   in
 
   Buffer.add_int32_be buffer (Int32.of_int len);
-  Buffer.add_bytes buffer serialized_value;
+  Buffer.add_bytes buffer value_param;
 
   buffer
-
-(* let encode_value value = *)
-(*   let serialized_value = serialize_param value in *)
-(*   let buffer = Buffer.create (Buffer.length serialized_value + 4) in *)
-(**)
-(*   Buffer.add_int32_be buffer (Int32.of_int (Buffer.length buffer)); *)
-(*   Buffer.ad buffer serialized_value; *)
-(**)
-(*   buffer *)
 
 (** Create a bind message with the statement_id, portal_name and params *)
 let bind ~statement_id ~params ~portal_name =

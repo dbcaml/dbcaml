@@ -30,6 +30,7 @@ let receive (Conn { reader; _ } as conn) =
 let make_connection ~reader ~writer ~uri ~addr =
   Conn { writer; reader; uri; addr }
 
+(* Create a TLS connection using certificates *)
 module Auth = struct
   let () = Mirage_crypto_rng_unix.initialize (module Mirage_crypto_rng.Fortuna)
 
@@ -47,6 +48,9 @@ module Auth = struct
     make_default authenticator
 end
 
+(** 
+    Create a new connection using the provided connection string. 
+    Also tries to make a SSL upgrade if the user don't provide sslmode=disable as a query *)
 let connect conninfo =
   let authentication_information = Authentication_information.make ~conninfo in
 

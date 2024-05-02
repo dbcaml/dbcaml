@@ -1,8 +1,10 @@
+(** Connection errors *)
 type connection_error =
   | ConnectionError of string
   | AuthenticationError of string
   | GeneralError of string
 
+(** Execution errors *)
 type execution_error =
   | ExecutionError of string
   | NoRows

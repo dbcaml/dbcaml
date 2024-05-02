@@ -9,12 +9,14 @@ type authentication_information = {
   sslmode: bool;
 }
 
+(* Used to get the databse name from the url string. Without this would Uri.path add / to the beginning of the database  *)
 let remove_first_letter_if_slash str =
   if String.starts_with ~prefix:"/" str then
     String.sub str 1 (String.length str - 1)
   else
     str
 
+(* Create the connection_information object based on the connection string *)
 let make ~conninfo =
   let uri = Uri.of_string conninfo in
   let user = Uri.user uri |> Option.value ~default:"" in

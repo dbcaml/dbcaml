@@ -41,7 +41,12 @@ let verify_server_proof ~server_key ~auth_message ~verifier =
   let decoded_verifier = Base64.decode_exn verifier in
   server_signature = decoded_verifier
 
+(** 
+  Authenticate using SASL.
+  Ref: https://www.postgresql.org/docs/current/sasl-authentication.html
+*)
 let authenticate ~conn ~is_plus ~username ~password =
+  (* Create initial message *)
   let nonce = Nonce.generate () |> base64_encode in
   let channel_binding = "n,," in
   let first_bare = Printf.sprintf "n=%s,r=%s" username nonce in

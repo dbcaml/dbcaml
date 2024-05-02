@@ -1,5 +1,6 @@
 let ( let* ) = Result.bind
 
+(** Create a query. This is for example: select * from users *)
 let query ~query =
   let buf = Buffer.create 0 in
 

@@ -1,3 +1,4 @@
+(** Ask postgres to describe the statement. Used to get DataRowDescripion within the response *)
 let statement ~statement_id =
   let buf = Buffer.create (String.length statement_id + 5) in
 

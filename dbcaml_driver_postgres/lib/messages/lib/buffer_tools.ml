@@ -1,3 +1,4 @@
+(** Read a buffer and prefix it with a length of the full message *)
 let put_length_prefixed buffer f =
   let new_buffer = Buffer.create 1 in
 
@@ -11,6 +12,7 @@ let put_length_prefixed buffer f =
   Buffer.add_int32_be buffer message_length;
   Buffer.add_buffer buffer new_buffer
 
+(** function used to end a string with a \000 byte to the postgres that it have reached the end of the string  *)
 let put_str_null buffer str =
   Buffer.add_string buffer str;
   Buffer.add_char buffer '\000'

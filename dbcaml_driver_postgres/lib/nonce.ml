@@ -1,3 +1,4 @@
+(** Generate a random nonce used for generating random statements and portals *)
 let generate () =
   let count = Random.int ~max:(64 - 28 + 28) () in
 
