@@ -30,6 +30,7 @@ let () =
     let config =
       Silo_postgres.config
         ~connections:5
+        ~deserializer:(module Serde_postgres.Deserializer)
         ~connection_string:
           "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
     in

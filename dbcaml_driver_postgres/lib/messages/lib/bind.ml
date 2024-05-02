@@ -11,66 +11,103 @@ let escape_sql_value value =
     value;
   Buffer.contents buffer
 
-let serialize_param param =
-  let value =
-    match param with
-    | Dbcaml.Params.String str -> str
-    | Dbcaml.Params.Number i ->
-      let buffer = Buffer.create 4 in
-      Buffer.add_int32_be buffer (Int32.of_int i);
-      Buffer.contents buffer
-    | Dbcaml.Params.Float f -> string_of_float f
-    | Dbcaml.Params.Bool b -> string_of_bool b
-    | Dbcaml.Params.StringArray s ->
-      let buffer = Buffer.create 20 in
-      Buffer.add_int32_be buffer (Int32.of_int 1);
-      Buffer.add_int32_be buffer (Int32.of_int 0);
-      (* 1015 is the OID for varchar array *)
-      Buffer.add_bytes buffer (Bytes.of_string "1015");
-      Buffer.add_int32_be buffer (List.length s |> Int32.of_int);
-      Buffer.add_int32_be buffer (Int32.of_int 1);
-      List.iter
-        (fun x ->
-          Buffer_tools.put_length_prefixed buffer (fun buf ->
-              Buffer.add_string buf x);
-          ())
-        s;
-      Buffer.contents buffer
-    | Dbcaml.Params.NumberArray s ->
-      let buffer = Buffer.create 20 in
-      Buffer.add_int32_be buffer (Int32.of_int 1);
-      Buffer.add_int32_be buffer (Int32.of_int 0);
-      (* 1015 is the OID for varchar array *)
-      Buffer.add_bytes buffer (Bytes.of_string "1015");
-      Buffer.add_int32_be buffer (List.length s |> Int32.of_int);
-      Buffer.add_int32_be buffer (Int32.of_int 1);
-      List.iter
-        (fun x ->
-          Buffer_tools.put_length_prefixed buffer (fun buf ->
-              Buffer.add_int32_be buf (Int32.of_int x));
-          ())
-        s;
-      Buffer.contents buffer
-  in
+let encode_int32 n =
+  let result = Bytes.create 4 in
+  Bytes.set_int32_be result 0 n;
+  result
 
-  escape_sql_value value
+let encode_int8 n = Bytes.make 1 (Char.chr n)
+
+let serialize_param param =
+  match param with
+  | Dbcaml.Params.String str -> escape_sql_value str |> Bytes.of_string
+  | Dbcaml.Params.Number i -> encode_int32 (Int32.of_int i)
+  | Dbcaml.Params.Float f -> encode_int32 (Int32.of_float f)
+  | Dbcaml.Params.Bool b ->
+    if b then
+      encode_int8 1
+    else
+      encode_int8 0
+  | Dbcaml.Params.StringArray s ->
+    let oid = Bytes.of_string "1015" in
+    let length = List.length s in
+    let header =
+      Bytes.concat
+        Bytes.empty
+        [
+          encode_int32 1l;
+          encode_int32 0l;
+          oid;
+          encode_int32 (Int32.of_int length);
+          encode_int32 1l;
+        ]
+    in
+    let content =
+      List.fold_left
+        (fun acc x ->
+          let escaped = escape_sql_value x in
+          Bytes.cat
+            acc
+            (Bytes.concat
+               Bytes.empty
+               [
+                 encode_int32 (String.length escaped |> Int32.of_int);
+                 Bytes.of_string escaped;
+               ]))
+        Bytes.empty
+        s
+    in
+    Bytes.concat Bytes.empty [header; content]
+  | Dbcaml.Params.NumberArray s ->
+    let oid = Bytes.of_string "1007" in
+    let length = List.length s in
+    let header =
+      Bytes.concat
+        Bytes.empty
+        [
+          encode_int32 (Int32.of_int 1);
+          encode_int32 (Int32.of_int 0);
+          oid;
+          encode_int32 (Int32.of_int length);
+          encode_int32 (Int32.of_int 1);
+        ]
+    in
+    let content =
+      List.fold_left
+        (fun acc x ->
+          Bytes.cat
+            acc
+            (Bytes.concat
+               Bytes.empty
+               [encode_int32 4l; encode_int32 (Int32.of_int x)]))
+        Bytes.empty
+        s
+    in
+    Bytes.concat Bytes.empty [header; content]
 
 let encode_value value =
-  let seriaized_value = serialize_param value in
-  let buffer = Buffer.create (String.length seriaized_value + 4) in
-
-  let encoded_value = Bytes.of_string seriaized_value in
+  let serialized_value = serialize_param value in
+  let buffer = Buffer.create (Bytes.length serialized_value + 4) in
 
   let len =
-    match Bytes.length encoded_value with
+    match Bytes.length serialized_value with
     | 0 -> -1
     | len -> len
   in
 
   Buffer.add_int32_be buffer (Int32.of_int len);
-  Buffer.add_bytes buffer encoded_value;
+  Buffer.add_bytes buffer serialized_value;
 
   buffer
+
+(* let encode_value value = *)
+(*   let serialized_value = serialize_param value in *)
+(*   let buffer = Buffer.create (Buffer.length serialized_value + 4) in *)
+(**)
+(*   Buffer.add_int32_be buffer (Int32.of_int (Buffer.length buffer)); *)
+(*   Buffer.ad buffer serialized_value; *)
+(**)
+(*   buffer *)
 
 (** Create a bind message with the statement_id, portal_name and params *)
 let bind ~statement_id ~params ~portal_name =
