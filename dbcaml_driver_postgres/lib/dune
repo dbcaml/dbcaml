@@ -1,0 +1,14 @@
+(library
+ (name dbcaml_driver_postgres)
+ (public_name dbcaml-driver-postgres)
+ (libraries
+  riot
+  uri
+  dbcaml
+  messages
+  bytestring
+  str
+  random
+  cryptokit
+  mirage-crypto
+  castore))

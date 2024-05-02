@@ -22,23 +22,58 @@
  (depends
   ocaml
   dune
+  (alcotest :with-test)
   (riot
-   (>= 0.0.8))
+   (>= 0.0.9))
   uri)
  (tags
   (topics "database" "dbcaml")))
 
 (package
- (name dbcaml_driver_postgres)
+ (name dbcaml-driver-postgres)
  (synopsis "Postgres driver for dbcaml")
  (description "Postgres driver for dbcaml")
  (depends
   ocaml
+  (alcotest :with-test)
   dune
   (riot
-   (>= 0.0.8))
-  dbcaml
-  postgresql
+   (>= 0.0.9))
+  (dbcaml :version)
+  bytestring
+  cryptokit
+  castore
+  random
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
+
+(package
+ (name silo-postgres)
+ (synopsis "Silo postgres")
+ (description "Silo postgres")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  serde
+  (serde-postgres :version)
+  serde_derive
+  (serde-postgres :version))
+ (tags
+  (topics "postgres" "ocaml")))
+
+(package
+ (name serde-postgres)
+ (synopsis "serde-postgres")
+ (description "serde-postgres")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  (serde
+   (>= 0.0.2))
+  (serde_derive
+   (>= 0.0.2)))
+ (tags
+  (topics "postgres" "serde" "ocaml")))

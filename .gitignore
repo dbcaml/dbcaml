@@ -27,5 +27,3 @@ setup.log
 
 # Local OPAM switch
 _opam/
-
-examples/**/*.sql

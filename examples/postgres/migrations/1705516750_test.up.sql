@@ -1,0 +1,111 @@
+create table users (
+  id serial primary key,
+  name varchar(255),
+  some_bool boolean,
+  some_int64 bigint,
+  some_int32 integer,
+  some_float double precision,
+  pets text[],
+  pet_name varchar(255)
+);
+
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Alice,', TRUE, null, 1, 2, 1.1, '{Lucy, Adam, "helllo,world"}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Bob', TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Charlie',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('David',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Eve',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Frank',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Grace',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Hannah',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ian',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Jane',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Kyle',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Laura',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Mike',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Nora',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Oscar',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Patty',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Quinn',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Rachel',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Steve',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Tina',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ursula',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Victor',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Wendy',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Xander',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Yvonne',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Zach',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Amelia',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Brad',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Catherine',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Derek',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Elaine',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Felix',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Gloria',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Harold',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Iris',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Justin',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Kara',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Leon',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Mona',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ned',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Olivia',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Pete',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Quincy',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Rita',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Sam',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Tiffany',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ulysses',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Vanessa',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('William',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Xena',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Yosef',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Zoe',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Adam',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Betty',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Carl',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Diana',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ethan',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Fiona',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('George',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Heather',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ivan',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Julia',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Kevin',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Linda',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Marvin',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Nancy',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Oliver',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Paula',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Quentin',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Rebecca',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Sean',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Tracy',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Umar',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Violet',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Wesley',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Xiomara',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Yanni',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Zelda',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Aaron',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Brenda',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Cody',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Debbie',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Ernest',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Felicia',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Gary',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Holly',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Isaac',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Jenna',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Kenny',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Lori',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Manny',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Nina',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Owen',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Pam',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Quinton',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Rosalind',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Shane',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Theresa',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ('Uriah',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
+INSERT INTO users ( name, some_bool, pet_name, some_int64, some_int32, some_float, pets) VALUES ( 'Veronica',TRUE,  'Danza', 1, 2, 1.1, '{Lucy, Adam}');
