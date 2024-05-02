@@ -1,9 +1,11 @@
+open Alcotest
+
 let () =
-  let open Alcotest in
+  Riot.run @@ fun () ->
   run
-    "Serde Postgres deserializer test"
+    "Silo Postgres"
     [
-      ("Unescape string", Escaped_values.suite);
-      ("Deserialize record list", Record_list.suite);
-      ("Deserialize record", Single_record.suite);
+      ("Parse command complete", Parse_command_complete.suite);
+      ("Queries and deserialize data", Query.suite);
+      ("Executes Queries", Execute.suite);
     ]

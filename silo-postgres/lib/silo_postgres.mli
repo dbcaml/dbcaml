@@ -17,4 +17,9 @@ val query :
   Pid.t ->
   query:string ->
   deserializer:('a, Serde_postgres.Deserializer.state) Serde.De.t ->
-  ('a, string) result
+  ('a option, string) result
+
+val parse_command_complete : string -> (int, string) result
+
+val execute :
+  ?params:Params.t list -> Pid.t -> query:string -> (int, string) result

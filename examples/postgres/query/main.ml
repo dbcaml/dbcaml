@@ -30,7 +30,6 @@ let () =
     let config =
       Silo_postgres.config
         ~connections:5
-        ~deserializer:(module Serde_postgres.Deserializer)
         ~connection_string:
           "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
     in
@@ -64,7 +63,7 @@ let () =
         x.some_bool
         (String.concat ", " x.pets)
         (String.concat ", " (Array.to_list x.pets_array)))
-    fetched_users;
+    (Option.get fetched_users);
 
   (* Fetch the user and return the user to a variable *)
   let* fetched_users =
@@ -91,6 +90,6 @@ let () =
         x.some_bool
         (String.concat ", " x.pets)
         (String.concat ", " (Array.to_list x.pets_array)))
-    fetched_users;
+    (Option.get fetched_users);
 
   Ok 1

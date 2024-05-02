@@ -1,6 +1,6 @@
 (executable
  (package dbcaml)
- (public_name basic_postgres)
+ (public_name postgres_execute)
  (name main)
  (preprocess
   (pps serde_derive))

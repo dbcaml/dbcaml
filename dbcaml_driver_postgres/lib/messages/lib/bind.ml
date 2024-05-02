@@ -22,7 +22,7 @@ let serialize_param param =
   match param with
   | Dbcaml.Params.String str -> escape_sql_value str |> Bytes.of_string
   | Dbcaml.Params.Number i -> encode_int32 (Int32.of_int i)
-  | Dbcaml.Params.Float f -> encode_int32 (Int32.of_float f)
+  | Dbcaml.Params.Float f -> encode_int32 (Int32.bits_of_float f)
   | Dbcaml.Params.Bool b ->
     if b then
       encode_int8 1
