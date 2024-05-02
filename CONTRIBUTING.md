@@ -17,13 +17,13 @@ More information on how DBCaml work exist at [the documentation](https://dbca.ml
 
 ## Installing from Sources
 
-To install DBCaml from sources, make sure to include all its dependencies:
+To install DBCaml, DBCaml postgres driver, Serde postgres and Silo postgres from sources do you need to pin each package:
 
 ```sh
-; opam pin dbcaml.0.0.1 git+https://github.com/dbcaml/dbcaml
-; opam pin dbcaml-driver-postgres.0.0.1 git+https://github.com/dbcaml/dbcaml
-; opam pin serde-postgres.0.0.1 git+https://github.com/dbcaml/dbcaml
-; opam pin silo-postgres.0.0.1 git+https://github.com/dbcaml/dbcaml
+; opam pin dbcaml.0.0.2 git+https://github.com/dbcaml/dbcaml
+; opam pin dbcaml-driver-postgres.0.0.2 git+https://github.com/dbcaml/dbcaml
+; opam pin serde-postgres.0.0.2 git+https://github.com/dbcaml/dbcaml
+; opam pin silo-postgres.0.0.2 git+https://github.com/dbcaml/dbcaml
 ```
 
 You can run builds with:
@@ -43,9 +43,7 @@ You can run all tests with
 To help with testing locally do it exist a `docker-compose.yaml` file in examples, This file contains all the database currently in use or planned to be used. 
 Running  `docker compose up` should setup the database for you, migrate and add data, and expose it. The database urls for each database are:
 
-- Postgres:postgresql://postgres:mysecretpassword@localhost:6432/development
-- MariaDB: mariadb://root:password@localhost:3307/development 
-- MySQL: mysql://root:password@localhost:3306/development
+- Postgres:postgresql://postgres:postgres@localhost:6432/postgres
 
 # Building a driver
 
@@ -53,6 +51,13 @@ A driver within DBCaml is the thing who actually talking to the database, the ma
 The way for the main package to interact with the driver is that the driver should export a module that hold the type `Driver.t`. 
 
 [Example driver](./dbcaml_driver_postgres)
+
+## Driver requirements
+
+1. Each driver should only start 1 connection. The pool manager starts multiple connections using the driver.
+2. The driver needs to escape params send to the database. It's also important that this is tested
+3. The driver needs to be able to make a TLS upgrade(use ssl). However it should determine if it needs to make a TLS upgrade on the sslmode query parameter in the connection(`?sslmod=disabled`).
+4. The driver should return the full necessary bytes from the database as this is used by other libraries
 
 ## Purpose of a Driver
 
