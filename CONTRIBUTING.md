@@ -20,13 +20,6 @@ More information on how DBCaml work exist at [the documentation](https://dbca.ml
 To install DBCaml from sources, make sure to include all its dependencies:
 
 ```sh
-; opam pin config.0.0.1 git+https://github.com/leostera/config.ml
-; opam pin libc.0.0.1 git+https://github.com/ocaml-sys/libc.ml
-; opam pin rio.0.0.8 git+https://github.com/riot-ml/riot
-; opam pin bytestring.0.0.8 git+https://github.com/riot-ml/riot
-; opam pin gluon.0.0.8 git+https://github.com/riot-ml/riot
-; opam pin riot.0.0.8 git+https://github.com/riot-ml/riot
-; opam pin dbcaml.0.0.1 git+https://github.com/dbcaml/dbcaml
 ```
 
 You can run builds with:

@@ -45,5 +45,5 @@ jobs:
           migrations_table: "schema_migrations"
           database_url: "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
       - run: opam install . --deps-only --with-test
-      - run: opam exec -- dune build
-      - run: opam exec -- dune runtest
+      - run: dune build
+      - run: dune runtest

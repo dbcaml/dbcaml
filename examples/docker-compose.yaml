@@ -9,7 +9,7 @@ services:
     ports:
       - "6432:5432"
   migration-postgres:
-    image: ghcr.io/emilpriver/geni:latest
+    image: ghcr.io/emilpriver/geni:latest-slim
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
     volumes:
