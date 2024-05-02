@@ -20,29 +20,63 @@ DBCaml is an async database toolkit built on <a href="https://github.com/riot-ml
 
 ```ocaml
 
-let driver =
-    Dbcaml_driver_postgres.connection
-      "postgresql://postgres:mysecretpassword@localhost:6432/development"
+
+type user = {
+  name: string;
+  id: int;
+  some_int64: int64;
+  some_int32: int32;
+  some_float: float;
+  some_bool: bool;
+  pet_name: string option;
+  pets: string list;
+  pets_array: string array;
+}
+[@@deriving deserialize]
+
+type users = user list [@@deriving deserialize]
+
+(* Start the database connection pool *)
+let* db =
+  let config =
+    Silo_postgres.config
+      ~connections:5
+      ~connection_string:
+        "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
   in
 
-  let pool_id = Dbcaml.start_link ~connections:10 driver |> Result.get_ok in
+  match Silo_postgres.connect ~config with
+  | Ok c -> Ok c
+  | Error (`Msg e) -> Error e
+in
 
-  (* Fetch 1 row from the database *)
-  (match
-     Dbcaml.fetch_one
-       pool_id
-       ~params:[Dbcaml.Param.String "1"]
-       "select * from users where id = $1"
-   with
-  | Ok x ->
-    let rows = Dbcaml.Row.row_to_type x in
-    (* Iterate over each column and print it's values *)
-    List.iter (fun x -> print_endline x) rows
-  | Error x -> print_endline (Dbcaml.Res.execution_error_to_string x));
+(* Fetch the user and return the user to a variable *)
+let* fetched_users =
+  Silo_postgres.query
+    db
+    ~query:
+      "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users limit 2"
+    ~deserializer:deserialize_users
+in
 
-
-
+List.iter
+  (fun x ->
+    Printf.printf
+      "Fetching user with id %d:\nName: %s\nSome float: %f\nSome int64: %d\nSome int32: %d\n%s\n Some bool: %b\nPets: %s\nPets array: %s\n\n"
+      x.id
+      x.name
+      x.some_float
+      (Int64.to_int x.some_int64)
+      (Int32.to_int x.some_int32)
+      (match x.pet_name with
+      | Some pn -> Printf.sprintf "Pet name: %S" pn
+      | None -> "No pet")
+      x.some_bool
+      (String.concat ", " x.pets)
+      (String.concat ", " (Array.to_list x.pets_array)))
+  (Option.get fetched_users);
 ```
+
 DBCaml aims to offer:
 
 * **Database pooling**. Built using Riots lightweight process to spin up a connection pool.
@@ -58,13 +92,12 @@ DBCaml aims to offer:
 ## Quick Start
 
 ```
-opam pin dbcaml.0.0.1 git+https://github.com/dbcaml/dbcaml
+opam pin dbcaml.0.0.2 git+https://github.com/dbcaml/dbcaml
 ```
 
 After that, you can use any of the [examples](./examples) as a base for your app, and run them:
-
 ```
-dune exec ./my_app.exe
+dune exec X
 ```
 # Important
-DBCaml is heavily in development, the content in this repo will change!
+DBCaml is heavily in development, the content in this repo will change. It's not production ready and will probably have bugs
