@@ -19,6 +19,7 @@ let test_execute_successfully () =
       let config =
         Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in
@@ -62,10 +63,7 @@ let test_execute_successfully () =
       Silo.execute
         db
         ~params:
-          [
-            Silo.Params.String "hello-world-2";
-            Silo.Params.String "hello-world";
-          ]
+          [Silo.Params.String "hello-world-2"; Silo.Params.String "hello-world"]
         ~query:"update users set name = $1 where name = $2"
     with
     | Ok r -> r

@@ -51,6 +51,11 @@ module Postgres = struct
     let* conn = Dbcaml.Connection.make ~conn ~query () in
 
     Ok conn
+
+  let deserialize ~message ~deserializer =
+    match Serde_postgres.of_bytes deserializer message with
+    | Ok t -> Ok (Some t)
+    | Error e -> Error (Format.asprintf "Deserialize error: %a" Serde.pp_err e)
 end
 
 (** Create a interface which returns back a Dbcaml.Driver.t type. This type is used to create a connection and make queries *)

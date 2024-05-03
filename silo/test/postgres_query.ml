@@ -19,6 +19,7 @@ let test_query_sucessfully () =
       let config =
         Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in
@@ -53,6 +54,7 @@ let test_query_no_rows () =
       let config =
         Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in
@@ -84,6 +86,7 @@ let test_query_unsucessfully () =
       let config =
         Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in

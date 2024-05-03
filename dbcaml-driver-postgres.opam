@@ -17,6 +17,7 @@ depends: [
   "dbcaml" {version}
   "bytestring"
   "cryptokit"
+  "serde-postgres" {version}
   "castore"
   "random"
   "uri"

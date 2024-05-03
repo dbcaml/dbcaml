@@ -29,6 +29,11 @@ module type Intf = sig
       | `Would_block
       ] )
     result
+
+  val deserialize :
+    message:bytes ->
+    deserializer:('a, 'state) Serde.De.t ->
+    ('a option, string) result
 end
 
 (*

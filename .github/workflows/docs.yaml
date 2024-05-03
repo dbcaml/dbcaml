@@ -4,7 +4,14 @@ on:
   release:
     types: [created]
 
-permissions: read-all
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   docs:
@@ -27,6 +34,9 @@ jobs:
       - name: Generate docs
         run: opam exec -- dune build @doc
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./_build/default/_doc/_html
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

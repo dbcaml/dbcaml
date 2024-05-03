@@ -3,9 +3,9 @@ open Alcotest
 let () =
   Riot.run @@ fun () ->
   run
-    "Silo Postgres"
+    "Silo"
     [
       ("Parse command complete", Parse_command_complete.suite);
-      ("Queries and deserialize data", Query.suite);
-      ("Executes Queries", Execute.suite);
+      ("Postgres: Queries and deserialize data", Postgres_query.suite);
+      ("Postgres: Executes Queries", Postgres_execute.suite);
     ]

@@ -42,6 +42,7 @@
   (dbcaml :version)
   bytestring
   cryptokit
+  (serde-postgres :version)
   castore
   random
   uri)
@@ -57,7 +58,6 @@
   (alcotest :with-test)
   dune
   serde
-  (serde-postgres :version)
   serde_derive
   (serde-postgres :version))
  (tags

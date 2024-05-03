@@ -14,7 +14,6 @@ depends: [
   "alcotest" {with-test}
   "dune" {>= "3.12"}
   "serde"
-  "serde-postgres" {version}
   "serde_derive"
   "serde-postgres" {version}
   "odoc" {with-doc}
