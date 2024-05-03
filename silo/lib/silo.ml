@@ -6,8 +6,18 @@ module type Intf = sig
   val connection : string -> Dbcaml.Driver.t
 end
 
+module type SerdeIntf = sig
+  type t
+
+  val of_bytes :
+    ('a, Serde_postgres.Deserializer.state) Serde.De.t ->
+    bytes ->
+    ('a option, string) result
+end
+
 type t =
   | Config : {
+      deserializer: (module SerdeIntf);
       driver: (module Intf);
       connections: int;
       connection_string: string;
@@ -15,9 +25,8 @@ type t =
       -> t
 
 (** Create a new config based on the provided params.  *)
-let config ~connections ~connection_string =
-  Config
-    { driver = (module Dbcaml_driver_postgres); connections; connection_string }
+let config ~connections ~driver ~connection_string ~deserializer =
+  Config { driver; deserializer; connections; connection_string }
 
 (** 
   Start a connection to the database.
@@ -25,7 +34,8 @@ let config ~connections ~connection_string =
 *)
 let connect ~config =
   match config with
-  | Config { driver = (module DriverModule); connections; connection_string } ->
+  | Config { driver = (module DriverModule); connections; connection_string; _ }
+    ->
     let connection = DriverModule.connection connection_string in
     Dbcaml.start_link ~connections connection
 

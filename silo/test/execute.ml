@@ -17,13 +17,13 @@ let test_execute_successfully () =
   let db =
     match
       let config =
-        Silo_postgres.config
+        Silo.config
           ~connections:1
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in
 
-      match Silo_postgres.connect ~config with
+      match Silo.connect ~config with
       | Ok c -> Ok c
       | Error (`Msg e) -> Error e
     with
@@ -34,17 +34,17 @@ let test_execute_successfully () =
   (* Fetch the user and return the user to a variable *)
   let rows_affected =
     match
-      Silo_postgres.execute
+      Silo.execute
         db
         ~params:
           [
-            Silo_postgres.Params.String "hello-world";
-            Silo_postgres.Params.Bool true;
-            Silo_postgres.Params.String "Danza";
-            Silo_postgres.Params.Number 1;
-            Silo_postgres.Params.Number 1;
-            Silo_postgres.Params.Float 1.1;
-            Silo_postgres.Params.StringArray ["Danza"];
+            Silo.Params.String "hello-world";
+            Silo.Params.Bool true;
+            Silo.Params.String "Danza";
+            Silo.Params.Number 1;
+            Silo.Params.Number 1;
+            Silo.Params.Float 1.1;
+            Silo.Params.StringArray ["Danza"];
           ]
         ~query:
           "insert into users (name, some_bool, pet_name, some_int64, some_int32, some_float, pets) values ($1, $2, $3, $4, $5, $6, $7)"
@@ -59,12 +59,12 @@ let test_execute_successfully () =
   (* Fetch the user and return the user to a variable *)
   let rows_affected =
     match
-      Silo_postgres.execute
+      Silo.execute
         db
         ~params:
           [
-            Silo_postgres.Params.String "hello-world-2";
-            Silo_postgres.Params.String "hello-world";
+            Silo.Params.String "hello-world-2";
+            Silo.Params.String "hello-world";
           ]
         ~query:"update users set name = $1 where name = $2"
     with
@@ -77,9 +77,9 @@ let test_execute_successfully () =
   (* Fetch the user and return the user to a variable *)
   let rows_affected =
     match
-      Silo_postgres.execute
+      Silo.execute
         db
-        ~params:[Silo_postgres.Params.String "hello-world-2"]
+        ~params:[Silo.Params.String "hello-world-2"]
         ~query:"delete from users where name = $1"
     with
     | Ok r -> r

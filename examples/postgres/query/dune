@@ -4,4 +4,4 @@
  (name main)
  (preprocess
   (pps serde_derive))
- (libraries silo-postgres serde riot))
+ (libraries silo serde riot))

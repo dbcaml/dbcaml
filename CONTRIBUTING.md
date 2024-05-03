@@ -17,13 +17,15 @@ More information on how DBCaml work exist at [the documentation](https://dbca.ml
 
 ## Installing from Sources
 
+Run `opam install . --deps-only` to install the necessary packages.
+
 To install DBCaml, DBCaml postgres driver, Serde postgres and Silo postgres from sources do you need to pin each package:
 
 ```sh
-; opam pin dbcaml.0.0.2 git+https://github.com/dbcaml/dbcaml
-; opam pin dbcaml-driver-postgres.0.0.2 git+https://github.com/dbcaml/dbcaml
-; opam pin serde-postgres.0.0.2 git+https://github.com/dbcaml/dbcaml
-; opam pin silo-postgres.0.0.2 git+https://github.com/dbcaml/dbcaml
+; opam pin dbcaml.0.0.3 git+https://github.com/dbcaml/dbcaml
+; opam pin dbcaml-driver-postgres.0.0.3 git+https://github.com/dbcaml/dbcaml
+; opam pin serde-postgres.0.0.3 git+https://github.com/dbcaml/dbcaml
+; opam pin silo.0.0.3 git+https://github.com/dbcaml/dbcaml
 ```
 
 You can run builds with:

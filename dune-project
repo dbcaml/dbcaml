@@ -49,9 +49,9 @@
   (topics "database" "dbcaml" "dbcaml")))
 
 (package
- (name silo-postgres)
- (synopsis "Silo postgres")
- (description "Silo postgres")
+ (name silo)
+ (synopsis "Silo")
+ (description "Silo")
  (depends
   ocaml
   (alcotest :with-test)
