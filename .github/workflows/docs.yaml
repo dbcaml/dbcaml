@@ -1,7 +1,6 @@
 name: Generate and publish docs
 
 on:
-  push:
   release:
     types: [created]
 
