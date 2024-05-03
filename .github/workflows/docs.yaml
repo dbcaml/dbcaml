@@ -23,7 +23,8 @@ jobs:
         uses: ocaml/setup-ocaml@v2
         with:
           ocaml-compiler: "5.1"
-      - run: opam install dune
+      - run: opam install . --deps-only --with-test
+      - run: opam install dune odoc
       - name: Generate docs
         run: opam exec -- dune build @doc
       - name: Upload artifact
