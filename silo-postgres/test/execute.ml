@@ -38,7 +38,7 @@ let test_execute_successfully () =
         db
         ~params:
           [
-            Silo_postgres.Params.String "hello-world";
+            Silo_postgres.Params.String "hello-world-w";
             Silo_postgres.Params.Bool true;
             Silo_postgres.Params.String "Danza";
             Silo_postgres.Params.Number 1;
