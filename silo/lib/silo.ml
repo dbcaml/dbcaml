@@ -27,7 +27,9 @@ let connect ~config =
   | Config { driver = (module DriverModule); connections; connection_string; _ }
     ->
     let connection = DriverModule.connection connection_string in
-    Dbcaml.start_link ~connections connection
+    (match Dbcaml.start_link ~connections connection with
+    | Ok c -> Ok c
+    | Error (`Msg error_message) -> Error error_message)
 
 (* Check if we have rows back. If we don't have rows shouldn't we try to start a deserializer as there is no data *)
 let check_amount_rows message =

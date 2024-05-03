@@ -11,7 +11,7 @@ end
 val config :
   connections:int -> driver:(module Intf) -> connection_string:string -> t
 
-val connect : config:t -> (Pid.t, [> `Msg of string ]) result
+val connect : config:t -> (Pid.t, string) result
 
 val query :
   ?params:Params.t list ->

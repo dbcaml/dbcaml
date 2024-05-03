@@ -22,9 +22,7 @@ let () =
           "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
     in
 
-    match Silo.connect ~config with
-    | Ok c -> Ok c
-    | Error (`Msg e) -> Error e
+    Silo.connect ~config
   in
 
   (* Fetch the user and return the user to a variable *)
