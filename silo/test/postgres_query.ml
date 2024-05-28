@@ -24,9 +24,7 @@ let test_query_sucessfully () =
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in
 
-      match Silo.connect ~config with
-      | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      Silo.connect ~config
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e
@@ -61,7 +59,7 @@ let test_query_no_rows () =
 
       match Silo.connect ~config with
       | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      | Error e -> Error e
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e
@@ -93,7 +91,7 @@ let test_query_unsucessfully () =
 
       match Silo.connect ~config with
       | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      | Error e -> Error e
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e

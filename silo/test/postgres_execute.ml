@@ -24,15 +24,12 @@ let test_execute_successfully () =
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
       in
 
-      match Silo.connect ~config with
-      | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      Silo.connect ~config
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e
   in
 
-  (* Fetch the user and return the user to a variable *)
   let rows_affected =
     match
       Silo.execute

@@ -3,4 +3,4 @@
  (public_name silo)
  (preprocess
   (pps serde_derive))
- (libraries dbcaml dbcaml-driver-postgres serde-postgres))
+ (libraries dbcaml))

@@ -13,6 +13,8 @@ let ( let* ) = Result.bind
 module type Intf = sig
   type config
 
+  type state
+
   val connect :
     config ->
     ( Connection.t,
@@ -30,19 +32,16 @@ module type Intf = sig
       ] )
     result
 
-  val deserialize :
-    message:bytes ->
-    deserializer:('a, 'state) Serde.De.t ->
-    ('a option, string) result
+  val deserialize : ('a, state) Serde.De.t -> bytes -> ('a, Serde.error) result
 end
 
 (*
  * The driver type is a GADT that contains a module that implements the Intf module type and the config that is used to create a new connection
- * Eeach driver will later on implement it's own version of Driver.t
+ * Each driver will later on implement it's own version of Driver.t
  *)
 type t =
   | Driver : {
-      driver: (module Intf with type config = 'config);
+      driver: (module Intf with type config = 'config and type state = 'state);
       config: 'config;
     }
       -> t
