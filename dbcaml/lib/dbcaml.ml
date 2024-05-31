@@ -57,11 +57,4 @@ let raw_query ?(row_limit = 0) connection_manager_id ~params ~query =
 
   result
 
-let deserialize
-    (type config state)
-    (module Driver : Driver.Intf
-      with type config = config
-       and type state = state)
-    (state : ('a, state) Serde.De.t)
-    buf =
-  Driver.deserialize state buf
+let deserialize = Driver.deserialize

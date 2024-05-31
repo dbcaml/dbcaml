@@ -70,14 +70,10 @@ let query :
 
     (match have_rows result_bytes with
     | Some _ ->
-      (match driver with
-      | Driver { driver = (module DriverIntf); _ } ->
-        (match
-           Dbcaml.deserialize (module DriverIntf) deserializer result_bytes
-         with
-        | Ok t -> Ok (Some t)
-        | Error e ->
-          Error (Format.asprintf "Deserialize error: %a" Serde.pp_err e)))
+      (match Dbcaml.deserialize driver deserializer result_bytes with
+      | Ok t -> Ok (Some t)
+      | Error e ->
+        Error (Format.asprintf "Deserialize error: %a" Serde.pp_err e))
     | None -> Ok None)
   | Ready_to_connect _ -> Error "Should be a connected config"
 

@@ -94,3 +94,8 @@ let child_spec connection_manager_pid (driver : t) =
   let state = { connection_manager_pid; driver } in
 
   Supervisor.child_spec start_link state
+
+let deserialize (type s) (driver : t) (state : ('a, s) Serde.De.t) buf =
+  match driver with
+  | Driver { driver = (module DriverModule); _ } ->
+    DriverModule.deserialize state buf
