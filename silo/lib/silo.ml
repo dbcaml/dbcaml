@@ -55,19 +55,11 @@ let have_rows message =
   | _ -> None
 
 (** Query send a fetch request to the database and use the bytes to deserialize the output to a type using serde. Ideal to use for select queries *)
-let query :
-    type value state.
-    ?params:Dbcaml.Params.t list ->
-    t ->
-    query:string ->
-    deserializer:(value, state) Serde.De.t ->
-    (value option, string) result =
- fun ?params config ~query ~deserializer ->
+let query ?params config query deserializer =
   match config with
   | Connected { conn_mgr_pid; driver; _ } ->
     let* result = Dbcaml.raw_query conn_mgr_pid ~params ~query in
     let result_bytes = Bytes.of_string result in
-
     (match have_rows result_bytes with
     | Some _ ->
       (match Dbcaml.deserialize driver deserializer result_bytes with

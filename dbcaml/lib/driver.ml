@@ -95,12 +95,15 @@ let child_spec connection_manager_pid (driver : t) =
 
   Supervisor.child_spec start_link state
 
-let deserialize (type s c) (driver : t) (state : ('a, s) Serde.De.t) buf =
+type ('value, 'state) deserialize_fn =
+  t -> ('value, 'state) Serde.De.t -> bytes -> ('value, 'state) Serde.De.t
+
+let deserialize : type value state. (value, state) deserialize_fn =
+ fun driver state buf ->
   match driver with
   | Driver
       {
-        driver =
-          (module DriverModule : Intf with type config = c and type state = s);
+        driver = (module D : Intf with type config = _ and type state = state);
         _;
       } ->
-    DriverModule.deserialize state buf
+    D.deserialize state buf
