@@ -31,9 +31,9 @@ let remove global_storage storage_mutex key =
   Mutex.unlock storage_mutex
 
 (*
-   * This function fold over all available items in the global_storage
-   * and try to find someone which are ready, when it finds a holder which is available do it return it
-   * otherwise do it return a error to let the request know it needs to wait
+* This function fold over all available items in the global_storage
+* and try to find someone which are ready, when it finds a holder which is available do it return it
+* otherwise do it return a error to let the request know it needs to wait
 *)
 let available_holder global_storage storage_mutex =
   Mutex.lock storage_mutex;

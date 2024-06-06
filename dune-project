@@ -42,6 +42,7 @@
   (dbcaml :version)
   bytestring
   cryptokit
+  (serde-postgres :version)
   castore
   random
   uri)
@@ -49,15 +50,14 @@
   (topics "database" "dbcaml" "dbcaml")))
 
 (package
- (name silo-postgres)
- (synopsis "Silo postgres")
- (description "Silo postgres")
+ (name silo)
+ (synopsis "Silo")
+ (description "Silo")
  (depends
   ocaml
   (alcotest :with-test)
   dune
   serde
-  (serde-postgres :version)
   serde_derive
   (serde-postgres :version))
  (tags
