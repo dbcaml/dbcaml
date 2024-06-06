@@ -55,7 +55,7 @@ let have_rows message =
   | _ -> None
 
 (** Query send a fetch request to the database and use the bytes to deserialize the output to a type using serde. Ideal to use for select queries *)
-let query ?params config query deserializer =
+let query ?params config ~query ~deserializer =
   match config with
   | Connected { conn_mgr_pid; driver; _ } ->
     let* result = Dbcaml.raw_query conn_mgr_pid ~params ~query in
@@ -68,6 +68,23 @@ let query ?params config query deserializer =
         Error (Format.asprintf "Deserialize error: %a" Serde.pp_err e))
     | None -> Ok None)
   | Ready_to_connect _ -> Error "Should be a connected config"
+
+(** Used internally. parse_command_complete reads the "Command Complete" message which starts with a C and reads how many rows that is effected and return a int
+    If it's unable to do so do it return a error *)
+let parse_command_complete message =
+  try
+    let length = String.length message in
+    (* Find the position of the last space, before the number of rows *)
+    let space_pos = String.rindex message ' ' in
+    (* Extract the number from space position to the end minus the null character *)
+    let number_str =
+      String.sub message (space_pos + 1) (length - space_pos - 2)
+    in
+    (* Convert the extracted string to an integer *)
+    let value = int_of_string number_str in
+    Ok value
+  with
+  | _ -> Error "failed to parse command complete message"
 
 (** Execute sends a execute command to the database and returns the amount of rows affected. Ideal to use for insert,update and delete queries  *)
 let execute ?(params = []) config ~query =
