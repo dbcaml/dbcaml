@@ -47,7 +47,21 @@
   random
   uri)
  (tags
-  (topics "database" "dbcaml" "dbcaml")))
+  (topics "database" "dbcaml" "Postgres")))
+
+(package
+ (name dbcaml-driver-sqlite)
+ (synopsis "sqlite driver for dbcaml")
+ (description "sqlite driver for dbcaml")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  (riot
+   (>= 0.0.9))
+  (dbcaml :version))
+ (tags
+  (topics "database" "dbcaml" "sqlite")))
 
 (package
  (name silo)
@@ -60,6 +74,21 @@
   serde
   serde_derive
   (serde-postgres :version))
+ (tags
+  (topics "postgres" "ocaml")))
+
+(package
+ (name silo-sqlite)
+ (synopsis "Silo sqlite")
+ (description "Silo sqlite")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  serde
+  (silo-sqlite :version)
+  serde_derive
+  (serde-sqlite :version))
  (tags
   (topics "postgres" "ocaml")))
 
