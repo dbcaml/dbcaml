@@ -10,7 +10,7 @@ open Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
-(*
+(**
  * start_link is the main function for Dbcaml, starts the Supervisor which 
  * controls the Pool manager.
  *)
@@ -21,6 +21,7 @@ let start_link ?(connections = 10) (driver : Driver.t) =
     List.init connections (fun _ -> Driver.child_spec pool_id driver)
   in
 
+  (* FIXME: we need to wait for all child to have booted before we continue *)
   let* _supervisor_pid =
     match Supervisor.start_link ~restart_limit:10 ~child_specs () with
     | Ok pid -> Ok pid
