@@ -1,0 +1,6 @@
+(library
+ (name dbcaml_driver_turso)
+ (public_name dbcaml-driver-turso)
+ (libraries
+  riot
+  dbcaml))
