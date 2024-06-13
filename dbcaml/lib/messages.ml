@@ -16,3 +16,4 @@ type Message.t +=
   | (* The content fo the holder. such as the connection *)
       HolderMessage of
       Pid.t * Connection.t
+  | ConnectionResult of (unit, string) result

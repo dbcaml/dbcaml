@@ -50,7 +50,7 @@ let () =
       Silo_postgres.query
         db
         ~query:
-          "select id, name, some_bool, some_int64, some_int32, some_float, pets, pets as pets_array, pet_name from users"
+          "select id, name, some_bool, some_int64, some_int32, some_float, pets, pets as pets_array, pet_name from users limit 2"
         ~deserializer:deserialize_users
     with
     | Ok result -> Option.get result

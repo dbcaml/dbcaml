@@ -45,6 +45,7 @@ type t =
 type 'ctx state = {
   connection_manager_pid: Pid.t;
   driver: t;
+  requester_pid: Pid.t;
 }
 
 let rec wait_for_job connection_manager_pid item =
@@ -67,13 +68,28 @@ let rec wait_for_job connection_manager_pid item =
   *)
   wait_for_job connection_manager_pid item
 
-let start_link { connection_manager_pid; driver } =
+let start_link { connection_manager_pid; driver; requester_pid } =
   let* conn =
     match driver with
     | Driver { driver = (module DriverModule); config } ->
       (match DriverModule.connect config with
       | Ok e -> Ok e
-      | Error e -> Error e)
+      | Error (`Msg e) ->
+        send requester_pid (Messages.ConnectionResult (Error e));
+        Error (`Msg e)
+      | Error `Connection_closed
+      | Error `Closed ->
+        send
+          requester_pid
+          (Messages.ConnectionResult
+             (Error "Connection closed, is the database up?"));
+        Error (`Msg "Connection closed, is the database up?")
+      | Error e ->
+        send
+          requester_pid
+          (Messages.ConnectionResult
+             (Error "couldn't start a connection due to unknown reason"));
+        Error e)
   in
 
   let child_pid =
@@ -82,11 +98,14 @@ let start_link { connection_manager_pid; driver } =
 
   send connection_manager_pid (Messages.CheckIn child_pid);
 
+  (* Tell the main process we have a connection ready*)
+  send requester_pid (Messages.ConnectionResult (Ok ()));
+
   debug (fun f -> f "Created a new holder with pid: %a" Pid.pp child_pid);
 
   Ok child_pid
 
-let child_spec connection_manager_pid (driver : t) =
-  let state = { connection_manager_pid; driver } in
+let child_spec requester_pid connection_manager_pid (driver : t) =
+  let state = { connection_manager_pid; requester_pid; driver } in
 
   Supervisor.child_spec start_link state
