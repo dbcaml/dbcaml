@@ -18,6 +18,7 @@ let get_message_parts ~message =
 
 (* Read the response from Postgres and return the message and the buffer after the message *)
 let read_message buf =
+  Printf.printf "%S" (Bytes.to_string buf);
   let size = Bytes.get_int32_be buf 1 in
   let total_message_length = (Int32.unsigned_to_int size |> Option.get) + 1 in
   let message = Bytes.sub buf 0 total_message_length in
@@ -31,6 +32,7 @@ let read_message buf =
 (* parse_response reads the message and filter which messages to keep. Some of the messages such as CloseComplete are we not
    not interested in but we want the data in RowDescription for instance *)
 let rec parse_response acc message =
+  (* FIXME: we need to parse messages until we have a C. Seems as we don't read all the data we need from the socket *)
   let message_type =
     match from_u8 (Bytes.get message 0) with
     | Ok v -> v

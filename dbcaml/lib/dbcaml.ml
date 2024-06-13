@@ -10,12 +10,23 @@ open Logger.Make (struct
   let namespace = ["dbcaml"]
 end)
 
+let rec wait_until_connection_exist storage =
+  match Hashtbl.length storage with
+  | 0 -> wait_until_connection_exist storage
+  | _ -> ()
+
 (**
  * start_link is the main function for Dbcaml, starts the Supervisor which 
  * controls the Pool manager.
  *)
 let start_link ?(connections = 10) (driver : Driver.t) =
-  let pool_id = Pool.start_link ~pool_size:connections in
+  let global_storage : (Pid.t, Storage.status) Hashtbl.t =
+    Hashtbl.create connections
+  in
+
+  let pool_id =
+    Pool.start_link ~pool_size:connections ~storage:global_storage
+  in
 
   let child_specs =
     List.init connections (fun _ -> Driver.child_spec pool_id driver)
@@ -27,6 +38,8 @@ let start_link ?(connections = 10) (driver : Driver.t) =
     | Ok pid -> Ok pid
     | Error _ -> Error (`Msg "Failed to start supervisor")
   in
+
+  wait_until_connection_exist global_storage;
 
   Ok pool_id
 
