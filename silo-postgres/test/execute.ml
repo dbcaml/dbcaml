@@ -64,7 +64,7 @@ let test_execute_successfully () =
         ~params:
           [
             Silo_postgres.Params.String "hello-world-2";
-            Silo_postgres.Params.String "hello-world";
+            Silo_postgres.Params.String "hello-world-w";
           ]
         ~query:"update users set name = $1 where name = $2"
     with
