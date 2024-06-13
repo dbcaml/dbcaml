@@ -88,7 +88,7 @@ let start_link { connection_manager_pid; driver; requester_pid } =
         send
           requester_pid
           (Messages.ConnectionResult
-             (Error "couldn't start a connection due to unknown reason"));
+             (Error "Failed to start connection, is the database up?"));
         Error e)
   in
 
