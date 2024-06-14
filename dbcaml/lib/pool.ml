@@ -6,8 +6,8 @@ open Logger.Make (struct
 end)
 
 (* Creates the pool and return a Supervisor that make sure the pool is up and running *)
-let start_link ~pool_size =
-  let child_specs = [Manager.child_spec ~pool_size ()] in
+let start_link ~pool_size ~storage =
+  let child_specs = [Manager.child_spec ~pool_size ~storage ()] in
 
   match Supervisor.start_link ~restart_limit:10 ~child_specs () with
   | Ok s -> s

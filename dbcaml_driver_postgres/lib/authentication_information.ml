@@ -28,7 +28,7 @@ let make ~conninfo =
     Uri.get_query_param uri "sslmode"
     |> Option.value ~default:"disabled"
     |> String.equal "disabled"
-    (* We only want sslmode to be false is sslmode is enabled and have value "disabled" *)
+    (* We only want sslmode to be false if sslmode is enabled and have value "disabled" *)
     |> not
   in
 
