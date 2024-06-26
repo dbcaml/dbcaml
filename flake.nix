@@ -44,6 +44,7 @@
               inputsFrom = [
                 self'.packages.default
                 self'.packages.dbcaml_driver_postgres
+                self'.packages.dbcaml_driver_sqlite
                 self'.packages.silo_postgres
                 self'.packages.serde_postgres
               ];
@@ -103,6 +104,16 @@
                 alcotest
                 uri
                 cryptokit
+              ];
+              src = ./.;
+            };
+            dbcaml_driver_sqlite = buildDunePackage {
+              inherit version;
+              pname = "dbcaml-driver-sqlite";
+              propagatedBuildInputs = with ocamlPackages; [
+                inputs'.riot.packages.default
+                self'.packages.default
+                alcotest
               ];
               src = ./.;
             };
