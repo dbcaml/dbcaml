@@ -42,7 +42,7 @@ let* db =
     Silo_postgres.config
       ~connections:5
       ~connection_string:
-        "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
+        "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
   in
 
   match Silo_postgres.connect ~config with

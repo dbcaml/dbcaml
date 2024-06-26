@@ -26,8 +26,8 @@ let make ~conninfo =
   let port = Uri.port uri |> Option.value ~default:5432 in
   let sslmode =
     Uri.get_query_param uri "sslmode"
-    |> Option.value ~default:"disabled"
-    |> String.equal "disabled"
+    |> Option.value ~default:"disable"
+    |> String.equal "disable"
     (* We only want sslmode to be false if sslmode is enabled and have value "disabled" *)
     |> not
   in
