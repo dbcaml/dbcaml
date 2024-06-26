@@ -78,6 +78,21 @@
   (topics "postgres" "ocaml")))
 
 (package
+ (name silo-sqlite)
+ (synopsis "Silo sqlite")
+ (description "Silo sqlite")
+ (depends
+  ocaml
+  (alcotest :with-test)
+  dune
+  serde
+  (silo-sqlite :version)
+  serde_derive
+  (serde-sqlite :version))
+ (tags
+  (topics "postgres" "ocaml")))
+
+(package
  (name serde-postgres)
  (synopsis "serde-postgres")
  (description "serde-postgres")
