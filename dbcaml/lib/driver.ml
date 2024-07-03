@@ -28,7 +28,7 @@ module type Intf = sig
       ] )
     result
 
-  val deserialize : ('a, state) Serde.De.t -> bytes -> ('a, Serde.error) result
+  val deserialize : 'a Serde.De.t -> bytes -> ('a, Serde.error) result
 end
 
 type t =
@@ -80,8 +80,7 @@ let child_spec connection_manager_pid (driver : t) =
 
   Supervisor.child_spec start_link state
 
-let deserialize
-    (type value state) driver (deserializer : (value, state) Serde.De.t) buf =
+let deserialize driver (deserializer : 'a Serde.De.t) buf =
   match driver with
   | Driver
       { driver = (module D : Intf with type config = _ and type state = _); _ }
