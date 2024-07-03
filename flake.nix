@@ -15,7 +15,7 @@
       url = "github:suri-framework/atacama";
     };
     serde = {
-      url = "github:serde-ml/serde/hide-format-deserializer-state-type";
+      url = "github:serde-ml/serde";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

@@ -4,6 +4,8 @@ open Logger.Make (struct
   let namespace = ["examples"; "basic_postgres"]
 end)
 
+let ( let* ) = Result.bind
+
 type user = {
   name: string;
   id: int;

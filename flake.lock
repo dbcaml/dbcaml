@@ -5445,16 +5445,15 @@
         "rio": "rio_9"
       },
       "locked": {
-        "lastModified": 1720042353,
-        "narHash": "sha256-wzDQ3IawmMaY43tbRzQOWIEwL1hw/ohif4yYgPzy1bo=",
+        "lastModified": 1720044759,
+        "narHash": "sha256-61xBcPuXgsOVM2kj1/lPZRcljN2jl6F8orHQpKfPuzg=",
         "owner": "serde-ml",
         "repo": "serde",
-        "rev": "ec5a85ad6d0d12aa35509ca40a2cc1d4c678cf7b",
+        "rev": "fb898196911781d8a594c81cd83a95289be6e616",
         "type": "github"
       },
       "original": {
         "owner": "serde-ml",
-        "ref": "hide-format-deserializer-state-type",
         "repo": "serde",
         "type": "github"
       }
