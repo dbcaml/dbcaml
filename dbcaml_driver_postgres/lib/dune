@@ -8,7 +8,6 @@
   messages
   bytestring
   str
-  random
   cryptokit
   mirage-crypto
   castore))
