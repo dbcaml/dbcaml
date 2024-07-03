@@ -7,6 +7,7 @@ end)
 type ('ctx, 'item) state = {
   pool_size: int;
   initial_ctx: 'ctx;
+  storage: (Pid.t, Storage.status) Hashtbl.t;
 }
 
 let rec handle_messages connection_manager_pid global_storage storage_mutex =
@@ -56,17 +57,13 @@ let rec handle_messages connection_manager_pid global_storage storage_mutex =
 * 2. Create a in-memory storage where we can store PIDs and the state.
 * 3. Be able to acquire a job and wait out until we have a ready item in the pool
 *)
-let start_link { pool_size; _ } =
+let start_link { pool_size; storage; _ } =
   debug (fun f -> f "Initiating pool with %d items" pool_size);
-
-  let global_storage : (Pid.t, Storage.status) Hashtbl.t =
-    Hashtbl.create pool_size
-  in
 
   let storage_mutex = Mutex.create () in
 
-  handle_messages (self ()) global_storage storage_mutex
+  handle_messages (self ()) storage storage_mutex
 
-let child_spec ~pool_size initial_ctx =
-  let state = { pool_size; initial_ctx } in
+let child_spec ~pool_size ~storage initial_ctx =
+  let state = { pool_size; initial_ctx; storage } in
   Supervisor.child_spec start_link state

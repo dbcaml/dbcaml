@@ -6,16 +6,19 @@ end)
 
 let ( let* ) = Result.bind
 
+type query_result = int [@@deriving deserialize]
+
+(* type for Users table *)
 type user = {
-  name: string;
   id: int;
+  name: string;
+  some_bool: bool;
   some_int64: int64;
   some_int32: int32;
   some_float: float;
-  some_bool: bool;
-  pet_name: string option;
   pets: string list;
   pets_array: string array;
+  pet_name: string option;
 }
 [@@deriving deserialize]
 
@@ -23,18 +26,22 @@ type users = user list [@@deriving deserialize]
 
 let () =
   Riot.run_with_status ~on_error:(fun x -> failwith x) @@ fun () ->
-  let _ = Logger.start () |> Result.get_ok in
+  let _ =
+    match Logger.start () with
+    | Error (`Msg e) -> failwith e
+    | Error `Supervisor_error -> failwith "SUPERVISOR"
+    | Error (`Application_error msg) -> failwith msg
+    | Ok pid -> pid
+  in
   set_log_level (Some Logger.Debug);
   info (fun f -> f "Starting application");
-
-  (* Start the database connection pool *)
   let* db =
     let config =
       Silo.config
         ~connections:5
         ~driver:(module Dbcaml_driver_postgres)
         ~connection_string:
-          "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disabled"
+          "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
     in
 
     Silo.connect ~config
@@ -93,4 +100,5 @@ let () =
         (String.concat ", " (Array.to_list x.pets_array)))
     (Option.get fetched_users);
 
+  info (fun f -> f "Starting application");
   Ok 1

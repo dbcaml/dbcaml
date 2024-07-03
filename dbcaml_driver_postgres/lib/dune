@@ -9,7 +9,6 @@
   bytestring
   serde-postgres
   str
-  random
   cryptokit
   mirage-crypto
   castore))
