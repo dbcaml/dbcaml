@@ -78,3 +78,5 @@ let raw_query ?(row_limit = 0) connection_manager_id ~params ~query =
   Pool.release_connection connection_manager_id ~holder_pid;
 
   result
+
+let deserialize = Driver.deserialize

@@ -44,7 +44,7 @@
               inputsFrom = [
                 self'.packages.default
                 self'.packages.dbcaml_driver_postgres
-                self'.packages.silo_postgres
+                self'.packages.silo
                 self'.packages.serde_postgres
               ];
               packages = builtins.attrValues {
@@ -116,9 +116,9 @@
               ];
               src = ./.;
             };
-            silo_postgres = buildDunePackage {
+            silo = buildDunePackage {
               inherit version;
-              pname = "silo_postgres";
+              pname = "silo";
               propagatedBuildInputs = with ocamlPackages; [
                 self'.packages.default
                 self'.packages.dbcaml_driver_postgres

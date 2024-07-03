@@ -15,30 +15,29 @@ let () =
   (* Start the database connection pool *)
   let* db =
     let config =
-      Silo_postgres.config
+      Silo.config
         ~connections:5
+        ~driver:(module Dbcaml_driver_postgres)
         ~connection_string:
           "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
     in
 
-    match Silo_postgres.connect ~config with
-    | Ok c -> Ok c
-    | Error (`Msg e) -> Error e
+    Silo.connect ~config
   in
 
   (* Fetch the user and return the user to a variable *)
   let* rows_affected =
-    Silo_postgres.execute
+    Silo.execute
       db
       ~params:
         [
-          Silo_postgres.Params.String "Emil";
-          Silo_postgres.Params.Bool true;
-          Silo_postgres.Params.String "Danza";
-          Silo_postgres.Params.Number 1;
-          Silo_postgres.Params.Number 1;
-          Silo_postgres.Params.Float 1.1;
-          Silo_postgres.Params.StringArray ["Danza"];
+          Silo.string "Emil";
+          Silo.bool true;
+          Silo.string "Danza";
+          Silo.number 1;
+          Silo.number 1;
+          Silo.float 1.1;
+          Silo.string_list ["Danza"];
         ]
       ~query:
         "insert into users (name, some_bool, pet_name, some_int64, some_int32, some_float, pets) values ($1, $2, $3, $4, $5, $6, $7)"
@@ -48,10 +47,9 @@ let () =
 
   (* Fetch the user and return the user to a variable *)
   let* rows_affected =
-    Silo_postgres.execute
+    Silo.execute
       db
-      ~params:
-        [Silo_postgres.Params.String "Emil"; Silo_postgres.Params.String "Lowa"]
+      ~params:[Silo.string "Emil"; Silo.string "Lowa"]
       ~query:"update users set pet_name = $2 where name = $1"
   in
 
@@ -59,9 +57,9 @@ let () =
 
   (* Fetch the user and return the user to a variable *)
   let* rows_affected =
-    Silo_postgres.execute
+    Silo.execute
       db
-      ~params:[Silo_postgres.Params.String "Emil"]
+      ~params:[Silo.string "Emil"]
       ~query:"delete from users where name = $1"
   in
 

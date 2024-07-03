@@ -17,7 +17,7 @@ let test_parse_command_complete () =
   in
   List.iter
     (fun (input, expected) ->
-      check (Silo_postgres.parse_command_complete input) expected)
+      check (Silo.parse_command_complete input) expected)
     tests
 
 let suite = [test_case "Test cases" `Quick test_parse_command_complete]

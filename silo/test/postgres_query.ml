@@ -17,15 +17,14 @@ let test_query_sucessfully () =
   let db =
     match
       let config =
-        Silo_postgres.config
+        Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
       in
 
-      match Silo_postgres.connect ~config with
-      | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      Silo.connect ~config
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e
@@ -34,9 +33,9 @@ let test_query_sucessfully () =
   (* Fetch the user and return the user to a variable *)
   let fetched_user =
     match
-      Silo_postgres.query
+      Silo.query
         db
-        ~params:[Silo_postgres.Params.String "Bob"]
+        ~params:[Silo.string "Bob"]
         ~query:
           "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users where name = $1 limit 1"
         ~deserializer:deserialize_user
@@ -51,15 +50,16 @@ let test_query_no_rows () =
   let db =
     match
       let config =
-        Silo_postgres.config
+        Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
       in
 
-      match Silo_postgres.connect ~config with
+      match Silo.connect ~config with
       | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      | Error e -> Error e
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e
@@ -67,9 +67,9 @@ let test_query_no_rows () =
 
   (* Fetch the user and return the user to a variable *)
   match
-    Silo_postgres.query
+    Silo.query
       db
-      ~params:[Silo_postgres.Params.String "i_dont_exist"]
+      ~params:[Silo.string "i_dont_exist"]
       ~query:
         "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users where name = $1 limit 1"
       ~deserializer:deserialize_user
@@ -82,15 +82,16 @@ let test_query_unsucessfully () =
   let db =
     match
       let config =
-        Silo_postgres.config
+        Silo.config
           ~connections:1
+          ~driver:(module Dbcaml_driver_postgres)
           ~connection_string:
             "postgresql://postgres:postgres@localhost:6432/postgres?sslmode=disable"
       in
 
-      match Silo_postgres.connect ~config with
+      match Silo.connect ~config with
       | Ok c -> Ok c
-      | Error (`Msg e) -> Error e
+      | Error e -> Error e
     with
     | Ok c -> c
     | Error e -> Alcotest.fail e
@@ -98,9 +99,9 @@ let test_query_unsucessfully () =
 
   (* Fetch the user and return the user to a variable *)
   match
-    Silo_postgres.query
+    Silo.query
       db
-      ~params:[Silo_postgres.Params.String "Alice"]
+      ~params:[Silo.string "Alice"]
       ~query:
         "select name, id, some_bool, pet_name, i_dont_exist, some_int32, some_float, pets, pets as pets_array from users where name = $1 limit 1"
       ~deserializer:deserialize_user

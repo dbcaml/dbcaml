@@ -5,6 +5,8 @@ let ( let* ) = Result.bind
 module Postgres = struct
   type config = { conninfo: string }
 
+  type state = Serde_postgres.Deserializer.state
+
   let connect config =
     let* (conn, conninfo) = Pg.connect config.conninfo in
 
@@ -51,6 +53,9 @@ module Postgres = struct
     let* conn = Dbcaml.Connection.make ~conn ~query () in
 
     Ok conn
+
+  (** Deserialize the response bytes from postgres into a type *)
+  let deserialize = Serde_postgres.of_bytes
 end
 
 (** Create a interface which returns back a Dbcaml.Driver.t type. This type is used to create a connection and make queries *)
