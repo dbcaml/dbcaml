@@ -1,6 +1,24 @@
+open Dbcaml.Params
+
 let ( let* ) = Result.bind
 
-module Params = Dbcaml.Params
+(** String param *)
+let string v = String v
+
+(** Number param *)
+let number v = Number v
+
+(** Float param *)
+let float v = Float v
+
+(** Bool param *)
+let bool v = Bool v
+
+(** List of strings param  *)
+let string_list v = StringArray v
+
+(** List of numbers param *)
+let number_list v = NumberArray v
 
 module type Intf = sig
   val connection : string -> Dbcaml.Driver.t

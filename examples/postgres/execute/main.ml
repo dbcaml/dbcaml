@@ -31,13 +31,13 @@ let () =
       db
       ~params:
         [
-          Silo.Params.String "Emil";
-          Silo.Params.Bool true;
-          Silo.Params.String "Danza";
-          Silo.Params.Number 1;
-          Silo.Params.Number 1;
-          Silo.Params.Float 1.1;
-          Silo.Params.StringArray ["Danza"];
+          Silo.string "Emil";
+          Silo.bool true;
+          Silo.string "Danza";
+          Silo.number 1;
+          Silo.number 1;
+          Silo.float 1.1;
+          Silo.string_list ["Danza"];
         ]
       ~query:
         "insert into users (name, some_bool, pet_name, some_int64, some_int32, some_float, pets) values ($1, $2, $3, $4, $5, $6, $7)"
@@ -49,7 +49,7 @@ let () =
   let* rows_affected =
     Silo.execute
       db
-      ~params:[Silo.Params.String "Emil"; Silo.Params.String "Lowa"]
+      ~params:[Silo.string "Emil"; Silo.string "Lowa"]
       ~query:"update users set pet_name = $2 where name = $1"
   in
 
@@ -59,7 +59,7 @@ let () =
   let* rows_affected =
     Silo.execute
       db
-      ~params:[Silo.Params.String "Emil"]
+      ~params:[Silo.string "Emil"]
       ~query:"delete from users where name = $1"
   in
 

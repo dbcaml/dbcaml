@@ -35,7 +35,7 @@ let test_query_sucessfully () =
     match
       Silo.query
         db
-        ~params:[Silo.Params.String "Bob"]
+        ~params:[Silo.string "Bob"]
         ~query:
           "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users where name = $1 limit 1"
         ~deserializer:deserialize_user
@@ -69,7 +69,7 @@ let test_query_no_rows () =
   match
     Silo.query
       db
-      ~params:[Silo.Params.String "i_dont_exist"]
+      ~params:[Silo.string "i_dont_exist"]
       ~query:
         "select name, id, some_bool, pet_name, some_int64, some_int32, some_float, pets, pets as pets_array from users where name = $1 limit 1"
       ~deserializer:deserialize_user
@@ -101,7 +101,7 @@ let test_query_unsucessfully () =
   match
     Silo.query
       db
-      ~params:[Silo.Params.String "Alice"]
+      ~params:[Silo.string "Alice"]
       ~query:
         "select name, id, some_bool, pet_name, i_dont_exist, some_int32, some_float, pets, pets as pets_array from users where name = $1 limit 1"
       ~deserializer:deserialize_user

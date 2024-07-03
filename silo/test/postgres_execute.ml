@@ -36,13 +36,13 @@ let test_execute_successfully () =
         db
         ~params:
           [
-            Silo.Params.String "hello-world";
-            Silo.Params.Bool true;
-            Silo.Params.String "Danza";
-            Silo.Params.Number 1;
-            Silo.Params.Number 1;
-            Silo.Params.Float 1.1;
-            Silo.Params.StringArray ["Danza"];
+            Silo.string "hello-world";
+            Silo.bool true;
+            Silo.string "Danza";
+            Silo.number 1;
+            Silo.number 1;
+            Silo.float 1.1;
+            Silo.string_list ["Danza"];
           ]
         ~query:
           "insert into users (name, some_bool, pet_name, some_int64, some_int32, some_float, pets) values ($1, $2, $3, $4, $5, $6, $7)"
@@ -59,8 +59,7 @@ let test_execute_successfully () =
     match
       Silo.execute
         db
-        ~params:
-          [Silo.Params.String "hello-world-2"; Silo.Params.String "hello-world"]
+        ~params:[Silo.string "hello-world-2"; Silo.string "hello-world"]
         ~query:"update users set name = $1 where name = $2"
     with
     | Ok r -> r
@@ -74,7 +73,7 @@ let test_execute_successfully () =
     match
       Silo.execute
         db
-        ~params:[Silo.Params.String "hello-world-2"]
+        ~params:[Silo.string "hello-world-2"]
         ~query:"delete from users where name = $1"
     with
     | Ok r -> r
