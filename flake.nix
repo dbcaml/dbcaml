@@ -45,7 +45,7 @@
                 self'.packages.default
                 self'.packages.dbcaml_driver_postgres
                 self'.packages.dbcaml_driver_sqlite
-                self'.packages.silo_postgres
+                self'.packages.silo
                 self'.packages.serde_postgres
               ];
               packages = builtins.attrValues {
