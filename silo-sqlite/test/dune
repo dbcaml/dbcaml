@@ -4,7 +4,7 @@
  (preprocess
   (pps serde_derive))
  (libraries
-  silo-postgres
+  silo
   dbcaml
   dbcaml-driver-postgres
   serde-postgres
