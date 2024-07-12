@@ -5,8 +5,6 @@ let ( let* ) = Result.bind
 module Postgres = struct
   type config = { conninfo: string }
 
-  type state = Serde_postgres.Deserializer.state
-
   let connect config =
     let* (conn, conninfo) = Pg.connect config.conninfo in
 
