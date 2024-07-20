@@ -35,9 +35,9 @@
         system,
         ...
       }: let
-        pkgs = nixpkgs.legacyPackages."${system}".extend (self: super: {
-          ocamlPackages = super.ocaml-ng.ocamlPackages_5_1;
-        });
+        # pkgs = nixpkgs.legacyPackages."${system}".extend (self: super: {
+        #   ocamlPackages = super.ocaml-ng.ocamlPackages_5_1;
+        # });
         inherit (pkgs) ocamlPackages mkShell;
         inherit (ocamlPackages) buildDunePackage;
         version = "0.0.6+dev";
