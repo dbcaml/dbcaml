@@ -4,6 +4,8 @@ module Sqlite = struct
   type config = { conninfo: string }
 
   let connect _ =
+    let* _conn = Drivers.make "" in
+
     let query ~connection:_ ~params:_ ~query:_ ~row_limit:_ =
       Ok (Bytes.of_string "")
     in

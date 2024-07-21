@@ -11,6 +11,7 @@ doc: "https://github.com/emilpriver/dbcaml"
 bug-reports: "https://github.com/emilpriver/dbcaml/issues"
 depends: [
   "ocaml"
+  "sqlite3"
   "alcotest" {with-test}
   "dune" {>= "3.12"}
   "riot" {>= "0.0.9"}

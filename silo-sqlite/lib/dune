@@ -1,6 +1,0 @@
-(library
- (name silo_sqlite)
- (public_name silo-sqlite)
- (preprocess
-  (pps serde_derive))
- (libraries dbcaml dbcaml-driver-postgres serde-postgres))

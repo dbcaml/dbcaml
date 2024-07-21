@@ -1,0 +1,7 @@
+(library
+ (name drivers)
+ (package dbcaml-driver-sqlite)
+ (libraries
+  riot
+  sqlite3
+  dbcaml))

@@ -83,9 +83,11 @@
               rev = "bdddd31cf201b2877600282345c695d71435cc35";
             };
             propagatedBuildInputs = with ocamlPackages; [
-              pkgs.pkg-config
               dune-configurator
               pkgs.sqlite
+            ];
+            propagatedNativeBuildInputs = with pkgs; [
+              pkg-config
             ];
           };
           random = buildDunePackage {

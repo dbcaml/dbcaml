@@ -55,6 +55,7 @@
  (description "sqlite driver for dbcaml")
  (depends
   ocaml
+  sqlite3
   (alcotest :with-test)
   dune
   (riot
@@ -74,21 +75,6 @@
   serde
   serde_derive
   (serde-postgres :version))
- (tags
-  (topics "postgres" "ocaml")))
-
-(package
- (name silo-sqlite)
- (synopsis "Silo sqlite")
- (description "Silo sqlite")
- (depends
-  ocaml
-  (alcotest :with-test)
-  dune
-  serde
-  (silo-sqlite :version)
-  serde_derive
-  (serde-sqlite :version))
  (tags
   (topics "postgres" "ocaml")))
 
