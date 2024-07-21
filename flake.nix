@@ -73,6 +73,21 @@
               hash = "sha256-KIvx/UNtPTg0EqfwuJgzSCtr6RgKIXK6yv9QkUUHbJk=";
             };
           };
+          sqlite3 = buildDunePackage {
+            version = "5.1.0";
+            pname = "sqlite3";
+            src = pkgs.fetchFromGitHub {
+              owner = "mmottl";
+              repo = "sqlite3-ocaml";
+              hash = "sha256-+Pd+PJhpujQuvKioZXgP/vAgtluYKnFJj/7CpZwvZ7o=";
+              rev = "bdddd31cf201b2877600282345c695d71435cc35";
+            };
+            propagatedBuildInputs = with ocamlPackages; [
+              pkgs.pkg-config
+              dune-configurator
+              pkgs.sqlite
+            ];
+          };
           random = buildDunePackage {
             version = "0.0.1";
             pname = "random";
@@ -119,6 +134,7 @@
             pname = "dbcaml-driver-sqlite";
             propagatedBuildInputs = with ocamlPackages; [
               inputs'.riot.packages.default
+              self'.packages.sqlite3
               self'.packages.default
               alcotest
             ];
