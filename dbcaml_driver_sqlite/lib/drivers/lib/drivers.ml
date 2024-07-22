@@ -19,6 +19,7 @@ let make connection_string =
     path
     connection_string
     (Filename.is_relative path);
+  print_newline ();
 
   match scheme with
   | "libsql" -> Ok "libsql"
