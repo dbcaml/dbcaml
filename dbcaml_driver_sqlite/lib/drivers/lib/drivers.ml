@@ -5,19 +5,21 @@
        - If the conninfo is a relative or absolute path do we use "normal" sqlite driver
      - If the connection string is starting with libsql:// do we setup a libsql driver
 *)
+
+let extract_scheme_and_value url =
+  match String.split_on_char ':' url with
+  | scheme :: "//" :: value :: _ -> (scheme, value)
+  | scheme :: value :: _ -> (scheme, value)
+  | _ -> ("", "")
+
 let make conninfo =
-  let uri = Uri.of_string conninfo in
-  let scheme = Uri.scheme uri in
-  let path = Uri.path uri in
-  print_endline "path";
-  print_endline path;
-  print_endline conninfo;
+  let (scheme, path) = extract_scheme_and_value conninfo in
+  Printf.printf "path: %s %s %b \n" path conninfo (Filename.is_relative path);
 
   match scheme with
-  | Some "libsql" -> Ok "libsql"
-  | Some "sqlite" when Filename.is_relative path -> Ok "local_path"
-  | Some "sqlite" when conninfo == "sqlite::memory:" -> Ok "memory"
-  | Some _
+  | "libsql" -> Ok "libsql"
+  | "sqlite" when Filename.is_relative path -> Ok "local_path"
+  | "sqlite" when conninfo == "sqlite::memory:" -> Ok "memory"
   | _ ->
     Error
       (`Msg

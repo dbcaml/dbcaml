@@ -42,7 +42,7 @@ let test_make_with_local_file_conninfo () =
 
   check
     (result string string)
-    "test_make_with_local_file_conninfo"
+    "test_make_with_local_file_conninfo_relative_path"
     (Ok "local_path")
     (make_connection "sqlite://./example.sqlite")
 
