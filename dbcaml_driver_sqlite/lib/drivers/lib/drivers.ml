@@ -12,14 +12,18 @@ let extract_scheme_and_value url =
   | scheme :: value :: _ -> (scheme, value)
   | _ -> ("", "")
 
-let make conninfo =
-  let (scheme, path) = extract_scheme_and_value conninfo in
-  Printf.printf "path: %s %s %b \n" path conninfo (Filename.is_relative path);
+let make connection_string =
+  let (scheme, path) = extract_scheme_and_value connection_string in
+  Printf.printf
+    "path: %s %s %b \n"
+    path
+    connection_string
+    (Filename.is_relative path);
 
   match scheme with
   | "libsql" -> Ok "libsql"
   | "sqlite" when Filename.is_relative path -> Ok "local_path"
-  | "sqlite" when conninfo == "sqlite::memory:" -> Ok "memory"
+  | "sqlite" when connection_string == "sqlite::memory:" -> Ok "memory"
   | _ ->
     Error
       (`Msg
