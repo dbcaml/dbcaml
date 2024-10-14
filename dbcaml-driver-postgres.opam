@@ -19,7 +19,6 @@ depends: [
   "cryptokit"
   "serde-postgres" {version}
   "castore"
-  "random"
   "uri"
   "odoc" {with-doc}
 ]

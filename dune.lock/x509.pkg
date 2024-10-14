@@ -1,0 +1,33 @@
+(version 0.16.5)
+
+(build
+ (progn
+  (when
+   %{pkg-self:dev}
+   (run dune subst))
+  (run dune build -p %{pkg-self:name} -j %{jobs})))
+
+(depends
+ ocaml
+ dune
+ cstruct
+ asn1-combinators
+ ptime
+ base64
+ mirage-crypto
+ mirage-crypto-pk
+ mirage-crypto-ec
+ mirage-crypto-rng
+ fmt
+ gmap
+ domain-name
+ logs
+ pbkdf
+ ipaddr)
+
+(source
+ (fetch
+  (url
+   https://github.com/mirleft/ocaml-x509/releases/download/v0.16.5/x509-0.16.5.tbz)
+  (checksum
+   sha256=149e25a5fea37f619fb2690bee5c00f01c9dcf31d335f8ffcaab39a7538ccd99)))

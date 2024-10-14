@@ -9,8 +9,6 @@ let ( let* ) = Result.bind
 module type Intf = sig
   type config
 
-  type state
-
   val connect :
     config ->
     ( Connection.t,
@@ -33,7 +31,7 @@ end
 
 type t =
   | Driver : {
-      driver: (module Intf with type config = 'config and type state = 'state);
+      driver: (module Intf with type config = 'config);
       config: 'config;
     }
       -> t
@@ -101,7 +99,5 @@ let child_spec requester_pid connection_manager_pid (driver : t) =
 
 let deserialize driver (deserializer : 'a Serde.De.t) buf =
   match driver with
-  | Driver
-      { driver = (module D : Intf with type config = _ and type state = _); _ }
-    ->
+  | Driver { driver = (module D : Intf with type config = _); _ } ->
     D.deserialize deserializer buf

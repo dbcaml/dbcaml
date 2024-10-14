@@ -1,0 +1,15 @@
+(version 1.2.0)
+
+(build
+ (progn
+  (when
+   %{pkg-self:dev}
+   (run dune subst))
+  (run dune build -j %{jobs} -p %{pkg-self:name} @install)))
+
+(depends ocaml dune cstruct mirage-crypto)
+
+(source
+ (fetch
+  (url https://github.com/abeaumont/ocaml-pbkdf/archive/1.2.0.tar.gz)
+  (checksum md5=1e0e69de61b2d9d4f9843572ecc6655c)))
