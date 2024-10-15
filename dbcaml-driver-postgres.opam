@@ -14,12 +14,12 @@ depends: [
   "alcotest" {with-test}
   "dune" {>= "3.12"}
   "riot" {>= "0.0.9"}
-  "dbcaml" {version}
   "bytestring"
   "cryptokit"
-  "serde-postgres" {version}
   "castore"
   "uri"
+  "dbcaml"
+  "serde-postgres"
   "odoc" {with-doc}
 ]
 build: [

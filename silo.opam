@@ -15,7 +15,7 @@ depends: [
   "dune" {>= "3.12"}
   "serde"
   "serde_derive"
-  "serde-postgres" {version}
+  "serde-postgres"
   "odoc" {with-doc}
 ]
 build: [
