@@ -37,6 +37,7 @@
   (alcotest :with-test)
   (riot
    (>= 0.0.9))
+  serde
   uri)
  (tags
   (topics "database" "dbcaml")))
