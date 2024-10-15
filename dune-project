@@ -51,12 +51,13 @@
   dune
   (riot
    (>= 0.0.9))
-  (dbcaml :version)
   bytestring
   cryptokit
-  (serde-postgres :version)
   castore
-  uri)
+  uri
+  ;; Internal
+  dbcaml
+  serde-postgres)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
 
@@ -70,7 +71,7 @@
   dune
   serde
   serde_derive
-  (serde-postgres :version))
+  serde-postgres)
  (tags
   (topics "postgres" "ocaml")))
 
