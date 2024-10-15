@@ -9,6 +9,7 @@
   bytestring
   serde-postgres
   str
+  tls
   cryptokit
   mirage-crypto
   castore))

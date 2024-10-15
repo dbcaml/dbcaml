@@ -55,6 +55,7 @@
   bytestring
   cryptokit
   castore
+  (tls (= "0.17.5"))
   uri
   ;; Internal
   dbcaml
