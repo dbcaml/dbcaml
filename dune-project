@@ -87,3 +87,7 @@
   serde_derive)
  (tags
   (topics "postgres" "serde" "ocaml")))
+
+(package
+  (name dbcaml-examples)
+  (depends dbcaml dbcaml-driver-postgres serde riot silo))
