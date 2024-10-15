@@ -34,12 +34,12 @@ let make_connection ~reader ~writer ~uri ~addr =
 module Auth = struct
   let () = Mirage_crypto_rng_unix.initialize (module Mirage_crypto_rng.Fortuna)
 
-  let make_default authenticator = Tls.Config.client ~authenticator ()
+  let make_default authenticator =
+    Tls.Config.client ~authenticator () |> Result.get_ok
 
   let default () =
     let time () = Some (Ptime_clock.now ()) in
     let decode_pem ca =
-      let ca = Cstruct.of_string ca in
       let cert = X509.Certificate.decode_pem ca in
       Result.get_ok cert
     in

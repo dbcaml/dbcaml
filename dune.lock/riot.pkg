@@ -1,11 +1,6 @@
-(version 0.0.9)
+(version dev)
 
-(build
- (progn
-  (when
-   %{pkg-self:dev}
-   (run dune subst))
-  (run dune build -p %{pkg-self:name} -j %{jobs} @install)))
+(dune)
 
 (depends
  bytestring
@@ -16,7 +11,6 @@
  mtime
  ocaml
  ptime
- randomconv
  rio
  telemetry
  tls
@@ -25,7 +19,6 @@
 
 (source
  (fetch
-  (url
-   https://github.com/riot-ml/riot/releases/download/0.0.9/riot-0.0.9.tbz)
-  (checksum
-   sha256=f035f5b6ac2558794298bb7f5c7aeb73feea93e32125dc019c0aa6424b13aa8a)))
+  (url git+https://github.com/riot-ml/riot.git)))
+
+(dev)

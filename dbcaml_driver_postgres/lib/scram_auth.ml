@@ -6,21 +6,17 @@ let scram_hi ~data ~salt ~iterations =
   Pbkdf.pbkdf2
     ~prf:`SHA256
     ~salt
-    ~password:(Cstruct.of_string data)
+    ~password:data
     ~count:iterations
     ~dk_len:(Int32.of_int 32)
 
 let scram_hmac ~key ~text =
-  Cstruct.of_string text
-  |> Mirage_crypto.Hash.SHA256.hmac ~key
-  |> Cstruct.to_string
+  Digestif.SHA256.hmac_string ~key text |> Digestif.SHA256.to_raw_string
 
-let scram_h ~text = Cstruct.of_string text |> Mirage_crypto.Hash.SHA256.digest
+let scram_h ~text =
+  Digestif.SHA256.digest_string text |> Digestif.SHA256.to_raw_string
 
-let xor ~a ~b =
-  Mirage_crypto.Uncommon.Cs.xor (Cstruct.of_string a) (Cstruct.of_string b)
-  |> Cstruct.to_string
-  |> Base64.encode_exn
+let xor ~a ~b = Mirage_crypto.Uncommon.xor a b |> Base64.encode_exn
 
 let base64_encode input =
   Cryptokit.transform_string (Cryptokit.Base64.encode_compact ()) input
@@ -88,7 +84,7 @@ let authenticate ~conn ~is_plus ~username ~password =
     Printf.sprintf "c=%s,r=%s" (base64_encode channel_binding) server_nonce
   in
 
-  let salt = Base64.decode_exn salt |> Cstruct.of_string in
+  let salt = Base64.decode_exn salt in
   let salted_password = scram_hi ~data:password ~salt ~iterations in
   let client_key = scram_hmac ~key:salted_password ~text:"Client Key" in
   let stored_key = scram_h ~text:client_key in
@@ -123,9 +119,7 @@ let authenticate ~conn ~is_plus ~username ~password =
   let parsed_payload = parse_payload ~payload_str:message in
   let verifier = List.assoc "v" parsed_payload in
   let salted_password = scram_hi ~data:password ~salt ~iterations in
-  let server_key =
-    scram_hmac ~key:salted_password ~text:"Server Key" |> Cstruct.of_string
-  in
+  let server_key = scram_hmac ~key:salted_password ~text:"Server Key" in
   let auth_message =
     String.concat "," [first_bare; server_first_message; without_proof]
   in
