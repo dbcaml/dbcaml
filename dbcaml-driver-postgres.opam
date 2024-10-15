@@ -17,6 +17,7 @@ depends: [
   "bytestring"
   "cryptokit"
   "castore"
+  "tls"
   "uri"
   "dbcaml"
   "serde-postgres"
