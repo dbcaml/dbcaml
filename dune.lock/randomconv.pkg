@@ -1,0 +1,17 @@
+(version 0.2.0)
+
+(build
+ (progn
+  (when
+   %{pkg-self:dev}
+   (run dune subst))
+  (run dune build -p %{pkg-self:name} -j %{jobs})))
+
+(depends ocaml dune)
+
+(source
+ (fetch
+  (url
+   https://github.com/hannesm/randomconv/releases/download/v0.2.0/randomconv-0.2.0.tbz)
+  (checksum
+   sha256=b3171edf07e341a4468f92ffc21e2a8863b82ed5c36f7477cc98daf05d5b63ea)))

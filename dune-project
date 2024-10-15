@@ -15,6 +15,18 @@
 
 (documentation https://github.com/emilpriver/dbcaml)
 
+(pin
+ (url "git+https://github.com/serde-ml/serde.git")
+ (package (name serde)))
+
+(pin
+ (url "git+https://github.com/serde-ml/serde.git")
+ (package (name serde_json)))
+
+(pin
+ (url "git+https://github.com/serde-ml/serde.git")
+ (package (name serde_derive)))
+
 (package
  (name dbcaml)
  (synopsis "Database toolkit for OCaml")
@@ -44,7 +56,6 @@
   cryptokit
   (serde-postgres :version)
   castore
-  random
   uri)
  (tags
   (topics "database" "dbcaml" "dbcaml")))
@@ -71,9 +82,7 @@
   ocaml
   (alcotest :with-test)
   dune
-  (serde
-   (>= 0.0.2))
-  (serde_derive
-   (>= 0.0.2)))
+  serde
+  serde_derive)
  (tags
   (topics "postgres" "serde" "ocaml")))

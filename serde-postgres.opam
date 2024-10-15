@@ -13,8 +13,8 @@ depends: [
   "ocaml"
   "alcotest" {with-test}
   "dune" {>= "3.12"}
-  "serde" {>= "0.0.2"}
-  "serde_derive" {>= "0.0.2"}
+  "serde"
+  "serde_derive"
   "odoc" {with-doc}
 ]
 build: [

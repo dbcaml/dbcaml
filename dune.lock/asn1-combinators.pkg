@@ -1,0 +1,17 @@
+(version 0.2.6)
+
+(build
+ (progn
+  (when
+   %{pkg-self:dev}
+   (run dune subst))
+  (run dune build -p %{pkg-self:name} -j %{jobs})))
+
+(depends ocaml dune cstruct zarith ptime)
+
+(source
+ (fetch
+  (url
+   https://github.com/mirleft/ocaml-asn1-combinators/releases/download/v0.2.6/asn1-combinators-v0.2.6.tbz)
+  (checksum
+   sha256=012ade0d8869ef621063752c1cf8ea026f6bc702fed10df9af56688e291b1a91)))

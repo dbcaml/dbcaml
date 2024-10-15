@@ -1,0 +1,30 @@
+(version 0.17.3)
+
+(build
+ (progn
+  (when
+   %{pkg-self:dev}
+   (run dune subst))
+  (run dune build -p %{pkg-self:name} -j %{jobs})))
+
+(depends
+ ocaml
+ dune
+ cstruct
+ mirage-crypto
+ mirage-crypto-ec
+ mirage-crypto-pk
+ mirage-crypto-rng
+ x509
+ domain-name
+ fmt
+ hkdf
+ logs
+ ipaddr)
+
+(source
+ (fetch
+  (url
+   https://github.com/mirleft/ocaml-tls/releases/download/v0.17.3/tls-0.17.3.tbz)
+  (checksum
+   sha256=47e5decdd30ed1c367736458a63ae077474147b3dd675c14590b81a92d5031d4)))
