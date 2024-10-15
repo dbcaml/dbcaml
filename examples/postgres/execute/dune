@@ -1,5 +1,5 @@
 (executable
- (package dbcaml)
+ (package dbcaml-examples)
  (public_name postgres_execute)
  (name main)
  (preprocess
