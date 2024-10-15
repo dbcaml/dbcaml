@@ -1,4 +1,4 @@
-(version 0.16.5)
+(version 1.0.4)
 
 (build
  (progn
@@ -10,7 +10,6 @@
 (depends
  ocaml
  dune
- cstruct
  asn1-combinators
  ptime
  base64
@@ -22,12 +21,13 @@
  gmap
  domain-name
  logs
- pbkdf
+ kdf
+ ohex
  ipaddr)
 
 (source
  (fetch
   (url
-   https://github.com/mirleft/ocaml-x509/releases/download/v0.16.5/x509-0.16.5.tbz)
+   https://github.com/mirleft/ocaml-x509/releases/download/v1.0.4/x509-1.0.4.tbz)
   (checksum
-   sha256=149e25a5fea37f619fb2690bee5c00f01c9dcf31d335f8ffcaab39a7538ccd99)))
+   sha256=3e09d3983e53119d40cb0bfa9b07d595db7d0c5c9df06f5f2ac82a6258f5e702)))

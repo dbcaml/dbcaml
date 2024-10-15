@@ -1,4 +1,4 @@
-(version 0.17.3)
+(version 1.0.2)
 
 (build
  (progn
@@ -10,7 +10,6 @@
 (depends
  ocaml
  dune
- cstruct
  mirage-crypto
  mirage-crypto-ec
  mirage-crypto-pk
@@ -18,13 +17,15 @@
  x509
  domain-name
  fmt
- hkdf
+ kdf
  logs
- ipaddr)
+ ipaddr
+ ohex
+ digestif)
 
 (source
  (fetch
   (url
-   https://github.com/mirleft/ocaml-tls/releases/download/v0.17.3/tls-0.17.3.tbz)
+   https://github.com/mirleft/ocaml-tls/releases/download/v1.0.2/tls-1.0.2.tbz)
   (checksum
-   sha256=47e5decdd30ed1c367736458a63ae077474147b3dd675c14590b81a92d5031d4)))
+   sha256=a21751200cb3146ffe1547f5d6de187b5147e8ee6bed12b09d52c002d42b3feb)))

@@ -27,6 +27,11 @@
  (url "git+https://github.com/serde-ml/serde.git")
  (package (name serde_derive)))
 
+(pin
+ (url "git+https://github.com/riot-ml/riot.git")
+ (package (name riot)))
+
+
 (package
  (name dbcaml)
  (synopsis "Database toolkit for OCaml")
@@ -55,7 +60,7 @@
   bytestring
   cryptokit
   castore
-  tls
+  (tls (>= 1.0.0))
   uri
   ;; Internal
   dbcaml
