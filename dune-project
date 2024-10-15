@@ -76,6 +76,7 @@
   ocaml
   (alcotest :with-test)
   dune
+  dbcaml
   serde
   serde_derive
   serde-postgres)

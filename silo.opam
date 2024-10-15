@@ -13,6 +13,7 @@ depends: [
   "ocaml"
   "alcotest" {with-test}
   "dune" {>= "3.12"}
+  "dbcaml"
   "serde"
   "serde_derive"
   "serde-postgres"
