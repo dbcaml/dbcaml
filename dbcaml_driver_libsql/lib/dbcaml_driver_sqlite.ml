@@ -1,10 +1,17 @@
 let ( let* ) = Result.bind
 
+module Drivers = Drivers
+module Connection = Connection
+
 module Sqlite = struct
   type config = { conninfo: string }
 
   let connect _ =
-    let* _conn = Drivers.make "" in
+    let* _conn =
+      match Drivers.make "" with
+      | Ok c -> Ok c
+      | Error e -> Error (`Msg e)
+    in
 
     let query ~connection:_ ~params:_ ~query:_ ~row_limit:_ =
       Ok (Bytes.of_string "")

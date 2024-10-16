@@ -50,12 +50,14 @@
   (topics "database" "dbcaml" "Postgres")))
 
 (package
- (name dbcaml-driver-sqlite)
- (synopsis "sqlite driver for dbcaml")
- (description "sqlite driver for dbcaml")
+ (name dbcaml-driver-libsql)
+ (synopsis "libsql driver for dbcaml")
+ (description "libsql driver for dbcaml")
  (depends
   ocaml
   sqlite3
+  base
+  dbcaml
   (alcotest :with-test)
   dune
   (riot

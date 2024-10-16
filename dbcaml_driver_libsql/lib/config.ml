@@ -1,11 +1,11 @@
 module type Intf = sig
   type config
 
-  val connect : config -> (string, string) result
+  val connect : config -> ('conn, string) result
 end
 
 type t =
-  | Connection : {
+  | Driver : {
       driver: (module Intf with type config = 'config);
       config: 'config;
     }

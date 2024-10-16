@@ -138,6 +138,7 @@
               inputs'.riot.packages.default
               self'.packages.sqlite3
               self'.packages.default
+              base
               alcotest
             ];
             src = ./.;
