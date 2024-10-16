@@ -66,7 +66,24 @@
   dbcaml
   serde-postgres)
  (tags
-  (topics "database" "dbcaml" "dbcaml")))
+  (topics "database" "dbcaml" "Postgres")))
+
+(package
+ (name dbcaml-driver-libsql)
+ (synopsis "libsql driver for dbcaml")
+ (description "libsql driver for dbcaml")
+ (depends
+  ocaml
+  sqlite3
+  base
+  dbcaml
+  (alcotest :with-test)
+  dune
+  (riot
+   (>= 0.0.9))
+  (dbcaml :version))
+ (tags
+  (topics "database" "dbcaml" "sqlite")))
 
 (package
  (name silo)

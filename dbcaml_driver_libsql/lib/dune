@@ -1,0 +1,4 @@
+(library
+ (name dbcaml_driver_libsql)
+ (public_name dbcaml-driver-libsql)
+ (libraries riot base sqlite3 dbcaml))
